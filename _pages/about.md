@@ -51,7 +51,7 @@ Yingxuan Wang<sup>*</sup>, **Yuning Peng<sup>*</sup>**, Xudong Hu, Penglin Zhang
 # 🏅 Honors and Awards
 - *2023.10* National Scholarship for Undergraduates (Top 3%) 
 - *2023.04* Innova Student Innovation Achievement Award of Wuhan University
-- *2022.08* First Prize of "China Software Cup" college student software design competition (Rank 1)
+- *2022.08* First Prize of "China Software Cup" College Student Software Design Competition (Rank 1)
 
 # 📖 Educations
 - *2024.09 - now*, M.S. in Photogrammetry and Remote Sensing, Wuhan University. 

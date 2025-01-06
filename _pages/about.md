@@ -32,19 +32,17 @@ I am a member of [WHU-USI3DV](https://github.com/WHU-USI3DV), please check advan
 
 # 📝 Publications 
 
-<div class='paper-box'><div class='paper-box-image'><div><div class="badge">Forest</div><img src='images/Forest_poster2.png' alt="sym" width="100%"></div></div>
+<!-- <div class='paper-box'><div class='paper-box-image'><div><div class="badge">Forest</div><img src='images/Forest_poster2.png' alt="sym" width="100%"></div></div>
 <div class='paper-box-text' markdown="1">
 
 [Fine-Resolution Forest Height Estimation by Integrating ICESat-2 and Landsat 8 OLI Data with a Spatial Downscaling Method for Aboveground Biomass Quantification](https://www.mdpi.com/1999-4907/14/7/1414)
 
 Yingxuan Wang<sup>*</sup>, **Yuning Peng<sup>*</sup>**, Xudong Hu, Penglin Zhang
 
-<!-- [**Project**](https://scholar.google.com/citations?view_op=view_citation&hl=zh-CN&user=DhtAFkwAAAAJ&citation_for_view=DhtAFkwAAAAJ:ALROH1vI_8AC)  -->
-<!-- <strong><span class='show_paper_citations' data='DhtAFkwAAAAJ:ALROH1vI_8AC'></span></strong> -->
 - We propose a random forest (RF)-based down-scaling method to map forest height and biomass at a 15-m resolution by integrating Landsat 8 OLI and Ice, Cloud and Land Elevation Satellite-2 (ICESat-2) LiDAR data.  
 - The Jilin Province in northeast China is taken as the study area, and the forest AGB estimation results reveal a density of 61.15 Mg/ha with a standard deviation of 89.46 Mg/ha.
 </div>
-</div>
+</div> -->
 
 <!-- - [Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet](https://github.com), A, B, C, **CVPR 2020** -->
 

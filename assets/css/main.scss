@@ -107,3 +107,10 @@ h1:before, .anchor:before {
     background-color: #00369f;
     font-size: .8em;
 }
+
+/* Custom: dark red title class for paper-box headings */
+.dark-red {
+    color: #8B0000; /* dark red */
+    /* optional: uncomment to slightly increase emphasis */
+    /* font-weight: 600; font-size: 1.15rem; */
+}

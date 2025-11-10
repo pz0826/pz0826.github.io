@@ -17,7 +17,7 @@ redirect_from:
 
 <span class='anchor' id='about-me'></span>
 
-Hi there! I am a master's student at [LIESMARS](https://www.whu.edu.cn), [Wuhan University](https://www.whu.edu.cn), under the supervision of Prof. [Zhen Dong](https://dongzhenwhu.github.io/index.html) and Prof. [Bisheng Yang](https://3s.whu.edu.cn/ybs/index.htm).
+Hi there! I am a master's student at [LIESMARS](https://www.whu.edu.cn), [Wuhan University](https://www.whu.edu.cn), under the supervision of Prof. [Zhen Dong](https://dongzhenwhu.github.io/index.html), Prof. [Bisheng Yang](https://3s.whu.edu.cn/ybs/index.htm) and Assistant Prof. [Yuan Liu](https://liuyuan-pal.github.io/) from [HKUST](https://hkust.edu.hk/).
 
 My current research focuses on 3D computer vision, with a particular emphasis on 3D scene understanding, 3D reconstruction, and 3D large language models (LLMs).
 

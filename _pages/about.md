@@ -27,7 +27,7 @@ I am a member of [WHU-USI3DV](https://github.com/WHU-USI3DV), please check advan
 
 
 # 🔥 News
-- *2025.11*: 🍾🍾🍾 Paper [GAGS: Granularity-Aware 3D Feature Distillation for Gaussian Splatting]((https://pz0826.github.io/GAGS-Webpage/)) is accepted by AAAI-26!
+- *2025.11*: 🍾🍾🍾 Paper [GAGS: Granularity-Aware 3D Feature Distillation for Gaussian Splatting](https://pz0826.github.io/GAGS-Webpage/) is accepted by AAAI-26!
 - *2025.10*: 🥳🥳🥳 Paper [The neural city: A next-generation spatio-temporal intelligence paradigm for urban holistic governance](https://www.sciencedirect.com/science/article/pii/S2666675825003522) is accepted by The Innovation(IF:25.7)!
 
 

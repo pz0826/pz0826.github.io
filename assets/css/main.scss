@@ -114,3 +114,11 @@ h1:before, .anchor:before {
     /* optional: uncomment to slightly increase emphasis */
     /* font-weight: 600; font-size: 1.15rem; */
 }
+
+.inline-logo {
+    display: inline-block;
+    height: 1.15em;
+    max-width: 7em;
+    margin: 0 .12em;
+    vertical-align: -0.18em;
+}

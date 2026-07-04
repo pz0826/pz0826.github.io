@@ -27,11 +27,31 @@ I am a member of [WHU-USI3DV](https://github.com/WHU-USI3DV), please check advan
 
 
 # 🔥 News
+- *2026.07*: 🍾🍾🍾 Paper [LEGO: Leveled Language Gaussian Splatting](https://pz0826.github.io/LEGO-Webpage/) is accepted by ECCV-26!
 - *2025.11*: 🍾🍾🍾 Paper [GAGS: Granularity-Aware 3D Feature Distillation for Gaussian Splatting](https://pz0826.github.io/GAGS-Webpage/) is accepted by AAAI-26!
 - *2025.10*: 🥳🥳🥳 Paper [The neural city: A next-generation spatio-temporal intelligence paradigm for urban holistic governance](https://www.sciencedirect.com/science/article/pii/S2666675825003522) is accepted by The Innovation(IF:25.7)!
 
 
 # 📝 Publications 
+
+<div class='paper-box'><div class='paper-box-image'><div><div class="badge">ECCV 2026</div>
+  <video width="100%" controls autoplay muted playsinline loop preload="metadata">
+    <source src="/videos/LEGO-video.mp4" type="video/mp4">
+  </video>
+</div></div>
+<div class='paper-box-text' markdown="1">
+
+## LEGO: Leveled Language Gaussian Splatting
+
+**Yuning Peng**, Haiping Wang, Yuan Liu, Yipeng Lu, Zhen Dong, Bisheng Yang
+
+<h3 class="dark-red">3D segmentation &amp; Open-vocabulary Understanding</h3>
+
+We introduce LEGO for advanced open-vocabulary scene understanding. Beyond basic concept recognition, its core innovation lies in capturing the intrinsic semantic hierarchies within the scene.
+
+[[Web Page]](https://pz0826.github.io/LEGO-Webpage/)
+</div>
+</div>
 
 <div class='paper-box'><div class='paper-box-image'><div><div class="badge">AAAI 2026</div>
   <video width="100%" controls autoplay muted playsinline loop preload="metadata" poster="/images/GAGS-poster.png">
@@ -99,5 +119,5 @@ We propose a novel down-scaling method to map forest height and biomass at a 15-
 - *2021.06*, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
 - *2021.03*, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet.  \| [\[video\]](https://github.com/) -->
 
-<!-- # 💻 Internships
-- *2019.05 - 2020.02*, [Lorem](https://github.com/), China. -->
+# 💻 Internships
+- *2026.05 - now*, [Bytedance](https://www.bytedance.com/) <img class="inline-logo" src="/images/bytedance_BIG.svg" alt="Bytedance">, China.

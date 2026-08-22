@@ -49,7 +49,7 @@ I am a member of [WHU-USI3DV](https://github.com/WHU-USI3DV), please check advan
 
 We introduce LEGO for advanced open-vocabulary scene understanding. Beyond basic concept recognition, its core innovation lies in capturing the intrinsic semantic hierarchies within the scene.
 
-[[Web Page]](https://pz0826.github.io/LEGO-Webpage/)
+[[Paper link]](https://arxiv.org/abs/2608.10057) [[Web Page]](https://pz0826.github.io/LEGO-Webpage/) [[Code]](https://github.com/WHU-USI3DV/LEGO)
 </div>
 </div>
 

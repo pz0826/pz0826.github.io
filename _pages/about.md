@@ -45,7 +45,7 @@ I am a member of [WHU-USI3DV](https://github.com/WHU-USI3DV), please check advan
 
 **Yuning Peng**, Haiping Wang, Yuan Liu, Yipeng Lu, Zhen Dong, Bisheng Yang
 
-<h3 class="dark-red">3D segmentation &amp; Open-vocabulary Understanding</h3>
+<h3 class="dark-red">3D Scene Hierarchy Modeling &amp; Open-vocabulary Understanding</h3>
 
 We introduce LEGO for advanced open-vocabulary scene understanding. Beyond basic concept recognition, its core innovation lies in capturing the intrinsic semantic hierarchies within the scene.
 

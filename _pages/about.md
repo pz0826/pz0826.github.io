@@ -27,12 +27,32 @@ I am a member of [WHU-USI3DV](https://github.com/WHU-USI3DV), please check advan
 
 
 # 🔥 News
+- *2026.08*: 🚀🚀🚀 Paper [LifePlanner: Evaluating LLM Agents for Geo-spatial Planning with Social Media Data](https://arxiv.org/abs/2608.25039) is now available on arXiv!
 - *2026.07*: 🎉🎉🎉 Paper [LEGO: Leveled Language Gaussian Splatting](https://pz0826.github.io/LEGO-Webpage/) is accepted by ECCV 2026!
 - *2025.11*: 🍾🍾🍾 Paper [GAGS: Granularity-Aware 3D Feature Distillation for Gaussian Splatting](https://pz0826.github.io/GAGS-Webpage/) is accepted by AAAI 2026!
 - *2025.10*: 🥳🥳🥳 Paper [The neural city: A next-generation spatio-temporal intelligence paradigm for urban holistic governance](https://www.sciencedirect.com/science/article/pii/S2666675825003522) is accepted by The Innovation(IF:25.7)!
 
 
 # 📝 Publications 
+
+<div class='paper-box'><div class='paper-box-image'><div><div class="badge">arXiv 2026</div>
+  <video width="100%" controls autoplay muted playsinline loop preload="metadata" poster="/images/LifePlanner-poster.png">
+    <source src="/videos/LifePlanner-video.mp4" type="video/mp4">
+  </video>
+</div></div>
+<div class='paper-box-text' markdown="1">
+
+## LifePlanner: Evaluating LLM Agents for Geo-spatial Planning with Social Media Data
+
+Zhen Dong<sup>*</sup>, **Yuning Peng<sup>*</sup>**, Yutao Shi, Lei Zhong, Yongsen Mao, Yuan Liu, Haiping Wang<sup>†</sup>
+
+<h3 class="dark-red">Spatial Agents</h3>
+
+We introduce LifePlanner, a benchmark that enriches map data with large-scale local social-media evidence and exposes it through an MCP toolset to evaluate LLM agents across four geo-spatial planning tasks and three difficulty levels.
+
+[[Paper link]](https://arxiv.org/abs/2608.25039)
+</div>
+</div>
 
 <div class='paper-box'><div class='paper-box-image'><div><div class="badge">ECCV 2026</div>
   <video width="100%" controls autoplay muted playsinline loop preload="metadata">

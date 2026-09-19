@@ -1,0 +1,8 @@
+node_modules
+dist
+.astro
+.preview
+.tools
+public
+docs
+package-lock.json

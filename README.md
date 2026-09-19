@@ -1,72 +1,101 @@
+# Yuning Peng — Ways of seeing
 
-<h1 align="center">
-AcadHomepage
-</h1>
+An artistic personal research homepage, built with Astro, React, Three.js, and Spark. Development takes place on `feat/artistic-homepage`; the original site remains on its existing branch.
 
-<div align="center">
+## Run locally
 
-[![](https://img.shields.io/github/stars/RayeRen/acad-homepage.github.io)](https://github.com/RayeRen/acad-homepage.github.io)
-[![](https://img.shields.io/github/forks/RayeRen/acad-homepage.github.io)](https://github.com/RayeRen/acad-homepage.github.io)
-[![](https://img.shields.io/github/issues/RayeRen/acad-homepage.github.io)](https://github.com/RayeRen/acad-homepage.github.io)
-[![](https://img.shields.io/github/license/RayeRen/acad-homepage.github.io)](https://github.com/RayeRen/acad-homepage.github.io/blob/main/LICENSE)  | [中文文档](./docs/README-zh.md) 
-</div>
+Use Node 22.12 or newer (`.nvmrc` selects Node 22):
 
-<p align="center">A Modern and Responsive Academic Personal Homepage</p>
+```bash
+npm ci
+npm run dev
+```
 
-<p align="center">
-    <br>
-    <img src="docs/screenshot.png" width="100%"/>
-    <br>
-</p>
+Open http://127.0.0.1:4321. `npm run build` checks types and produces the static site in `dist/`; `npm run preview` serves that build. The checked-in browser scene is sufficient to run the website; Python, CUDA, and research checkpoints are only needed to regenerate assets.
 
-Some examples:
-- [Demo Page](https://rayeren.github.io/acad-homepage.github.io/)
-- [Personal Homepage of the author](https://rayeren.github.io/)
+This checkout is on exFAT, so `.npmrc` disables dependency executable symlinks. Scripts call their Node entrypoints explicitly. On this Linux machine, the dedicated runtime can be selected with:
 
-## Key Features
-- **Automatically update google scholar citations**: using the google scholar crawler and github action, this REPO can update the author citations and publication citations automatically.
-- **Support Google analytics**: you can trace the traffics of your homepage by easy configuration.
-- **Responsive**: this homepage automatically adjust for different screen sizes and viewports.
-- **Beautiful and Simple Design**: this homepage is beautiful and simple, which is very suitable for academic personal homepage.
-- **SEO**: search Engine Optimization (SEO) helps search engines find the information you publish on your homepage easily, then rank it against similar websites.
+```bash
+export PATH="/home/pyn/.local/share/homepage-toolchain/node_modules/node/bin:$PATH"
+```
 
-## Quick Start
+To keep the development server running after disconnecting SSH:
 
-1. Fork this REPO and rename to `USERNAME.github.io`, where `USERNAME` is your github USERNAME.
-1. Configure the google scholar citation crawler:
-    1. Find your google scholar ID in the url of your google scholar page (e.g., https://scholar.google.com/citations?user=SCHOLAR_ID), where `SCHOLAR_ID` is your google scholar ID.
-    1. Set GOOGLE_SCHOLAR_ID variable to your google scholar ID in `Settings -> Secrets -> Actions -> New repository secret` of the REPO website with `name=GOOGLE_SCHOLAR_ID` and `value=SCHOLAR_ID`.
-    1. Click the `Action` of the REPO website and enable the workflows by clicking *"I understand my workflows, go ahead and enable them"*. This github action will generate google scholar citation stats data `gs_data.json` in `google-scholar-stats` branch of your REPO. When you update your main branch, this action will be triggered. This action will also be trigger 08:00 UTC everyday.
-1. Generate favicon using [favicon-generator](https://redketchup.io/favicon-generator) and download all generated files to `REPO/images`.
-1. Modify the configuration of your homepage `_config.yml`:
-    1. `title`: the title of your homepage
-    1. `description`: the description of your homepage
-    1. `repository`: USER_NAME/REPO_NAME  
-    1. `google_analytics_id` (optional): google analytics ID
-    1. SEO Related keys (optional): get these keys from search engine consoles (e.g. Google, Bing and Baidu) and paste here.
-    1. `author`: the author information of this homepage, including some other websites, emails, city and univeristy.
-    1. More configuration details are described in the comments.
-1. Add your homepage content in `_pages/about.md`.
-    1. You can use html+markdown syntax just same as jekyll.
-    1. You can use a `<span>` tag with class `show_paper_citations` and attribute `data` to display the citations of your paper. Set the data to the google scholar paper ID. For
-        ```html
-        <span class='show_paper_citations' data='DhtAFkwAAAAJ:ALROH1vI_8AC'></span>
-        ``` 
-        > Q: How to get the google scholar paper ID?   
-        > A: Enter your google scholar homepage and click the paper name. Then you can see the paper ID from `citation_for_view=XXXX`, where `XXXX` is the required paper ID.
-1. Your page will be published at `https://USERNAME.github.io`.
+```bash
+npm run dev:background
+npm run dev:status
+npm run dev:logs
+# Stop this checkout's managed server:
+npm run dev:stop
+```
 
-## Debug Locally
+Astro manages the background server and its lock file; no terminal session needs to stay open on Linux. The server binds only to loopback. From the Mac, keep this SSH command running and open http://localhost:4321:
 
-1. Clone your REPO to local using `git clone`.
-1. Install Jekyll building environment, including `Ruby`, `RubyGems`, `GCC` and `Make` following [the installation guide](https://jekyllrb.com/docs/installation/#requirements).
-1. Run `bash run_server.sh` to start Jekyll livereload server.
-1. Open http://127.0.0.1:4000 in your browser.
-1. If you change the source code of the website, the livereload server will automatically refresh.
-1. When you finish the modification of your homepage, `commit` your changings and `push` to your remote REPO using `git` command.
+```bash
+ssh -N -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 \
+  -L 4321:127.0.0.1:4321 pyn@100.65.194.90
+```
 
-# Acknowledges
+An SSH config host alias works in place of the IP. If local port 4321 is already occupied, use `-L 4322:127.0.0.1:4321` and open http://localhost:4322. The page renders on the Mac GPU; SSH carries site assets and development updates.
 
-- AcadHomepage incorporates Font Awesome, which is distributed under the terms of the SIL OFL 1.1 and MIT License.
-- AcadHomepage is influenced by the github repo [mmistakes/minimal-mistakes](https://github.com/mmistakes/minimal-mistakes), which is distributed under the MIT License.
-- AcadHomepage is influenced by the github repo [academicpages/academicpages.github.io](https://github.com/academicpages/academicpages.github.io), which is distributed under the MIT License.
+## Structure
+
+```text
+src/
+  content/                 Typed profile, news, and publication records
+  layouts/                 Document shell, fonts, metadata
+  pages/                   Static routes
+  components/
+    Navigation.astro       Native anchors and scroll indication
+    sections/              Info, News, Works, Arts
+    scene/                 React scene controls and playback orchestration
+  lib/scene/
+    types.ts               Renderer-independent scene contract
+    data.ts                Manifest and lazy binary-table loader
+    state.ts               Selection, hierarchy, relations, query state
+    spark-adapter.ts       Camera, 2DGS, GPU recoloring, resource lifecycle
+    picking.worker.ts      Visible Gaussian picking off the main thread
+  styles/                  Base, layout, scene, and content styles
+public/
+  media/                   Reused paper media and identity resources
+  scenes/room/             Compressed browser geometry, feature tables, metadata
+scripts/                   Offline scene export and integrity checks
+tests/                     Interaction invariants and real-browser smoke tests
+docs/                      Design, data provenance, and implementation notes
+```
+
+Edit profile/publications in `src/content/`; add normal page sections in `src/components/sections/`. Keep renderer-specific code behind `SceneAdapter`. Future photo galleries can be separate islands with their own data manifest, without importing the 3D renderer. Arts currently has a clearly marked placeholder until photographs are supplied.
+
+## Scene and interactions
+
+- Original Mip-NeRF 360 **room** demo: 1,064,578 ordered 2D Gaussians and five normalized hierarchy levels.
+- Human/AI radial transition keeps the camera and selection. Feature colors load by level.
+- Clicking a surface picks a source Gaussian through a worker and selects its current-level cluster. Parent/part controls follow actual node IDs.
+- Nearby uses center distance; Similar uses saved CLIP affinities. These are geometric/feature links, not inferred relationship names.
+- Six featured recorded COR queries replay original cameras and intermediate selections. All ten cached final candidates are painted by their normalized scores. No live LLM endpoint is required.
+- Manual input cancels playback. Wheel scrolling always scrolls the page; touch devices explicitly enter/exit Explore. Offscreen/hidden scenes stop requesting frames. Static content and the room poster remain usable on load/WebGL failure.
+
+The first browser export uses DC RGB and 8-bit quaternions in `.splat`, with zero local Z scale and Spark's `enable2DGS`. It does not retain degree-3 view-dependent spherical harmonics, and is not pixel-identical to the original gsplat renderer. It retains all Gaussians and IDs. Gzip compression is lossless; browser-side `DecompressionStream` decodes assets before use. See `docs/browser-demo-2026-09-20.md` for validation and current limitations.
+
+Regenerate assets on the research machine:
+
+```bash
+/home/pyn/anaconda3/envs/lego/bin/python scripts/export_room_web.py \
+  --source /home/pyn/CODE/LEGO/outputs_homepage_legacy/mipnerf360/room
+npm run check:assets
+```
+
+Research checkpoints and raw feature tensors stay outside this repository. The smaller browser assets are versioned so a fresh checkout works. The source dataset is [Mip-NeRF 360](https://jonbarron.info/mipnerf360/); scene semantics and recorded demos are from [LEGO](https://pz0826.github.io/LEGO-Webpage/). The original template's MIT license is retained.
+
+## Validation and delivery
+
+```bash
+npm test                 # Replay races, hierarchy mapping, weighted candidates, occlusion picking
+npm run check:assets     # Checksums, lengths, hierarchy references, query IDs
+npm run build            # Astro type check and static production build
+npm run test:browser     # Requires preview server + Chrome (CHROME_PATH can override)
+```
+
+The browser test uses headless Vulkan on this machine's RTX 4090. Set `SOFTWARE_WEBGL=1` for software WebGL; it is much slower on the full scene. Screenshots and test results are saved in `.preview/`. Node/CI checks require no GPU.
+
+The GitHub workflow only builds and uploads a preview artifact. It does not deploy or change the live GitHub Pages site. Hosting can later serve `dist/` as a normal static site; preserve the separate `/LEGO-Webpage/` and `/GAGS-Webpage/` project URLs when changing Pages settings.

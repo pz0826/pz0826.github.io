@@ -1,0 +1,62 @@
+---
+import { profile, awards } from '../../content/profile';
+---
+
+<section id="info" class="section info-section">
+  <div class="section-heading">
+    <span class="eyebrow">01 / A little context</span>
+    <h2>Info</h2>
+  </div>
+  <div class="info-body">
+    <p class="lead">
+      I study how machines perceive
+      <br class="desktop-break" /> and understand the world in 3D.
+    </p>
+    <p>
+      I am a master’s student at LIESMARS,{' '}
+      <a href="https://www.whu.edu.cn">Wuhan University</a>, advised by{' '}
+      <a href="https://dongzhenwhu.github.io/index.html">Zhen Dong</a>,{' '}
+      <a href="https://3s.whu.edu.cn/ybs/index.htm">Bisheng Yang</a>,{' '}
+      <a href="https://liuyuan-pal.github.io/">Yuan Liu</a>, and{' '}
+      <a href="https://hpwang-whu.github.io/">Haiping Wang</a> from HKUST.
+    </p>
+    <p>
+      My research spans 3D scene understanding, reconstruction, and large
+      language models. I am part of{' '}
+      <a href="https://github.com/WHU-USI3DV">WHU-USI3DV</a>.
+    </p>
+    <div class="text-links">
+      {profile.links.map((link) => (
+        <a href={link.href}>{link.label} ↗</a>
+      ))}
+    </div>
+    <div class="info-details">
+      <div>
+        <h3>Education</h3>
+        <p>
+          <span class="eyebrow">2024 — present</span>
+          <br />
+          M.S. · Photogrammetry & Remote Sensing
+          <br />
+          Wuhan University
+        </p>
+        <p>
+          <span class="eyebrow">2020 — 2024</span>
+          <br />
+          B.S. · Wuhan University
+        </p>
+      </div>
+      <div>
+        <h3>Recognition</h3>
+        <ul class="awards">
+          {awards.map(([date, text]) => (
+            <li>
+              <span class="eyebrow">{date}</span>
+              <span>{text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

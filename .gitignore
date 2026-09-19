@@ -1,3 +1,15 @@
 _site/
 push.sh
 .DS_Store
+__pycache__/
+node_modules/
+.tools/
+.astro/
+dist/
+.preview/
+test-results/
+playwright-report/
+public/scenes/room/*.splat
+public/scenes/room/*.bin
+public/scenes/room/*.rgb8
+public/scenes/room/*.i32

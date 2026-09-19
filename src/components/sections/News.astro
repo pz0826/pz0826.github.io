@@ -1,0 +1,21 @@
+---
+import { news } from '../../content/profile';
+---
+
+<section id="news" class="section news-section">
+  <div class="section-heading">
+    <span class="eyebrow">02 / Recently</span>
+    <h2>News</h2>
+  </div>
+  <ol class="news-list">
+    {news.map((item) => (
+      <li>
+        <time class="eyebrow">{item.date}</time>
+        <a href={item.href}>
+          {item.text}
+          <span aria-hidden="true">↗</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</section>

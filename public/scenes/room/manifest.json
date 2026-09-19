@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "count": 1064578,
+  "levels": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "geometry": "room.splat.gz",
+  "initialCamera": {
+    "position": [
+      -0.8743770766675499,
+      0.5684298925072423,
+      0.44174521237071473
+    ],
+    "wxyz": [
+      0.1041377078930579,
+      -0.06555583816345893,
+      0.8298506336954431,
+      -0.5442478255654662
+    ],
+    "fov_rad": 1.3089969389957472,
+    "aspect": 1.3333333333333333,
+    "careful_observation": false,
+    "query": {
+      "text": "",
+      "level": 1,
+      "chain": [],
+      "results": [],
+      "status": "Ready",
+      "error": ""
+    },
+    "query_transition": {
+      "old_fade_start": 0.6,
+      "old_fade_end": 0.8,
+      "new_fade_start": 0.6,
+      "new_fade_end": 0.8
+    }
+  },
+  "representation": "2DGS, zero local Z scale, original entity order, DC RGB, quantized wxyz",
+  "sourceScene": "mipnerf360-room-legacy-demo",
+  "assets": {
+    "labels-level-1.i32.gz": {
+      "bytes": 895199,
+      "sha256": "de019115cac82e8ea0f8586b9be8d29f5e2692e680b0cff4fe4fd2963fc89da2"
+    },
+    "labels-level-2.i32.gz": {
+      "bytes": 1058584,
+      "sha256": "f2dafe78f42155df9462128c821306803706c87b50ea3ca04a43515a57492457"
+    },
+    "labels-level-3.i32.gz": {
+      "bytes": 1283916,
+      "sha256": "51498642f777d46d6c6562093847d62c9fce7e7ab88912760dd1f770648caac3"
+    },
+    "labels-level-4.i32.gz": {
+      "bytes": 1458995,
+      "sha256": "ab9c5fa183387e55ddd4376ef47c4aa03f4cae11b178dadc50788b0dac2f9532"
+    },
+    "labels-level-5.i32.gz": {
+      "bytes": 1558245,
+      "sha256": "a44a5dd62909722528187fdc44d66f2d530375cc83fa2ce38320168f97042305"
+    },
+    "nodes.json": {
+      "bytes": 834635,
+      "sha256": "1e011289975e427ccc347022a21e9da4c1595550b37dadf3eb116f6f107e61d1"
+    },
+    "pca-level-1.rgb8.gz": {
+      "bytes": 3009267,
+      "sha256": "664ed6c1c8097641063a9b9f6159d9f39214ea7b616e47ed3476e3eb701d4819"
+    },
+    "pca-level-2.rgb8.gz": {
+      "bytes": 2975815,
+      "sha256": "30e025954b6cc04c2431dcd34a11671ff9d28ca583801d1b90d81c4ab84ebf3b"
+    },
+    "pca-level-3.rgb8.gz": {
+      "bytes": 2929424,
+      "sha256": "347c4052d51f28365b3b158771ad3ebe1b17147eca3b1e0d3f2975c129544c47"
+    },
+    "pca-level-4.rgb8.gz": {
+      "bytes": 2920831,
+      "sha256": "0e4c0580b55c311decfd3c0c510d3c0364a9580fcae76fc3b1b671916d87a19d"
+    },
+    "pca-level-5.rgb8.gz": {
+      "bytes": 2879163,
+      "sha256": "3eb9046dd2143103f0b0b47acd7665c91ebf304dc0e51105e79410a643ff56dc"
+    },
+    "poster.webp": {
+      "bytes": 164528,
+      "sha256": "6a2178215a3889757fedee063523a9c3f4151d20355b00d51f4bdea21b8794ee"
+    },
+    "queries.json": {
+      "bytes": 47248,
+      "sha256": "fdbd370ae8695678cc9044fa466ebbd9efbfa9cdfb08e10f6b445fe54f98c4ed"
+    },
+    "room.splat.gz": {
+      "bytes": 29469932,
+      "sha256": "0b19af0dbd28b3cb7dc5451223f570bc17f41e8a6f928ad68ec86edac5eb0638"
+    },
+    "semantic_neighbors.json": {
+      "bytes": 643102,
+      "sha256": "b5a94124cef908493cd38e5afe6f40afa5ad2fb3de86585110cea5a182e4fd4d"
+    }
+  }
+}

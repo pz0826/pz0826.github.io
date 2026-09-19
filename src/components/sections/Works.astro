@@ -1,0 +1,93 @@
+---
+import { works } from '../../content/works';
+---
+
+<section id="works" class="section works-section">
+  <div class="section-heading">
+    <span class="eyebrow">03 / Selected research</span>
+    <h2>Works</h2>
+    <p>
+      From observations
+      <br />
+      to understanding.
+    </p>
+  </div>
+  <div class="work-list">
+    {works.map((work, index) => (
+      <article class="work" id={work.id}>
+        <div class="work-topline eyebrow">
+          <span>
+            0{index + 1} / {work.theme}
+          </span>
+          <span>{work.venue}</span>
+        </div>
+        <div class="work-grid">
+          <div class="work-media">
+            {work.video ? (
+              <video
+                controls
+                muted
+                playsinline
+                preload="none"
+                poster={`/media/works/${work.poster}`}
+                aria-label={`${work.id} research video`}
+              >
+                <source src={`/media/works/${work.video}`} type="video/mp4" />
+              </video>
+            ) : (
+              <img
+                src={`/media/works/${work.poster}`}
+                alt={`${work.id} research overview`}
+                loading="lazy"
+                width="1000"
+                height="600"
+              />
+            )}
+          </div>
+          <div class="work-copy">
+            <h3>{work.title}</h3>
+            <p class="authors">
+              {work.authors
+                .split(/(Yuning Peng\*?)/)
+                .map((part) =>
+                  part.startsWith('Yuning Peng') ? (
+                    <strong>{part}</strong>
+                  ) : (
+                    part
+                  ),
+                )}
+            </p>
+            <p class="work-summary">{work.summary}</p>
+            <div class="text-links">
+              {work.links.map((link) => (
+                <a href={link.href}>{link.label} ↗</a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </article>
+    ))}
+    <p class="contribution-note eyebrow">
+      * Equal contribution · † Corresponding author
+    </p>
+    <div class="experience">
+      <span class="eyebrow">Research experience</span>
+      <h3>ByteDance</h3>
+      <p>
+        Internship · China <span class="eyebrow">2026.05 — present</span>
+      </p>
+    </div>
+  </div>
+</section>
+<script>
+  const observer = new IntersectionObserver(
+    (entries) =>
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) (entry.target as HTMLVideoElement).pause();
+      }),
+    { threshold: 0.1 },
+  );
+  document
+    .querySelectorAll('video')
+    .forEach((video) => observer.observe(video));
+</script>

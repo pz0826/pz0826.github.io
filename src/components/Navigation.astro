@@ -1,0 +1,41 @@
+<header class="masthead">
+  <a class="wordmark" href="#top" aria-label="Yuning Peng, back to top">
+    Yuning Peng
+  </a>
+  <nav aria-label="Main navigation">
+    {['Info', 'News', 'Works', 'Arts'].map((label) => (
+      <a href={`#${label.toLowerCase()}`}>{label}</a>
+    ))}
+  </nav>
+</header>
+<script>
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('nav a')];
+  const sections = links.map((link) => document.querySelector(link.hash)!);
+  let scheduled = false;
+  function update() {
+    scheduled = false;
+    let active = '';
+    for (const section of sections)
+      if (section.getBoundingClientRect().top < window.innerHeight * 0.42)
+        active = section.id;
+    links.forEach((link) => {
+      if (link.hash === `#${active}`)
+        link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+    document
+      .querySelector('.masthead')
+      ?.classList.toggle('is-scrolled', window.scrollY > 60);
+  }
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!scheduled) {
+        scheduled = true;
+        requestAnimationFrame(update);
+      }
+    },
+    { passive: true },
+  );
+  update();
+</script>

@@ -1,0 +1,2071 @@
+{
+  "schema_version": 1,
+  "result_policy": {
+    "mode": "all cached candidates; ascending-score paint, highest overwrites",
+    "background_rgb_factor": 0.8,
+    "red_alpha_min": 0.2,
+    "red_alpha_max": 0.9,
+    "score_normalization": "min-max within each query, matching legacy viewer"
+  },
+  "queries": [
+    {
+      "id": "room-query-02",
+      "text": "Let's begin our room tour at the sofa. Find the head of the stuffed toy resting there.",
+      "source_keyframe_index": 2,
+      "source_query_level": 1,
+      "source_query_level_note": "UI query level; not the level of all result nodes",
+      "terms": [
+        "sofa",
+        "toy",
+        "head of toy"
+      ],
+      "cached_results": [
+        {
+          "chain": [
+            [
+              985,
+              0.21331220865249634
+            ],
+            [
+              445,
+              0.18994280695915222
+            ],
+            [
+              972,
+              0.19990593194961548
+            ]
+          ],
+          "total_score": 0.603160947561264,
+          "final_cluster_id": 972
+        },
+        {
+          "chain": [
+            [
+              985,
+              0.21331220865249634
+            ],
+            [
+              445,
+              0.18994280695915222
+            ],
+            [
+              343,
+              0.1979464888572693
+            ]
+          ],
+          "total_score": 0.6012015044689178,
+          "final_cluster_id": 343
+        },
+        {
+          "chain": [
+            [
+              985,
+              0.21331220865249634
+            ],
+            [
+              445,
+              0.18994280695915222
+            ],
+            [
+              2026,
+              0.19757764041423798
+            ]
+          ],
+          "total_score": 0.6008326560258865,
+          "final_cluster_id": 2026
+        },
+        {
+          "chain": [
+            [
+              985,
+              0.21331220865249634
+            ],
+            [
+              445,
+              0.18994280695915222
+            ],
+            [
+              81,
+              0.18944814801216125
+            ]
+          ],
+          "total_score": 0.5927031636238098,
+          "final_cluster_id": 81
+        },
+        {
+          "chain": [
+            [
+              985,
+              0.21331220865249634
+            ],
+            [
+              445,
+              0.18994280695915222
+            ],
+            [
+              473,
+              0.1888066977262497
+            ]
+          ],
+          "total_score": 0.5920617133378983,
+          "final_cluster_id": 473
+        },
+        {
+          "chain": [
+            [
+              985,
+              0.21331220865249634
+            ],
+            [
+              445,
+              0.18994280695915222
+            ],
+            [
+              1531,
+              0.18860332667827606
+            ]
+          ],
+          "total_score": 0.5918583422899246,
+          "final_cluster_id": 1531
+        },
+        {
+          "chain": [
+            [
+              985,
+              0.21331220865249634
+            ],
+            [
+              445,
+              0.18994280695915222
+            ],
+            [
+              1935,
+              0.18851259350776672
+            ]
+          ],
+          "total_score": 0.5917676091194153,
+          "final_cluster_id": 1935
+        },
+        {
+          "chain": [
+            [
+              985,
+              0.21331220865249634
+            ],
+            [
+              445,
+              0.18994280695915222
+            ],
+            [
+              883,
+              0.1812344193458557
+            ]
+          ],
+          "total_score": 0.5844894349575043,
+          "final_cluster_id": 883
+        },
+        {
+          "chain": [
+            [
+              985,
+              0.21331220865249634
+            ],
+            [
+              445,
+              0.18994280695915222
+            ],
+            [
+              1529,
+              0.18042489886283875
+            ]
+          ],
+          "total_score": 0.5836799144744873,
+          "final_cluster_id": 1529
+        },
+        {
+          "chain": [
+            [
+              985,
+              0.21331220865249634
+            ],
+            [
+              445,
+              0.18994280695915222
+            ],
+            [
+              2016,
+              0.18014079332351685
+            ]
+          ],
+          "total_score": 0.5833958089351654,
+          "final_cluster_id": 2016
+        }
+      ],
+      "primary_chain": [
+        {
+          "node_id": 985,
+          "scene_level": 4,
+          "score": 0.21331220865249634
+        },
+        {
+          "node_id": 445,
+          "scene_level": 3,
+          "score": 0.18994280695915222
+        },
+        {
+          "node_id": 972,
+          "scene_level": 4,
+          "score": 0.19990593194961548
+        }
+      ],
+      "camera": {
+        "position": [
+          0.2820000349028069,
+          0.04560766968907098,
+          0.4294239906181637
+        ],
+        "wxyz": [
+          0.424998361436774,
+          -0.44974784590000416,
+          0.6681904335186563,
+          -0.4130675640116441
+        ],
+        "fov_rad": 1.3089969389957472,
+        "aspect": 1.3333333333333333
+      },
+      "preview": "previews/query-02.png",
+      "featured": true,
+      "validation": "cached IDs, nonempty memberships and legacy adjacency checked; visually review preview"
+    },
+    {
+      "id": "room-query-04",
+      "text": "I'd like to play Ticket to Ride. Where can I find the board game?",
+      "source_keyframe_index": 4,
+      "source_query_level": 2,
+      "source_query_level_note": "UI query level; not the level of all result nodes",
+      "terms": [
+        "stores",
+        "board game retailers",
+        "Ticket to Ride"
+      ],
+      "cached_results": [
+        {
+          "chain": [
+            [
+              2538,
+              0.15656384825706482
+            ],
+            [
+              23,
+              0.18165704607963562
+            ],
+            [
+              1681,
+              0.24922087788581848
+            ]
+          ],
+          "total_score": 0.5874417722225189,
+          "final_cluster_id": 1681
+        },
+        {
+          "chain": [
+            [
+              2538,
+              0.15656384825706482
+            ],
+            [
+              23,
+              0.18165704607963562
+            ],
+            [
+              1688,
+              0.24875959753990173
+            ]
+          ],
+          "total_score": 0.5869804918766022,
+          "final_cluster_id": 1688
+        },
+        {
+          "chain": [
+            [
+              2538,
+              0.15656384825706482
+            ],
+            [
+              23,
+              0.18165704607963562
+            ],
+            [
+              1684,
+              0.24833020567893982
+            ]
+          ],
+          "total_score": 0.5865511000156403,
+          "final_cluster_id": 1684
+        },
+        {
+          "chain": [
+            [
+              2538,
+              0.15656384825706482
+            ],
+            [
+              23,
+              0.18165704607963562
+            ],
+            [
+              1328,
+              0.24757492542266846
+            ]
+          ],
+          "total_score": 0.5857958197593689,
+          "final_cluster_id": 1328
+        },
+        {
+          "chain": [
+            [
+              2538,
+              0.15656384825706482
+            ],
+            [
+              23,
+              0.18165704607963562
+            ],
+            [
+              1687,
+              0.24526286125183105
+            ]
+          ],
+          "total_score": 0.5834837555885315,
+          "final_cluster_id": 1687
+        },
+        {
+          "chain": [
+            [
+              2538,
+              0.15656384825706482
+            ],
+            [
+              23,
+              0.18165704607963562
+            ],
+            [
+              1686,
+              0.24488002061843872
+            ]
+          ],
+          "total_score": 0.5831009149551392,
+          "final_cluster_id": 1686
+        },
+        {
+          "chain": [
+            [
+              2538,
+              0.15656384825706482
+            ],
+            [
+              23,
+              0.18165704607963562
+            ],
+            [
+              557,
+              0.24453656375408173
+            ]
+          ],
+          "total_score": 0.5827574580907822,
+          "final_cluster_id": 557
+        },
+        {
+          "chain": [
+            [
+              2538,
+              0.15656384825706482
+            ],
+            [
+              23,
+              0.18165704607963562
+            ],
+            [
+              1325,
+              0.23793944716453552
+            ]
+          ],
+          "total_score": 0.576160341501236,
+          "final_cluster_id": 1325
+        },
+        {
+          "chain": [
+            [
+              2538,
+              0.15656384825706482
+            ],
+            [
+              23,
+              0.18165704607963562
+            ],
+            [
+              1714,
+              0.2336963415145874
+            ]
+          ],
+          "total_score": 0.5719172358512878,
+          "final_cluster_id": 1714
+        },
+        {
+          "chain": [
+            [
+              2538,
+              0.15656384825706482
+            ],
+            [
+              23,
+              0.18165704607963562
+            ],
+            [
+              1683,
+              0.23143936693668365
+            ]
+          ],
+          "total_score": 0.5696602612733841,
+          "final_cluster_id": 1683
+        }
+      ],
+      "primary_chain": [
+        {
+          "node_id": 2538,
+          "scene_level": 5,
+          "score": 0.15656384825706482
+        },
+        {
+          "node_id": 23,
+          "scene_level": 1,
+          "score": 0.18165704607963562
+        },
+        {
+          "node_id": 1681,
+          "scene_level": 5,
+          "score": 0.24922087788581848
+        }
+      ],
+      "camera": {
+        "position": [
+          0.8771051030516376,
+          -0.5348254638222413,
+          0.7351905250149152
+        ],
+        "wxyz": [
+          0.002967571612390407,
+          0.047856745154471345,
+          0.7880069108610975,
+          -0.6137964107887042
+        ],
+        "fov_rad": 1.3089969389957472,
+        "aspect": 1.3333333333333333
+      },
+      "preview": "previews/query-04.png",
+      "featured": false,
+      "validation": "cached IDs, nonempty memberships and legacy adjacency checked; visually review preview"
+    },
+    {
+      "id": "room-query-06",
+      "text": "I feel like gaming for a while. Can you locate the white PlayStation?",
+      "source_keyframe_index": 6,
+      "source_query_level": 1,
+      "source_query_level_note": "UI query level; not the level of all result nodes",
+      "terms": [
+        "white PlayStation"
+      ],
+      "cached_results": [
+        {
+          "chain": [
+            [
+              32,
+              0.22743862867355347
+            ]
+          ],
+          "total_score": 0.22743862867355347,
+          "final_cluster_id": 32
+        },
+        {
+          "chain": [
+            [
+              156,
+              0.22694680094718933
+            ]
+          ],
+          "total_score": 0.22694680094718933,
+          "final_cluster_id": 156
+        },
+        {
+          "chain": [
+            [
+              495,
+              0.2119273841381073
+            ]
+          ],
+          "total_score": 0.2119273841381073,
+          "final_cluster_id": 495
+        },
+        {
+          "chain": [
+            [
+              493,
+              0.19538626074790955
+            ]
+          ],
+          "total_score": 0.19538626074790955,
+          "final_cluster_id": 493
+        },
+        {
+          "chain": [
+            [
+              1185,
+              0.1605721116065979
+            ]
+          ],
+          "total_score": 0.1605721116065979,
+          "final_cluster_id": 1185
+        },
+        {
+          "chain": [
+            [
+              596,
+              0.15899650752544403
+            ]
+          ],
+          "total_score": 0.15899650752544403,
+          "final_cluster_id": 596
+        },
+        {
+          "chain": [
+            [
+              1832,
+              0.15807078778743744
+            ]
+          ],
+          "total_score": 0.15807078778743744,
+          "final_cluster_id": 1832
+        },
+        {
+          "chain": [
+            [
+              935,
+              0.15681156516075134
+            ]
+          ],
+          "total_score": 0.15681156516075134,
+          "final_cluster_id": 935
+        },
+        {
+          "chain": [
+            [
+              155,
+              0.1548439860343933
+            ]
+          ],
+          "total_score": 0.1548439860343933,
+          "final_cluster_id": 155
+        },
+        {
+          "chain": [
+            [
+              1702,
+              0.15361176431179047
+            ]
+          ],
+          "total_score": 0.15361176431179047,
+          "final_cluster_id": 1702
+        }
+      ],
+      "primary_chain": [
+        {
+          "node_id": 32,
+          "scene_level": 1,
+          "score": 0.22743862867355347
+        }
+      ],
+      "camera": {
+        "position": [
+          0.7555763157125126,
+          -0.4122917770885201,
+          0.484067337127691
+        ],
+        "wxyz": [
+          0.007980749078410558,
+          0.04502352355886702,
+          0.8165648614836577,
+          -0.5754398465180062
+        ],
+        "fov_rad": 1.3089969389957472,
+        "aspect": 1.3333333333333333
+      },
+      "preview": "previews/query-06.png",
+      "featured": false,
+      "validation": "cached IDs, nonempty memberships and legacy adjacency checked; visually review preview"
+    },
+    {
+      "id": "room-query-09",
+      "text": "I want to show you a photo by the TV. Point out the person wearing dark red clothes.",
+      "source_keyframe_index": 9,
+      "source_query_level": 1,
+      "source_query_level_note": "UI query level; not the level of all result nodes",
+      "terms": [
+        "TV",
+        "photo",
+        "person wearing dark red clothes"
+      ],
+      "cached_results": [
+        {
+          "chain": [
+            [
+              1823,
+              0.20009183883666992
+            ],
+            [
+              475,
+              0.19021832942962646
+            ],
+            [
+              1879,
+              0.20399494469165802
+            ]
+          ],
+          "total_score": 0.5943051129579544,
+          "final_cluster_id": 1879
+        },
+        {
+          "chain": [
+            [
+              1823,
+              0.20009183883666992
+            ],
+            [
+              475,
+              0.19021832942962646
+            ],
+            [
+              803,
+              0.19923818111419678
+            ]
+          ],
+          "total_score": 0.5895483493804932,
+          "final_cluster_id": 803
+        },
+        {
+          "chain": [
+            [
+              1823,
+              0.20009183883666992
+            ],
+            [
+              475,
+              0.19021832942962646
+            ],
+            [
+              499,
+              0.19400475919246674
+            ]
+          ],
+          "total_score": 0.5843149274587631,
+          "final_cluster_id": 499
+        },
+        {
+          "chain": [
+            [
+              1823,
+              0.20009183883666992
+            ],
+            [
+              475,
+              0.19021832942962646
+            ],
+            [
+              157,
+              0.19275397062301636
+            ]
+          ],
+          "total_score": 0.5830641388893127,
+          "final_cluster_id": 157
+        },
+        {
+          "chain": [
+            [
+              1823,
+              0.20009183883666992
+            ],
+            [
+              257,
+              0.1868065595626831
+            ],
+            [
+              34,
+              0.1958240270614624
+            ]
+          ],
+          "total_score": 0.5827224254608154,
+          "final_cluster_id": 34
+        },
+        {
+          "chain": [
+            [
+              1823,
+              0.20009183883666992
+            ],
+            [
+              257,
+              0.1868065595626831
+            ],
+            [
+              1065,
+              0.17656517028808594
+            ]
+          ],
+          "total_score": 0.563463568687439,
+          "final_cluster_id": 1065
+        },
+        {
+          "chain": [
+            [
+              1823,
+              0.20009183883666992
+            ],
+            [
+              257,
+              0.1868065595626831
+            ],
+            [
+              2090,
+              0.17524053156375885
+            ]
+          ],
+          "total_score": 0.5621389299631119,
+          "final_cluster_id": 2090
+        },
+        {
+          "chain": [
+            [
+              1823,
+              0.20009183883666992
+            ],
+            [
+              22,
+              0.18539497256278992
+            ],
+            [
+              2404,
+              0.17449764907360077
+            ]
+          ],
+          "total_score": 0.5599844604730606,
+          "final_cluster_id": 2404
+        },
+        {
+          "chain": [
+            [
+              1823,
+              0.20009183883666992
+            ],
+            [
+              475,
+              0.19021832942962646
+            ],
+            [
+              140,
+              0.1689721941947937
+            ]
+          ],
+          "total_score": 0.5592823624610901,
+          "final_cluster_id": 140
+        },
+        {
+          "chain": [
+            [
+              1823,
+              0.20009183883666992
+            ],
+            [
+              257,
+              0.1868065595626831
+            ],
+            [
+              429,
+              0.17164862155914307
+            ]
+          ],
+          "total_score": 0.5585470199584961,
+          "final_cluster_id": 429
+        }
+      ],
+      "primary_chain": [
+        {
+          "node_id": 1823,
+          "scene_level": 5,
+          "score": 0.20009183883666992
+        },
+        {
+          "node_id": 475,
+          "scene_level": 3,
+          "score": 0.19021832942962646
+        },
+        {
+          "node_id": 1879,
+          "scene_level": 5,
+          "score": 0.20399494469165802
+        }
+      ],
+      "camera": {
+        "position": [
+          -0.08312998625029677,
+          -0.5182015901517988,
+          0.47049509870575823
+        ],
+        "wxyz": [
+          -0.012914966936097396,
+          0.06693849728607623,
+          0.8161609783339057,
+          -0.5737888972916463
+        ],
+        "fov_rad": 1.3089969389957472,
+        "aspect": 1.3333333333333333
+      },
+      "preview": "previews/query-09.png",
+      "featured": true,
+      "validation": "cached IDs, nonempty memberships and legacy adjacency checked; visually review preview"
+    },
+    {
+      "id": "room-query-12",
+      "text": "I want to identify this plant. Find the writing on the flowerpot's label.",
+      "source_keyframe_index": 12,
+      "source_query_level": 1,
+      "source_query_level_note": "UI query level; not the level of all result nodes",
+      "terms": [
+        "flowerpot",
+        "label"
+      ],
+      "cached_results": [
+        {
+          "chain": [
+            [
+              429,
+              0.23302245140075684
+            ],
+            [
+              711,
+              0.2059158831834793
+            ]
+          ],
+          "total_score": 0.43893833458423615,
+          "final_cluster_id": 711
+        },
+        {
+          "chain": [
+            [
+              429,
+              0.23302245140075684
+            ],
+            [
+              2092,
+              0.20280838012695312
+            ]
+          ],
+          "total_score": 0.43583083152770996,
+          "final_cluster_id": 2092
+        },
+        {
+          "chain": [
+            [
+              429,
+              0.23302245140075684
+            ],
+            [
+              2091,
+              0.20150065422058105
+            ]
+          ],
+          "total_score": 0.4345231056213379,
+          "final_cluster_id": 2091
+        },
+        {
+          "chain": [
+            [
+              429,
+              0.23302245140075684
+            ],
+            [
+              1066,
+              0.19745829701423645
+            ]
+          ],
+          "total_score": 0.4304807484149933,
+          "final_cluster_id": 1066
+        },
+        {
+          "chain": [
+            [
+              429,
+              0.23302245140075684
+            ],
+            [
+              620,
+              0.1973418891429901
+            ]
+          ],
+          "total_score": 0.43036434054374695,
+          "final_cluster_id": 620
+        },
+        {
+          "chain": [
+            [
+              429,
+              0.23302245140075684
+            ],
+            [
+              714,
+              0.19525247812271118
+            ]
+          ],
+          "total_score": 0.428274929523468,
+          "final_cluster_id": 714
+        },
+        {
+          "chain": [
+            [
+              429,
+              0.23302245140075684
+            ],
+            [
+              621,
+              0.1951512098312378
+            ]
+          ],
+          "total_score": 0.42817366123199463,
+          "final_cluster_id": 621
+        },
+        {
+          "chain": [
+            [
+              429,
+              0.23302245140075684
+            ],
+            [
+              220,
+              0.1946583241224289
+            ]
+          ],
+          "total_score": 0.42768077552318573,
+          "final_cluster_id": 220
+        },
+        {
+          "chain": [
+            [
+              429,
+              0.23302245140075684
+            ],
+            [
+              264,
+              0.19451655447483063
+            ]
+          ],
+          "total_score": 0.42753900587558746,
+          "final_cluster_id": 264
+        },
+        {
+          "chain": [
+            [
+              429,
+              0.23302245140075684
+            ],
+            [
+              120,
+              0.19401971995830536
+            ]
+          ],
+          "total_score": 0.4270421713590622,
+          "final_cluster_id": 120
+        }
+      ],
+      "primary_chain": [
+        {
+          "node_id": 429,
+          "scene_level": 3,
+          "score": 0.23302245140075684
+        },
+        {
+          "node_id": 711,
+          "scene_level": 4,
+          "score": 0.2059158831834793
+        }
+      ],
+      "camera": {
+        "position": [
+          -0.3098732004705067,
+          -0.08399920404695357,
+          -0.05647469709718032
+        ],
+        "wxyz": [
+          -0.1446494312936547,
+          0.2075862985487389,
+          0.8010777866918117,
+          -0.542456311927702
+        ],
+        "fov_rad": 1.3089969389957472,
+        "aspect": 1.3333333333333333
+      },
+      "preview": "previews/query-12.png",
+      "featured": true,
+      "validation": "cached IDs, nonempty memberships and legacy adjacency checked; visually review preview"
+    },
+    {
+      "id": "room-query-14",
+      "text": "I want to check the room conditions. Find the temperature and humidity meter on the bookshelf.",
+      "source_keyframe_index": 14,
+      "source_query_level": 1,
+      "source_query_level_note": "UI query level; not the level of all result nodes",
+      "terms": [
+        "bookshelf",
+        "temperature and humidity meter"
+      ],
+      "cached_results": [
+        {
+          "chain": [
+            [
+              163,
+              0.24749787151813507
+            ],
+            [
+              1229,
+              0.1920432448387146
+            ]
+          ],
+          "total_score": 0.43954111635684967,
+          "final_cluster_id": 1229
+        },
+        {
+          "chain": [
+            [
+              163,
+              0.24749787151813507
+            ],
+            [
+              509,
+              0.17878396809101105
+            ]
+          ],
+          "total_score": 0.4262818396091461,
+          "final_cluster_id": 509
+        },
+        {
+          "chain": [
+            [
+              163,
+              0.24749787151813507
+            ],
+            [
+              1239,
+              0.17830167710781097
+            ]
+          ],
+          "total_score": 0.42579954862594604,
+          "final_cluster_id": 1239
+        },
+        {
+          "chain": [
+            [
+              163,
+              0.24749787151813507
+            ],
+            [
+              2240,
+              0.17787116765975952
+            ]
+          ],
+          "total_score": 0.4253690391778946,
+          "final_cluster_id": 2240
+        },
+        {
+          "chain": [
+            [
+              163,
+              0.24749787151813507
+            ],
+            [
+              1384,
+              0.17686012387275696
+            ]
+          ],
+          "total_score": 0.42435799539089203,
+          "final_cluster_id": 1384
+        },
+        {
+          "chain": [
+            [
+              163,
+              0.24749787151813507
+            ],
+            [
+              583,
+              0.17576570808887482
+            ]
+          ],
+          "total_score": 0.4232635796070099,
+          "final_cluster_id": 583
+        },
+        {
+          "chain": [
+            [
+              163,
+              0.24749787151813507
+            ],
+            [
+              2224,
+              0.17222625017166138
+            ]
+          ],
+          "total_score": 0.41972412168979645,
+          "final_cluster_id": 2224
+        },
+        {
+          "chain": [
+            [
+              163,
+              0.24749787151813507
+            ],
+            [
+              2241,
+              0.1644306480884552
+            ]
+          ],
+          "total_score": 0.41192851960659027,
+          "final_cluster_id": 2241
+        },
+        {
+          "chain": [
+            [
+              163,
+              0.24749787151813507
+            ],
+            [
+              2405,
+              0.16124773025512695
+            ]
+          ],
+          "total_score": 0.408745601773262,
+          "final_cluster_id": 2405
+        },
+        {
+          "chain": [
+            [
+              163,
+              0.24749787151813507
+            ],
+            [
+              744,
+              0.1567855030298233
+            ]
+          ],
+          "total_score": 0.4042833745479584,
+          "final_cluster_id": 744
+        }
+      ],
+      "primary_chain": [
+        {
+          "node_id": 163,
+          "scene_level": 2,
+          "score": 0.24749787151813507
+        },
+        {
+          "node_id": 1229,
+          "scene_level": 4,
+          "score": 0.1920432448387146
+        }
+      ],
+      "camera": {
+        "position": [
+          -1.1574865856208343,
+          -0.4299493551969455,
+          0.39784191027562577
+        ],
+        "wxyz": [
+          -0.09895116568388646,
+          0.16775859879512584,
+          0.827227739901083,
+          -0.5270293973567719
+        ],
+        "fov_rad": 1.3089969389957472,
+        "aspect": 1.3333333333333333
+      },
+      "preview": "previews/query-14.png",
+      "featured": false,
+      "validation": "cached IDs, nonempty memberships and legacy adjacency checked; visually review preview"
+    },
+    {
+      "id": "room-query-17",
+      "text": "The piano may need moving. Find its wheels.",
+      "source_keyframe_index": 17,
+      "source_query_level": 1,
+      "source_query_level_note": "UI query level; not the level of all result nodes",
+      "terms": [
+        "piano",
+        "wheel"
+      ],
+      "cached_results": [
+        {
+          "chain": [
+            [
+              2429,
+              0.23387721180915833
+            ],
+            [
+              1398,
+              0.17158770561218262
+            ]
+          ],
+          "total_score": 0.40546491742134094,
+          "final_cluster_id": 1398
+        },
+        {
+          "chain": [
+            [
+              609,
+              0.23194456100463867
+            ],
+            [
+              2421,
+              0.1716369390487671
+            ]
+          ],
+          "total_score": 0.40358150005340576,
+          "final_cluster_id": 2421
+        },
+        {
+          "chain": [
+            [
+              2429,
+              0.23387721180915833
+            ],
+            [
+              482,
+              0.16945189237594604
+            ]
+          ],
+          "total_score": 0.40332910418510437,
+          "final_cluster_id": 482
+        },
+        {
+          "chain": [
+            [
+              609,
+              0.23194456100463867
+            ],
+            [
+              963,
+              0.17114685475826263
+            ]
+          ],
+          "total_score": 0.4030914157629013,
+          "final_cluster_id": 963
+        },
+        {
+          "chain": [
+            [
+              2429,
+              0.23387721180915833
+            ],
+            [
+              1166,
+              0.16802433133125305
+            ]
+          ],
+          "total_score": 0.4019015431404114,
+          "final_cluster_id": 1166
+        },
+        {
+          "chain": [
+            [
+              609,
+              0.23194456100463867
+            ],
+            [
+              341,
+              0.16654455661773682
+            ]
+          ],
+          "total_score": 0.3984891176223755,
+          "final_cluster_id": 341
+        },
+        {
+          "chain": [
+            [
+              609,
+              0.23194456100463867
+            ],
+            [
+              964,
+              0.16549673676490784
+            ]
+          ],
+          "total_score": 0.3974412977695465,
+          "final_cluster_id": 964
+        },
+        {
+          "chain": [
+            [
+              609,
+              0.23194456100463867
+            ],
+            [
+              1191,
+              0.16542275249958038
+            ]
+          ],
+          "total_score": 0.39736731350421906,
+          "final_cluster_id": 1191
+        },
+        {
+          "chain": [
+            [
+              2429,
+              0.23387721180915833
+            ],
+            [
+              1702,
+              0.16347235441207886
+            ]
+          ],
+          "total_score": 0.3973495662212372,
+          "final_cluster_id": 1702
+        },
+        {
+          "chain": [
+            [
+              609,
+              0.23194456100463867
+            ],
+            [
+              951,
+              0.16464263200759888
+            ]
+          ],
+          "total_score": 0.39658719301223755,
+          "final_cluster_id": 951
+        }
+      ],
+      "primary_chain": [
+        {
+          "node_id": 2429,
+          "scene_level": 5,
+          "score": 0.23387721180915833
+        },
+        {
+          "node_id": 1398,
+          "scene_level": 4,
+          "score": 0.17158770561218262
+        }
+      ],
+      "camera": {
+        "position": [
+          -1.0607573717023309,
+          -0.05269868750757794,
+          0.3302935358282981
+        ],
+        "wxyz": [
+          -0.44154610533548694,
+          0.5963319365703307,
+          0.5908751719908214,
+          -0.3166887895302888
+        ],
+        "fov_rad": 1.3089969389957472,
+        "aspect": 1.3333333333333333
+      },
+      "preview": "previews/query-17.png",
+      "featured": true,
+      "validation": "cached IDs, nonempty memberships and legacy adjacency checked; visually review preview"
+    },
+    {
+      "id": "room-query-19",
+      "text": "I want to identify the piano's brand. Find its logo.",
+      "source_keyframe_index": 19,
+      "source_query_level": 1,
+      "source_query_level_note": "UI query level; not the level of all result nodes",
+      "terms": [
+        "piano",
+        "logo"
+      ],
+      "cached_results": [
+        {
+          "chain": [
+            [
+              2429,
+              0.23387721180915833
+            ],
+            [
+              1707,
+              0.18214768171310425
+            ]
+          ],
+          "total_score": 0.4160248935222626,
+          "final_cluster_id": 1707
+        },
+        {
+          "chain": [
+            [
+              609,
+              0.23194456100463867
+            ],
+            [
+              265,
+              0.18285305798053741
+            ]
+          ],
+          "total_score": 0.4147976189851761,
+          "final_cluster_id": 265
+        },
+        {
+          "chain": [
+            [
+              2429,
+              0.23387721180915833
+            ],
+            [
+              1406,
+              0.17689594626426697
+            ]
+          ],
+          "total_score": 0.4107731580734253,
+          "final_cluster_id": 1406
+        },
+        {
+          "chain": [
+            [
+              2429,
+              0.23387721180915833
+            ],
+            [
+              606,
+              0.17504854500293732
+            ]
+          ],
+          "total_score": 0.40892575681209564,
+          "final_cluster_id": 606
+        },
+        {
+          "chain": [
+            [
+              2429,
+              0.23387721180915833
+            ],
+            [
+              621,
+              0.17420458793640137
+            ]
+          ],
+          "total_score": 0.4080817997455597,
+          "final_cluster_id": 621
+        },
+        {
+          "chain": [
+            [
+              609,
+              0.23194456100463867
+            ],
+            [
+              1572,
+              0.1747867465019226
+            ]
+          ],
+          "total_score": 0.4067313075065613,
+          "final_cluster_id": 1572
+        },
+        {
+          "chain": [
+            [
+              609,
+              0.23194456100463867
+            ],
+            [
+              263,
+              0.1744106411933899
+            ]
+          ],
+          "total_score": 0.40635520219802856,
+          "final_cluster_id": 263
+        },
+        {
+          "chain": [
+            [
+              609,
+              0.23194456100463867
+            ],
+            [
+              1573,
+              0.1744106411933899
+            ]
+          ],
+          "total_score": 0.40635520219802856,
+          "final_cluster_id": 1573
+        },
+        {
+          "chain": [
+            [
+              609,
+              0.23194456100463867
+            ],
+            [
+              1574,
+              0.1744106411933899
+            ]
+          ],
+          "total_score": 0.40635520219802856,
+          "final_cluster_id": 1574
+        },
+        {
+          "chain": [
+            [
+              2429,
+              0.23387721180915833
+            ],
+            [
+              1713,
+              0.17215469479560852
+            ]
+          ],
+          "total_score": 0.40603190660476685,
+          "final_cluster_id": 1713
+        }
+      ],
+      "primary_chain": [
+        {
+          "node_id": 2429,
+          "scene_level": 5,
+          "score": 0.23387721180915833
+        },
+        {
+          "node_id": 1707,
+          "scene_level": 5,
+          "score": 0.18214768171310425
+        }
+      ],
+      "camera": {
+        "position": [
+          -0.9854417718904182,
+          0.26427642956550884,
+          0.3733094549874851
+        ],
+        "wxyz": [
+          -0.4189647270801166,
+          0.5552894739911919,
+          0.626595525258954,
+          -0.3514259598588646
+        ],
+        "fov_rad": 1.3089969389957472,
+        "aspect": 1.3333333333333333
+      },
+      "preview": "previews/query-19.png",
+      "featured": true,
+      "validation": "cached IDs, nonempty memberships and legacy adjacency checked; visually review preview"
+    },
+    {
+      "id": "room-query-21",
+      "text": "I forgot where I left my white Apple Pencil. Can you find it?",
+      "source_keyframe_index": 21,
+      "source_query_level": 1,
+      "source_query_level_note": "UI query level; not the level of all result nodes",
+      "terms": [
+        "white apple pencil"
+      ],
+      "cached_results": [
+        {
+          "chain": [
+            [
+              680,
+              0.2027834951877594
+            ]
+          ],
+          "total_score": 0.2027834951877594,
+          "final_cluster_id": 680
+        },
+        {
+          "chain": [
+            [
+              1752,
+              0.19500616192817688
+            ]
+          ],
+          "total_score": 0.19500616192817688,
+          "final_cluster_id": 1752
+        },
+        {
+          "chain": [
+            [
+              2483,
+              0.1920653134584427
+            ]
+          ],
+          "total_score": 0.1920653134584427,
+          "final_cluster_id": 2483
+        },
+        {
+          "chain": [
+            [
+              304,
+              0.19139176607131958
+            ]
+          ],
+          "total_score": 0.19139176607131958,
+          "final_cluster_id": 304
+        },
+        {
+          "chain": [
+            [
+              2488,
+              0.1904139220714569
+            ]
+          ],
+          "total_score": 0.1904139220714569,
+          "final_cluster_id": 2488
+        },
+        {
+          "chain": [
+            [
+              1478,
+              0.189555823802948
+            ]
+          ],
+          "total_score": 0.189555823802948,
+          "final_cluster_id": 1478
+        },
+        {
+          "chain": [
+            [
+              2484,
+              0.1886693239212036
+            ]
+          ],
+          "total_score": 0.1886693239212036,
+          "final_cluster_id": 2484
+        },
+        {
+          "chain": [
+            [
+              1480,
+              0.185441255569458
+            ]
+          ],
+          "total_score": 0.185441255569458,
+          "final_cluster_id": 1480
+        },
+        {
+          "chain": [
+            [
+              2503,
+              0.18438097834587097
+            ]
+          ],
+          "total_score": 0.18438097834587097,
+          "final_cluster_id": 2503
+        },
+        {
+          "chain": [
+            [
+              1028,
+              0.18276607990264893
+            ]
+          ],
+          "total_score": 0.18276607990264893,
+          "final_cluster_id": 1028
+        }
+      ],
+      "primary_chain": [
+        {
+          "node_id": 680,
+          "scene_level": 4,
+          "score": 0.2027834951877594
+        }
+      ],
+      "camera": {
+        "position": [
+          -0.6074258971658667,
+          0.4224135938924251,
+          0.2987861972126289
+        ],
+        "wxyz": [
+          0.564052478508681,
+          -0.6653699684754434,
+          0.4009975501697483,
+          -0.27987241967914916
+        ],
+        "fov_rad": 1.3089969389957472,
+        "aspect": 1.3333333333333333
+      },
+      "preview": "previews/query-21.png",
+      "featured": false,
+      "validation": "cached IDs, nonempty memberships and legacy adjacency checked; visually review preview"
+    },
+    {
+      "id": "room-query-24",
+      "text": "I'm thirsty. Find the bottle with the blue cap.",
+      "source_keyframe_index": 24,
+      "source_query_level": 1,
+      "source_query_level_note": "UI query level; not the level of all result nodes",
+      "terms": [
+        "bottle",
+        "blue cap"
+      ],
+      "cached_results": [
+        {
+          "chain": [
+            [
+              104,
+              0.23719516396522522
+            ],
+            [
+              1765,
+              0.24814766645431519
+            ]
+          ],
+          "total_score": 0.4853428304195404,
+          "final_cluster_id": 1765
+        },
+        {
+          "chain": [
+            [
+              104,
+              0.23719516396522522
+            ],
+            [
+              703,
+              0.24560827016830444
+            ]
+          ],
+          "total_score": 0.48280343413352966,
+          "final_cluster_id": 703
+        },
+        {
+          "chain": [
+            [
+              104,
+              0.23719516396522522
+            ],
+            [
+              1766,
+              0.24051035940647125
+            ]
+          ],
+          "total_score": 0.47770552337169647,
+          "final_cluster_id": 1766
+        },
+        {
+          "chain": [
+            [
+              104,
+              0.23719516396522522
+            ],
+            [
+              704,
+              0.19991834461688995
+            ]
+          ],
+          "total_score": 0.4371135085821152,
+          "final_cluster_id": 704
+        },
+        {
+          "chain": [
+            [
+              104,
+              0.23719516396522522
+            ],
+            [
+              491,
+              0.19567692279815674
+            ]
+          ],
+          "total_score": 0.43287208676338196,
+          "final_cluster_id": 491
+        },
+        {
+          "chain": [
+            [
+              104,
+              0.23719516396522522
+            ],
+            [
+              1777,
+              0.19481375813484192
+            ]
+          ],
+          "total_score": 0.43200892210006714,
+          "final_cluster_id": 1777
+        },
+        {
+          "chain": [
+            [
+              104,
+              0.23719516396522522
+            ],
+            [
+              148,
+              0.19471941888332367
+            ]
+          ],
+          "total_score": 0.4319145828485489,
+          "final_cluster_id": 148
+        },
+        {
+          "chain": [
+            [
+              104,
+              0.23719516396522522
+            ],
+            [
+              1778,
+              0.19239020347595215
+            ]
+          ],
+          "total_score": 0.42958536744117737,
+          "final_cluster_id": 1778
+        },
+        {
+          "chain": [
+            [
+              104,
+              0.23719516396522522
+            ],
+            [
+              719,
+              0.19168353080749512
+            ]
+          ],
+          "total_score": 0.42887869477272034,
+          "final_cluster_id": 719
+        },
+        {
+          "chain": [
+            [
+              104,
+              0.23719516396522522
+            ],
+            [
+              1178,
+              0.19142241775989532
+            ]
+          ],
+          "total_score": 0.42861758172512054,
+          "final_cluster_id": 1178
+        }
+      ],
+      "primary_chain": [
+        {
+          "node_id": 104,
+          "scene_level": 2,
+          "score": 0.23719516396522522
+        },
+        {
+          "node_id": 1765,
+          "scene_level": 5,
+          "score": 0.24814766645431519
+        }
+      ],
+      "camera": {
+        "position": [
+          0.04012485968927669,
+          0.06909508160836982,
+          0.27843867900158326
+        ],
+        "wxyz": [
+          0.6394400269508203,
+          -0.7464002528730792,
+          0.11972561042486675,
+          -0.14024582935877541
+        ],
+        "fov_rad": 1.3089969389957472,
+        "aspect": 1.3333333333333333
+      },
+      "preview": "previews/query-24.png",
+      "featured": true,
+      "validation": "cached IDs, nonempty memberships and legacy adjacency checked; visually review preview"
+    },
+    {
+      "id": "room-query-27",
+      "text": "Finally, find a soft place where I could curl up with a stuffed toy.",
+      "source_keyframe_index": 27,
+      "source_query_level": 1,
+      "source_query_level_note": "UI query level; not the level of all result nodes",
+      "terms": [
+        "soft place",
+        "stuffed toy"
+      ],
+      "cached_results": [
+        {
+          "chain": [
+            [
+              1201,
+              0.1501024216413498
+            ],
+            [
+              9,
+              0.23567140102386475
+            ]
+          ],
+          "total_score": 0.38577382266521454,
+          "final_cluster_id": 9
+        },
+        {
+          "chain": [
+            [
+              1201,
+              0.1501024216413498
+            ],
+            [
+              74,
+              0.23123900592327118
+            ]
+          ],
+          "total_score": 0.38134142756462097,
+          "final_cluster_id": 74
+        },
+        {
+          "chain": [
+            [
+              1210,
+              0.13963459432125092
+            ],
+            [
+              1613,
+              0.23425383865833282
+            ]
+          ],
+          "total_score": 0.37388843297958374,
+          "final_cluster_id": 1613
+        },
+        {
+          "chain": [
+            [
+              1197,
+              0.1462785303592682
+            ],
+            [
+              346,
+              0.2274913340806961
+            ]
+          ],
+          "total_score": 0.3737698644399643,
+          "final_cluster_id": 346
+        },
+        {
+          "chain": [
+            [
+              1210,
+              0.13963459432125092
+            ],
+            [
+              1611,
+              0.23327955603599548
+            ]
+          ],
+          "total_score": 0.3729141503572464,
+          "final_cluster_id": 1611
+        },
+        {
+          "chain": [
+            [
+              1210,
+              0.13963459432125092
+            ],
+            [
+              349,
+              0.23091855645179749
+            ]
+          ],
+          "total_score": 0.3705531507730484,
+          "final_cluster_id": 349
+        },
+        {
+          "chain": [
+            [
+              1210,
+              0.13963459432125092
+            ],
+            [
+              1609,
+              0.2308049201965332
+            ]
+          ],
+          "total_score": 0.3704395145177841,
+          "final_cluster_id": 1609
+        },
+        {
+          "chain": [
+            [
+              1210,
+              0.13963459432125092
+            ],
+            [
+              350,
+              0.23078705370426178
+            ]
+          ],
+          "total_score": 0.3704216480255127,
+          "final_cluster_id": 350
+        },
+        {
+          "chain": [
+            [
+              1210,
+              0.13963459432125092
+            ],
+            [
+              1614,
+              0.23078705370426178
+            ]
+          ],
+          "total_score": 0.3704216480255127,
+          "final_cluster_id": 1614
+        },
+        {
+          "chain": [
+            [
+              1197,
+              0.1462785303592682
+            ],
+            [
+              976,
+              0.22332409024238586
+            ]
+          ],
+          "total_score": 0.36960262060165405,
+          "final_cluster_id": 976
+        }
+      ],
+      "primary_chain": [
+        {
+          "node_id": 1201,
+          "scene_level": 4,
+          "score": 0.1501024216413498
+        },
+        {
+          "node_id": 9,
+          "scene_level": 1,
+          "score": 0.23567140102386475
+        }
+      ],
+      "camera": {
+        "position": [
+          0.5321271649006682,
+          -0.17522242832416796,
+          0.2900877371647497
+        ],
+        "wxyz": [
+          -0.48491547695184595,
+          0.5988153086723699,
+          -0.5514765955776243,
+          0.3196103422017061
+        ],
+        "fov_rad": 1.3089969389957472,
+        "aspect": 1.3333333333333333
+      },
+      "preview": "previews/query-27.png",
+      "featured": false,
+      "validation": "cached IDs, nonempty memberships and legacy adjacency checked; visually review preview"
+    }
+  ]
+}

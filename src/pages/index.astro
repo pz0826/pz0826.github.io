@@ -1,0 +1,45 @@
+---
+import Page from '../layouts/Page.astro';
+import Navigation from '../components/Navigation.astro';
+import RoomExperience from '../components/scene/RoomExperience';
+import Info from '../components/sections/Info.astro';
+import News from '../components/sections/News.astro';
+import Works from '../components/sections/Works.astro';
+import Arts from '../components/sections/Arts.astro';
+import { profile } from '../content/profile';
+---
+
+<Page>
+  <div id="top"></div>
+  <Navigation />
+  <main>
+    <section class="hero" aria-label="Ways of seeing">
+      <div class="hero-intro">
+        <span class="eyebrow">{profile.role}</span>
+        <p>{profile.statement}</p>
+      </div>
+      <RoomExperience client:visible />
+      <div class="hero-caption eyebrow">
+        <span>A room. More than meets the eye.</span>
+        <a href="#info">Scroll to discover ↓</a>
+      </div>
+    </section>
+    <Info />
+    <News />
+    <Works />
+    <Arts />
+  </main>
+  <footer>
+    <p>
+      Yuning Peng <span>· Observing, understanding, creating.</span>
+    </p>
+    <div class="text-links">
+      {profile.links.map((link) => (
+        <a href={link.href}>{link.label} ↗</a>
+      ))}
+    </div>
+    <a class="eyebrow" href="#top">
+      Back to top ↑
+    </a>
+  </footer>
+</Page>

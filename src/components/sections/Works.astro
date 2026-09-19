@@ -4,7 +4,6 @@ import { works } from '../../content/works';
 
 <section id="works" class="section works-section">
   <div class="section-heading">
-    <span class="eyebrow">03 / Selected research</span>
     <h2>Works</h2>
     <p>
       From observations
@@ -13,14 +12,8 @@ import { works } from '../../content/works';
     </p>
   </div>
   <div class="work-list">
-    {works.map((work, index) => (
+    {works.map((work) => (
       <article class="work" id={work.id}>
-        <div class="work-topline eyebrow">
-          <span>
-            0{index + 1} / {work.theme}
-          </span>
-          <span>{work.venue}</span>
-        </div>
         <div class="work-grid">
           <div class="work-media">
             {work.video ? (
@@ -45,6 +38,11 @@ import { works } from '../../content/works';
             )}
           </div>
           <div class="work-copy">
+            <p class="work-metadata eyebrow">
+              {work.theme}
+              <span aria-hidden="true"> / </span>
+              {work.venue}
+            </p>
             <h3>{work.title}</h3>
             <p class="authors">
               {work.authors

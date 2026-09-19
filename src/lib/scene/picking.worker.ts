@@ -1,3 +1,10 @@
+import {
+  toRoom,
+  fromRoom,
+  cropWeight,
+  displace,
+  pointScale,
+} from './art-direction.ts';
 // Exact source index from ray/2D Gaussian intersections. Work stays off the UI thread.
 // Choose the strongest front-to-back alpha contribution, not a cluster bounding box.
 let geometry: Float32Array;
@@ -14,7 +21,33 @@ self.onmessage = ({ data }) => {
   for (let i = 0; i < geometry.length / 8; i++) {
     const b = i * 32,
       f = i * 8;
-    const opacity = rgba[b + 27] / 255;
+    let opacity = rgba[b + 27] / 255;
+    if (data.field) {
+      const local = toRoom(geometry[f], geometry[f + 1], geometry[f + 2]);
+      opacity *= cropWeight(local) * 0.94;
+      if (opacity < 0.03) continue;
+      const shifted = displace(local, data.field);
+      const center = fromRoom(...shifted);
+      const vx = center[0] - o[0],
+        vy = center[1] - o[1],
+        vz = center[2] - o[2];
+      const t = vx * d[0] + vy * d[1] + vz * d[2];
+      if (t < 0.02 || t > 100) continue;
+      const dx = vx - t * d[0],
+        dy = vy - t * d[1],
+        dz = vz - t * d[2];
+      const wave =
+        Math.exp(-14 * (local[0] - (-2.3 + 4.4 * data.field.progress)) ** 2) *
+        Math.sin(Math.PI * data.field.progress);
+      const size =
+        pointScale(geometry[f + 3], geometry[f + 4], data.field.progress) *
+        (1 - 0.45 * wave);
+      const r2 = (dx * dx + dy * dy + dz * dz) / (size * size);
+      if (r2 > 8) continue;
+      const alpha = Math.min(0.99, opacity * Math.exp(-0.5 * r2));
+      if (alpha > 0.01) hits.push({ index: i, t, alpha });
+      continue;
+    }
     if (opacity < 0.03) continue;
     let w = (rgba[b + 28] - 128) / 128,
       x = (rgba[b + 29] - 128) / 128,

@@ -1,13 +1,18 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { SparkRenderer, SplatMesh, dyno } from '@sparkjsdev/spark';
+import { SparkRenderer, SplatMesh } from '@sparkjsdev/spark';
+import { withinAnchor } from './art-anchors';
+import { SceneHud } from './scene-hud';
+import { createArtField } from './art-modifier';
+import { ART, ROOM_AXES, fromRoom, toRoom } from './art-direction';
 import { SceneTables } from './data';
-import { initialState, nodeAtLevel, queryWeights, relatedNodes } from './state';
+import { initialState, nodeAtLevel, queryWeights } from './state';
 import type { SceneAdapter, SceneCamera, SceneData, SceneState } from './types';
 
 interface Options {
   host: HTMLElement;
-  frame: HTMLElement;
+  hud: HTMLElement;
+  onNode: (id: number, level: number) => void;
   data: SceneData;
   signal: AbortSignal;
   onSelect: (node: number | null, index: number) => void;
@@ -23,6 +28,8 @@ export class SparkAdapter implements SceneAdapter {
   private controls: OrbitControls;
   private spark: SparkRenderer;
   private mesh!: SplatMesh;
+  private hud?: SceneHud;
+  private geometry!: Float32Array;
   private worker: Worker;
   private overlay: THREE.DataTexture;
   private pixels: Uint8Array;
@@ -42,15 +49,16 @@ export class SparkAdapter implements SceneAdapter {
     f0: number;
     f1: number;
   };
-  private reveal = dyno.dynoFloat(0);
-  private projection = dyno.dynoMat4(new THREE.Matrix4());
-  private aspect = dyno.dynoFloat(1);
-  private queryDim = dyno.dynoFloat(1);
-  private tint = dyno.dynoVec3(new THREE.Vector3(1, 0.24, 0.2));
+  private field!: ReturnType<typeof createArtField>;
+  private projection = new THREE.Matrix4();
+  private lastTime = 0;
+  private brushTarget = 0;
+  private pointerActive = false;
+  private lastPointerMove = 0;
+  private homeView = true;
   private revealTarget = 0;
   private reducedMotion = matchMedia('(prefers-reduced-motion: reduce)')
     .matches;
-  private lines = new THREE.Group();
   private requestId = 0;
   private pointerDown?: { x: number; y: number };
 
@@ -74,16 +82,18 @@ export class SparkAdapter implements SceneAdapter {
       renderer: this.renderer,
       enable2DGS: true,
       sortRadial: false,
-      preBlurAmount: 0.3,
+      preBlurAmount: 0,
       blurAmount: 0,
       onDirty: () => this.invalidate(),
     });
-    this.scene.add(this.spark, this.lines);
+    this.scene.add(this.spark);
+    // OrbitControls caches its up-axis basis during construction.
+    this.camera.up.set(...ROOM_AXES[2]);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = false;
     this.controls.enableZoom = false; // Wheel scrolling always belongs to the page.
     this.controls.minDistance = 0.08;
-    this.controls.maxDistance = 5;
+    this.controls.maxDistance = 12;
     this.controls.rotateSpeed = 0.35;
     this.controls.addEventListener('start', this.manual);
     this.controls.addEventListener('change', this.invalidate);
@@ -92,6 +102,14 @@ export class SparkAdapter implements SceneAdapter {
       this.onPointerDown,
     );
     this.renderer.domElement.addEventListener('pointerup', this.onPointerUp);
+    this.renderer.domElement.addEventListener(
+      'pointermove',
+      this.onPointerMove,
+    );
+    this.renderer.domElement.addEventListener(
+      'pointerleave',
+      this.onPointerLeave,
+    );
     this.renderer.domElement.addEventListener(
       'webglcontextlost',
       this.contextLost,
@@ -107,6 +125,7 @@ export class SparkAdapter implements SceneAdapter {
     );
     this.overlay.minFilter = this.overlay.magFilter = THREE.NearestFilter;
     this.overlay.needsUpdate = true;
+    this.field = createArtField(this.overlay);
     this.worker = new Worker(new URL('./picking.worker.ts', import.meta.url), {
       type: 'module',
     });
@@ -123,12 +142,12 @@ export class SparkAdapter implements SceneAdapter {
       if (!width || !height) return;
       this.renderer.setSize(width, height);
       this.camera.aspect = width / height;
-      this.aspect.value = this.camera.aspect;
+      if (this.homeView) this.placeHome();
       this.camera.updateProjectionMatrix();
       this.invalidate();
     });
     this.resize.observe(host);
-    this.moveTo(data.manifest.initialCamera, false);
+    this.placeHome();
     document.addEventListener('visibilitychange', this.visibilityChanged);
   }
 
@@ -146,55 +165,27 @@ export class SparkAdapter implements SceneAdapter {
       adapter.worker.postMessage({ type: 'init', buffer: workerBuffer }, [
         workerBuffer,
       ]);
-      const texture = dyno.dynoSampler2D(adapter.overlay);
-      const modifier = dyno.dynoBlock(
-        { gsplat: dyno.Gsplat },
-        { gsplat: dyno.Gsplat },
-        ({ gsplat }) => ({
-          gsplat: new dyno.Dyno({
-            inTypes: {
-              gsplat: dyno.Gsplat,
-              table: 'sampler2D',
-              reveal: 'float',
-              projection: 'mat4',
-              aspect: 'float',
-              dim: 'float',
-              tint: 'vec3',
-            },
-            outTypes: { gsplat: dyno.Gsplat },
-            inputs: {
-              gsplat,
-              table: texture,
-              reveal: adapter.reveal,
-              projection: adapter.projection,
-              aspect: adapter.aspect,
-              dim: adapter.queryDim,
-              tint: adapter.tint,
-            },
-            statements: ({ inputs: i, outputs: o }) => [
-              `${o.gsplat} = ${i.gsplat};`,
-              `vec4 feature = texelFetch(${i.table}, ivec2(${i.gsplat}.index % ${WIDTH}, ${i.gsplat}.index / ${WIDTH}), 0);`,
-              `vec4 clip = ${i.projection} * vec4(${i.gsplat}.center, 1.0);`,
-              `float radius = length(clip.xy / max(0.0001, clip.w) * vec2(${i.aspect}, 1.0));`,
-              `float amount = ${i.reveal} >= 0.999 ? 1.0 : (${i.reveal} <= 0.001 ? 0.0 : 1.0 - smoothstep(${i.reveal} * 3.5 - 0.12, ${i.reveal} * 3.5, radius));`,
-              `vec3 base = mix(${i.gsplat}.rgba.rgb, feature.rgb, amount);`,
-              `${o.gsplat}.rgba.rgb = mix(base * (feature.a > 0.0 ? 1.0 : ${i.dim}), ${i.tint}, feature.a);`,
-            ],
-          }).outputs.gsplat,
-        }),
-      );
       adapter.mesh = new SplatMesh({
         fileBytes: buffer,
         fileName: 'room.splat',
         lod: false,
         enableLod: false,
-        objectModifier: modifier,
+        objectModifier: adapter.field.modifier,
       });
       await adapter.mesh.initialized;
       options.signal.throwIfAborted();
       if (adapter.mesh.numSplats !== options.data.manifest.count)
         throw new Error('Renderer changed Gaussian count');
       adapter.scene.add(adapter.mesh);
+      adapter.geometry = new Float32Array(buffer);
+      adapter.hud = new SceneHud(
+        options.hud,
+        options.data,
+        adapter.geometry,
+        adapter.tables,
+        options.onNode,
+      );
+      await adapter.hud.initialize();
       await adapter.apply(initialState);
       adapter.invalidate();
       return adapter;
@@ -212,7 +203,7 @@ export class SparkAdapter implements SceneAdapter {
     );
     const table = await this.tables.level(
       state.level,
-      state.view === 'ai' || this.reveal.value > 0,
+      state.view === 'ai' || this.field.progress.value > 0,
     );
     if (state.complete && query)
       await Promise.all(
@@ -230,6 +221,8 @@ export class SparkAdapter implements SceneAdapter {
             this.options.data.manifest.count,
           )
         : undefined;
+    await this.hud?.select(state);
+    if (version !== this.version || this.disposed) return;
     const selected = state.selected;
     for (let i = 0; i < this.options.data.manifest.count; i++) {
       const p = i * 4;
@@ -240,22 +233,31 @@ export class SparkAdapter implements SceneAdapter {
       }
       this.pixels[p + 3] = weights
         ? weights[i]
-        : selected !== null && table.labels[i] === selected
+        : selected !== null &&
+            table.labels[i] === selected &&
+            withinAnchor(
+              selected,
+              toRoom(
+                this.geometry[i * 8],
+                this.geometry[i * 8 + 1],
+                this.geometry[i * 8 + 2],
+              ),
+            )
           ? 115
           : 0;
     }
-    this.queryDim.value = state.complete && query ? 0.8 : 1;
-    if (state.complete && query) this.tint.value.set(1, 0, 0);
-    else this.tint.value.set(0.75, 0.9, 1);
+    this.field.dim.value = state.complete && query ? 0.8 : 1;
+    if (state.complete && query) this.field.tint.value.set(1, 0, 0);
+    else this.field.tint.value.set(0.75, 0.9, 1);
     this.overlay.needsUpdate = true;
     this.mesh.needsUpdate = true;
     this.revealTarget = state.view === 'ai' ? 1 : 0;
-    if (this.reducedMotion) this.reveal.value = this.revealTarget;
-    this.updateRelations();
+    if (this.reducedMotion) this.field.progress.value = this.revealTarget;
     this.invalidate();
   }
 
   moveTo(pose: SceneCamera, animate = true) {
+    this.homeView = false;
     const [w, x, y, z] = pose.wxyz;
     const q = new THREE.Quaternion(x, y, z, w).multiply(
       new THREE.Quaternion().setFromAxisAngle(
@@ -287,7 +289,8 @@ export class SparkAdapter implements SceneAdapter {
   private syncControls() {
     this.camera.updateProjectionMatrix();
     this.camera.updateMatrixWorld();
-    this.camera.up.set(0, 1, 0).applyQuaternion(this.camera.quaternion);
+    // Recorded quaternion retains the original roll during playback;
+    // subsequent manual orbit uses the room's stable vertical axis.
     this.controls.target
       .copy(this.camera.position)
       .add(
@@ -298,9 +301,25 @@ export class SparkAdapter implements SceneAdapter {
     this.motion = undefined;
     ++this.requestId;
   }
-  home() {
-    this.moveTo(this.options.data.manifest.initialCamera);
+  private placeHome() {
+    this.motion = undefined;
+    const target = new THREE.Vector3(...fromRoom(...ART.target));
+    const eye = new THREE.Vector3(...fromRoom(...ART.eye));
+    const fit = Math.max(1, 1.45 / this.camera.aspect);
+    this.camera.position.copy(target).add(eye.sub(target).multiplyScalar(fit));
+    this.camera.up.set(...ROOM_AXES[2]);
+    this.camera.fov = ART.fov;
+    this.camera.lookAt(target);
+    this.camera.updateProjectionMatrix();
+    this.camera.updateMatrixWorld();
+    this.controls.target.copy(target);
+    this.invalidate();
   }
+  home() {
+    this.homeView = true;
+    this.placeHome();
+  }
+
   setInteractive(enabled: boolean) {
     this.controls.enabled = enabled;
     this.renderer.domElement.style.touchAction = enabled ? 'none' : 'pan-y';
@@ -319,6 +338,7 @@ export class SparkAdapter implements SceneAdapter {
   }
   private manual = () => {
     this.cancelMotion();
+    this.homeView = false;
     this.options.onManual();
   };
   private visibilityChanged = () => {
@@ -328,8 +348,42 @@ export class SparkAdapter implements SceneAdapter {
     event.preventDefault();
     this.options.onError(new Error('WebGL context lost'));
   };
+  private onPointerMove = (event: PointerEvent) => {
+    if (
+      !this.controls.enabled ||
+      this.pointerDown ||
+      this.reducedMotion ||
+      event.pointerType === 'touch'
+    )
+      return;
+    const rect = this.renderer.domElement.getBoundingClientRect();
+    const ray = new THREE.Raycaster();
+    ray.setFromCamera(
+      new THREE.Vector2(
+        ((event.clientX - rect.left) / rect.width) * 2 - 1,
+        1 - ((event.clientY - rect.top) / rect.height) * 2,
+      ),
+      this.camera,
+    );
+    const o = toRoom(...ray.ray.origin.toArray()),
+      d = toRoom(...ray.ray.direction.toArray());
+    const t = (0.2 - o[2]) / d[2];
+    if (t > 0)
+      this.field.brush.value.set(o[0] + d[0] * t, o[1] + d[1] * t, 0.2);
+    this.brushTarget = 1;
+    this.pointerActive = true;
+    this.lastPointerMove = performance.now();
+    this.invalidate();
+  };
+  private onPointerLeave = () => {
+    this.brushTarget = 0;
+    this.pointerActive = false;
+    this.invalidate();
+  };
   private onPointerDown = (event: PointerEvent) => {
     this.pointerDown = { x: event.clientX, y: event.clientY };
+    this.brushTarget = 0;
+    this.pointerActive = false;
   };
   private onPointerUp = (event: PointerEvent) => {
     const down = this.pointerDown;
@@ -352,82 +406,17 @@ export class SparkAdapter implements SceneAdapter {
     );
     this.worker.postMessage({
       type: 'pick',
+      field: {
+        progress: this.field.progress.value,
+        time: this.field.time.value,
+        brush: this.field.brush.value.toArray(),
+        strength: this.field.strength.value,
+      },
       requestId: ++this.requestId,
       origin: ray.ray.origin.toArray(),
       direction: ray.ray.direction.toArray(),
     });
   };
-  private clearLines() {
-    for (const child of [...this.lines.children]) {
-      const line = child as THREE.Line;
-      line.geometry.dispose();
-      (line.material as THREE.Material).dispose();
-      this.lines.remove(child);
-    }
-  }
-  private updateRelations() {
-    this.clearLines();
-    const node =
-      this.state.selected === null
-        ? undefined
-        : this.options.data.nodes.get(this.state.selected);
-    if (!node) return;
-    for (const related of relatedNodes(this.options.data, this.state)) {
-      const geometry = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(...node.center),
-        new THREE.Vector3(...related.center),
-      ]);
-      const line = new THREE.Line(
-        geometry,
-        new THREE.LineDashedMaterial({
-          color: 0xffffff,
-          opacity: 0.65,
-          transparent: true,
-          dashSize: 0.018,
-          gapSize: 0.012,
-          depthTest: false,
-        }),
-      );
-      line.computeLineDistances();
-      line.renderOrder = 2;
-      this.lines.add(line);
-    }
-  }
-  private updateFrame() {
-    const frame = this.options.frame;
-    const node =
-      this.state.selected === null
-        ? undefined
-        : this.options.data.nodes.get(this.state.selected);
-    if (!node) {
-      frame.hidden = true;
-      return;
-    }
-    const points = [];
-    for (let i = 0; i < 8; i++) {
-      const p = new THREE.Vector3(...node.bounds_min);
-      if (i & 1) p.x = node.bounds_max[0];
-      if (i & 2) p.y = node.bounds_max[1];
-      if (i & 4) p.z = node.bounds_max[2];
-      p.project(this.camera);
-      if (p.z < -1 || p.z > 1) {
-        frame.hidden = true;
-        return;
-      }
-      points.push(p);
-    }
-    const x0 = Math.max(0, Math.min(...points.map((p) => (p.x + 1) / 2))),
-      x1 = Math.min(1, Math.max(...points.map((p) => (p.x + 1) / 2)));
-    const y0 = Math.max(0, Math.min(...points.map((p) => (1 - p.y) / 2))),
-      y1 = Math.min(1, Math.max(...points.map((p) => (1 - p.y) / 2)));
-    frame.hidden = x1 <= x0 || y1 <= y0;
-    Object.assign(frame.style, {
-      left: `${x0 * 100}%`,
-      top: `${y0 * 100}%`,
-      width: `${(x1 - x0) * 100}%`,
-      height: `${(y1 - y0) * 100}%`,
-    });
-  }
   private invalidate = () => {
     this.redraw = true;
     if (!this.disposed && !this.frameId && this.visible && !document.hidden)
@@ -436,6 +425,23 @@ export class SparkAdapter implements SceneAdapter {
   private render = (now: number) => {
     this.frameId = 0;
     if (this.disposed || !this.visible || document.hidden) return;
+    const dt = this.lastTime
+      ? Math.min(0.05, (now - this.lastTime) / 1000)
+      : 0.016;
+    this.lastTime = now;
+    if (now - this.lastPointerMove > 550) {
+      this.pointerActive = false;
+      this.brushTarget = 0;
+    }
+    const fieldActive =
+      this.pointerActive ||
+      Math.abs(this.field.strength.value - this.brushTarget) > 0.003;
+    this.field.strength.value = THREE.MathUtils.lerp(
+      this.field.strength.value,
+      this.brushTarget,
+      1 - Math.exp(-dt * 7),
+    );
+    if (!fieldActive) this.field.strength.value = this.brushTarget;
     const moving = !!this.motion;
     if (this.motion) {
       const m = this.motion,
@@ -447,31 +453,38 @@ export class SparkAdapter implements SceneAdapter {
       this.syncControls();
       if (t === 1) this.motion = undefined;
     }
-    const revealing = Math.abs(this.reveal.value - this.revealTarget) > 0.001;
+    const revealing =
+      Math.abs(this.field.progress.value - this.revealTarget) > 0.001;
     if (revealing) {
-      this.reveal.value = THREE.MathUtils.lerp(
-        this.reveal.value,
+      this.field.progress.value = THREE.MathUtils.lerp(
+        this.field.progress.value,
         this.revealTarget,
-        0.12,
+        1 - Math.exp(-dt * 3.5),
       );
-      if (Math.abs(this.reveal.value - this.revealTarget) < 0.001)
-        this.reveal.value = this.revealTarget;
+      if (Math.abs(this.field.progress.value - this.revealTarget) < 0.001)
+        this.field.progress.value = this.revealTarget;
     }
-    if (this.redraw || moving || revealing) {
+    if (revealing || fieldActive) this.field.time.value += dt;
+    if (this.redraw || moving || revealing || fieldActive) {
       this.redraw = false;
       this.camera.updateMatrixWorld();
       const projection = new THREE.Matrix4().multiplyMatrices(
         this.camera.projectionMatrix,
         this.camera.matrixWorldInverse,
       );
-      const cameraChanged = !projection.equals(this.projection.value);
-      this.projection.value.copy(projection);
-      if (this.mesh && (cameraChanged || moving || revealing))
+      const cameraChanged = !projection.equals(this.projection);
+      this.projection.copy(projection);
+      if (this.mesh && (cameraChanged || moving || revealing || fieldActive))
         this.mesh.needsUpdate = true;
       this.renderer.render(this.scene, this.camera);
-      this.updateFrame();
+      this.hud?.update(this.camera, {
+        progress: this.field.progress.value,
+        time: this.field.time.value,
+        brush: this.field.brush.value.toArray(),
+        strength: this.field.strength.value,
+      });
     }
-    if (moving || revealing) this.invalidate();
+    if (moving || revealing || fieldActive) this.invalidate();
   };
   dispose() {
     if (this.disposed) return;
@@ -486,12 +499,20 @@ export class SparkAdapter implements SceneAdapter {
     );
     this.renderer.domElement.removeEventListener('pointerup', this.onPointerUp);
     this.renderer.domElement.removeEventListener(
+      'pointermove',
+      this.onPointerMove,
+    );
+    this.renderer.domElement.removeEventListener(
+      'pointerleave',
+      this.onPointerLeave,
+    );
+    this.renderer.domElement.removeEventListener(
       'webglcontextlost',
       this.contextLost,
     );
     this.controls.dispose();
     this.worker.terminate();
-    this.clearLines();
+    this.hud?.dispose();
     this.mesh?.dispose();
     this.overlay.dispose();
     this.spark.dispose();

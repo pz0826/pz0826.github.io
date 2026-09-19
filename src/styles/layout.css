@@ -47,8 +47,8 @@ nav a {
 nav a[aria-current] {
   color: white;
 }
-nav a[aria-current]:before,
-nav a[aria-current]:after {
+nav a:before,
+nav a:after {
   content: '';
   position: absolute;
   width: 7px;
@@ -56,12 +56,12 @@ nav a[aria-current]:after {
   border-color: #eee;
   border-style: solid;
 }
-nav a[aria-current]:before {
+nav a:before {
   top: 0;
   left: -5px;
   border-width: 1px 0 0 1px;
 }
-nav a[aria-current]:after {
+nav a:after {
   bottom: 0;
   right: -5px;
   border-width: 0 1px 1px 0;
@@ -177,4 +177,29 @@ footer .text-links {
     grid-column: 2;
     font-size: 9px;
   }
+}
+
+/* Iris-inspired corner travel: persistent pseudo-elements can animate in and out. */
+nav a::before,
+nav a::after {
+  opacity: 0;
+  transition:
+    transform 0.32s cubic-bezier(0.17, 0.67, 0.05, 1.29),
+    opacity 0.24s;
+}
+nav a::before {
+  transform: translate(9px, 9px);
+}
+nav a::after {
+  transform: translate(-9px, -9px);
+}
+nav a[aria-current]::before,
+nav a[aria-current]::after {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+nav a:hover:not([aria-current])::before,
+nav a:hover:not([aria-current])::after {
+  opacity: 0.35;
+  transform: translate(0, 0);
 }

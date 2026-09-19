@@ -11,7 +11,7 @@ import type { SparkAdapter } from '../../lib/scene/spark-adapter';
 
 export default function RoomExperience() {
   const host = useRef<HTMLDivElement>(null),
-    frame = useRef<HTMLDivElement>(null),
+    hud = useRef<HTMLDivElement>(null),
     container = useRef<HTMLDivElement>(null);
   const adapter = useRef<SparkAdapter | null>(null);
   const [data, setData] = useState<SceneData | null>(null);
@@ -71,7 +71,12 @@ export default function RoomExperience() {
       setData(sceneData);
       local = await SparkAdapter.create({
         host: host.current!,
-        frame: frame.current!,
+        hud: hud.current!,
+        onNode: (id, level) => {
+          cancel();
+          picked.current = -1;
+          dispatch({ type: 'select', id, level });
+        },
         data: sceneData,
         signal: abort.signal,
         onSelect: (id, index) => {
@@ -209,8 +214,8 @@ export default function RoomExperience() {
       <div className="room-stage">
         <img
           className={`room-poster ${status === 'ready' ? 'is-loaded' : ''}`}
-          src="/scenes/room/poster.webp"
-          alt="A reconstructed living room, with a sofa, piano, and a table in the foreground."
+          src="/scenes/room/installation-poster.webp"
+          alt="A living room suspended in darkness, reconstructed as a field of light."
           width="1600"
           height="900"
           fetchPriority="high"
@@ -220,15 +225,14 @@ export default function RoomExperience() {
           ref={host}
           style={{ opacity: status === 'ready' ? 1 : 0 }}
         />
-        <div ref={frame} className="selection-frame" hidden aria-hidden="true">
-          <i />
-          <i />
-          <i />
-          <i />
-        </div>
+        <div
+          ref={hud}
+          className="scene-hud"
+          role="group"
+          aria-label="Objects in the room"
+        />
         <div className="scene-heading eyebrow">
           <span>Ways of seeing</span>
-          <span>01 / Room</span>
         </div>
         <div
           className="view-switch"
@@ -293,11 +297,11 @@ export default function RoomExperience() {
           <div className="scene-bottom">
             <span className="eyebrow">
               {state.view === 'ai'
-                ? 'Feature space / PCA'
-                : 'Through human eyes'}
+                ? 'A field of relationships'
+                : 'A room, remembered'}
               <span className="desktop-hint">
                 {' '}
-                · Drag to look around · Click to select
+                · Move to disturb · Drag to orbit
               </span>
             </span>
             <div className="camera-controls">

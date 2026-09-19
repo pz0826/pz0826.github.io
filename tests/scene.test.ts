@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import * as art from '../src/lib/scene/art-direction.ts';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
@@ -99,9 +100,15 @@ test('2D picking returns the visible source ID, not an occluded Gaussian', () =>
     readFileSync(
       new URL('../src/lib/scene/picking.worker.ts', import.meta.url),
       'utf8',
-    ),
+    ).replace(/^import[\s\S]*?;\n/, ''),
   );
-  runInNewContext(source, { self: worker, Float32Array, Uint8Array, Math });
+  runInNewContext(source, {
+    self: worker,
+    Float32Array,
+    Uint8Array,
+    Math,
+    ...art,
+  });
   const buffer = new ArrayBuffer(64),
     floats = new Float32Array(buffer),
     bytes = new Uint8Array(buffer);
@@ -131,4 +138,78 @@ test('2D picking returns the visible source ID, not an occluded Gaussian', () =>
     },
   });
   assert.equal((result as { index: number }).index, -1);
+});
+
+test('room crop rejects exterior debris and the art transform settles to original geometry', () => {
+  assert.equal(art.cropWeight([0, 0, 0.2]), 1);
+  assert.equal(art.cropWeight([3, 0, 0.2]), 0);
+  assert.equal(art.cropWeight([0, 0, 1.8]), 0);
+  const world = art.fromRoom(0.3, -0.2, 0.4);
+  const local = art.toRoom(...world);
+  for (let i = 0; i < 3; i++)
+    assert.ok(Math.abs(local[i] - [0.3, -0.2, 0.4][i]) < 1e-8);
+  for (const progress of [0, 1]) {
+    const p = art.displace(local, {
+      progress,
+      time: 3,
+      brush: [0, 0, 0],
+      strength: 0,
+    });
+    for (let i = 0; i < 3; i++) assert.ok(Math.abs(p[i] - local[i]) < 1e-8);
+  }
+});
+
+test('particle picking follows the disturbed center and ignores cropped geometry', () => {
+  let result: { index: number } | undefined;
+  const worker = {
+    onmessage: undefined as undefined | ((event: { data: unknown }) => void),
+    postMessage: (value: { index: number }) => {
+      result = value;
+    },
+  };
+  const source = stripTypeScriptTypes(
+    readFileSync(
+      new URL('../src/lib/scene/picking.worker.ts', import.meta.url),
+      'utf8',
+    ).replace(/^import[\s\S]*?;\n/, ''),
+  );
+  runInNewContext(source, {
+    self: worker,
+    Float32Array,
+    Uint8Array,
+    Math,
+    ...art,
+  });
+  const buffer = new ArrayBuffer(64),
+    floats = new Float32Array(buffer),
+    bytes = new Uint8Array(buffer);
+  floats.set(art.fromRoom(0, 0, 0.2), 0);
+  floats.set(art.fromRoom(3, 0, 0.2), 8);
+  for (let i = 0; i < 2; i++) {
+    floats[i * 8 + 3] = floats[i * 8 + 4] = 0.008;
+    bytes[i * 32 + 27] = 255;
+  }
+  worker.onmessage!({ data: { type: 'init', buffer } });
+  const field = { progress: 0.5, time: 2, brush: [0.05, 0, 0.2], strength: 1 };
+  const p = art.displace([0, 0, 0.2], field);
+  worker.onmessage!({
+    data: {
+      type: 'pick',
+      requestId: 1,
+      field,
+      origin: art.fromRoom(p[0], p[1], p[2] + 2),
+      direction: art.fromRoom(0, 0, -1),
+    },
+  });
+  assert.equal(result?.index, 0);
+  worker.onmessage!({
+    data: {
+      type: 'pick',
+      requestId: 2,
+      field,
+      origin: art.fromRoom(3, 0, 2),
+      direction: art.fromRoom(0, 0, -1),
+    },
+  });
+  assert.equal(result?.index, -1);
 });

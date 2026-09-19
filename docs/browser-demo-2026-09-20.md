@@ -1,5 +1,7 @@
 # Browser demo implementation · 2026-09-20
 
+Historical baseline at `homepage-v0.1`. See [installation pass](art-direction-v0.2.md) for the current camera, particle material, transition, and overlays.
+
 ## Delivered structure
 
 Astro 7.3.3 statically renders the homepage; React handles the room island. Three.js 0.180.0 and Spark 2.2.0 are dynamically imported only when the room starts. Node 22 is isolated under `/home/pyn/.local/share/homepage-toolchain`. exFAT cannot create symlinks, so package scripts call actual Node entrypoints and `.npmrc` uses `bin-links=false`.

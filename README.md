@@ -53,7 +53,11 @@ src/
     types.ts               Renderer-independent scene contract
     data.ts                Manifest and lazy binary-table loader
     state.ts               Selection, hierarchy, relations, query state
-    spark-adapter.ts       Camera, 2DGS, GPU recoloring, resource lifecycle
+    art-direction.ts       Room frame, crop, camera and shared displacement
+    art-modifier.ts        GPU particle material and Human/AI wave
+    art-anchors.ts         Curated object landmarks and spatial bounds
+    scene-hud.ts           Projected tags, selection envelope and links
+    spark-adapter.ts       Camera, GPU recoloring, resource lifecycle
     picking.worker.ts      Visible Gaussian picking off the main thread
   styles/                  Base, layout, scene, and content styles
 public/
@@ -69,13 +73,14 @@ Edit profile/publications in `src/content/`; add normal page sections in `src/co
 ## Scene and interactions
 
 - Original Mip-NeRF 360 **room** demo: 1,064,578 ordered 2D Gaussians and five normalized hierarchy levels.
-- Human/AI radial transition keeps the camera and selection. Feature colors load by level.
+- A softly cropped room floats in an elevated view, rendered as small Gaussian particles. Human/AI uses a spatial wave while keeping camera and selection; feature colors load by level.
+- Pointer movement briefly disturbs the field. Four floating object tags, a sampled selection envelope, and fine links follow the scene's camera and deformation.
 - Clicking a surface picks a source Gaussian through a worker and selects its current-level cluster. Parent/part controls follow actual node IDs.
 - Nearby uses center distance; Similar uses saved CLIP affinities. These are geometric/feature links, not inferred relationship names.
 - Six featured recorded COR queries replay original cameras and intermediate selections. All ten cached final candidates are painted by their normalized scores. No live LLM endpoint is required.
 - Manual input cancels playback. Wheel scrolling always scrolls the page; touch devices explicitly enter/exit Explore. Offscreen/hidden scenes stop requesting frames. Static content and the room poster remain usable on load/WebGL failure.
 
-The first browser export uses DC RGB and 8-bit quaternions in `.splat`, with zero local Z scale and Spark's `enable2DGS`. It does not retain degree-3 view-dependent spherical harmonics, and is not pixel-identical to the original gsplat renderer. It retains all Gaussians and IDs. Gzip compression is lossless; browser-side `DecompressionStream` decodes assets before use. See `docs/browser-demo-2026-09-20.md` for validation and current limitations.
+The browser export uses DC RGB and 8-bit quaternions in `.splat`, with zero local Z scale. The current artistic modifier turns these into small isotropic particles at render time. It does not retain degree-3 view-dependent spherical harmonics, and is not pixel-identical to the original gsplat renderer. It retains all Gaussians and IDs. Gzip compression is lossless; browser-side `DecompressionStream` decodes assets before use. See [installation notes and motion proposal](docs/art-direction-v0.2.md) for the current presentation and [baseline browser notes](docs/browser-demo-2026-09-20.md) for the original data contract.
 
 Regenerate assets on the research machine:
 
@@ -94,6 +99,7 @@ npm test                 # Replay races, hierarchy mapping, weighted candidates,
 npm run check:assets     # Checksums, lengths, hierarchy references, query IDs
 npm run build            # Astro type check and static production build
 npm run test:browser     # Requires preview server + Chrome (CHROME_PATH can override)
+node tests/art-browser.mjs # Particle movement, settling, picking and attached overlays
 ```
 
 The browser test uses headless Vulkan on this machine's RTX 4090. Set `SOFTWARE_WEBGL=1` for software WebGL; it is much slower on the full scene. Screenshots and test results are saved in `.preview/`. Node/CI checks require no GPU.

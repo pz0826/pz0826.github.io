@@ -62,21 +62,22 @@ try {
   );
   await page.getByRole('button', { name: 'Human', exact: true }).click();
   await page.waitForTimeout(1000);
-  const canvas = page.locator('.room-canvas canvas');
-  const bounds = await canvas.boundingBox();
-  await page.mouse.click(
-    bounds.x + bounds.width * 0.49,
-    bounds.y + bounds.height * 0.57,
-  );
+  await page
+    .getByRole('button', { name: 'Observe Plant', exact: true })
+    .click();
   await page.waitForFunction(
     () => !!document.querySelector('.room-experience')?.dataset.selected,
     { timeout: 10000 },
   );
   console.log(
-    'Picked source-backed cluster',
+    'Selected source-backed object',
     await room.getAttribute('data-selected'),
   );
   await page.screenshot({ path: '.preview/screenshots/desktop-selection.png' });
+  assert.equal(await room.getAttribute('data-selected'), '24');
+  assert.ok(
+    (await page.locator('.hud-outline').getAttribute('points')).length > 10,
+  );
   await page.getByRole('button', { name: 'Nearby', exact: true }).click();
   assert.ok(await page.locator('.relation-list button').count());
   await page

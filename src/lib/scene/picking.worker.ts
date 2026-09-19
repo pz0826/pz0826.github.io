@@ -4,6 +4,7 @@ import {
   cropWeight,
   displace,
   pointScale,
+  revealWave,
 } from './art-direction.ts';
 // Exact source index from ray/2D Gaussian intersections. Work stays off the UI thread.
 // Choose the strongest front-to-back alpha contribution, not a cluster bounding box.
@@ -36,9 +37,7 @@ self.onmessage = ({ data }) => {
       const dx = vx - t * d[0],
         dy = vy - t * d[1],
         dz = vz - t * d[2];
-      const wave =
-        Math.exp(-14 * (local[0] - (-2.3 + 4.4 * data.field.progress)) ** 2) *
-        Math.sin(Math.PI * data.field.progress);
+      const wave = revealWave(local, data.field.progress);
       const size =
         pointScale(geometry[f + 3], geometry[f + 4], data.field.progress) *
         (1 - 0.45 * wave);

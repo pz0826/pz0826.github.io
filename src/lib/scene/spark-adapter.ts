@@ -5,6 +5,7 @@ import { withinAnchor } from './art-anchors';
 import { SceneHud } from './scene-hud';
 import { createArtField } from './art-modifier';
 import { ART, ROOM_AXES, fromRoom, toRoom } from './art-direction';
+import { FLOW, FlowField } from './flow-field';
 import { SceneTables } from './data';
 import { initialState, nodeAtLevel, queryWeights } from './state';
 import type { SceneAdapter, SceneCamera, SceneData, SceneState } from './types';
@@ -52,9 +53,10 @@ export class SparkAdapter implements SceneAdapter {
   private field!: ReturnType<typeof createArtField>;
   private projection = new THREE.Matrix4();
   private lastTime = 0;
-  private brushTarget = 0;
-  private pointerActive = false;
-  private lastPointerMove = 0;
+  private flow = new FlowField();
+  private flowTexture: THREE.DataTexture;
+  private flowAccumulator = 0;
+  private stroke?: { x: number; y: number; time: number };
   private homeView = true;
   private revealTarget = 0;
   private reducedMotion = matchMedia('(prefers-reduced-motion: reduce)')
@@ -91,8 +93,9 @@ export class SparkAdapter implements SceneAdapter {
     this.camera.up.set(...ROOM_AXES[2]);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = false;
-    this.controls.enableZoom = false; // Wheel scrolling always belongs to the page.
-    this.controls.minDistance = 0.08;
+    this.controls.enableZoom = true;
+    this.controls.zoomSpeed = 0.6;
+    this.controls.minDistance = 0.6;
     this.controls.maxDistance = 12;
     this.controls.rotateSpeed = 0.35;
     this.controls.addEventListener('start', this.manual);
@@ -111,6 +114,11 @@ export class SparkAdapter implements SceneAdapter {
       this.onPointerLeave,
     );
     this.renderer.domElement.addEventListener(
+      'pointercancel',
+      this.onPointerCancel,
+    );
+    options.hud.addEventListener('wheel', this.onHudWheel, { passive: false });
+    this.renderer.domElement.addEventListener(
       'webglcontextlost',
       this.contextLost,
     );
@@ -125,7 +133,18 @@ export class SparkAdapter implements SceneAdapter {
     );
     this.overlay.minFilter = this.overlay.magFilter = THREE.NearestFilter;
     this.overlay.needsUpdate = true;
-    this.field = createArtField(this.overlay);
+    this.flowTexture = new THREE.DataTexture(
+      this.flow.values,
+      FLOW.width,
+      FLOW.height,
+      THREE.RGBAFormat,
+      THREE.FloatType,
+    );
+    this.flowTexture.minFilter = this.flowTexture.magFilter =
+      THREE.NearestFilter;
+    this.flowTexture.needsUpdate = true;
+    this.field = createArtField(this.overlay, this.flowTexture);
+    this.field.ambient.value = this.reducedMotion ? 0 : 1;
     this.worker = new Worker(new URL('./picking.worker.ts', import.meta.url), {
       type: 'module',
     });
@@ -322,26 +341,52 @@ export class SparkAdapter implements SceneAdapter {
 
   setInteractive(enabled: boolean) {
     this.controls.enabled = enabled;
+    this.stroke = undefined;
     this.renderer.domElement.style.touchAction = enabled ? 'none' : 'pan-y';
   }
   setVisible(visible: boolean) {
     this.visible = visible;
+    this.lastTime = 0;
+    this.stroke = undefined;
     if (visible) this.invalidate();
   }
   zoom(factor: number) {
     this.manual();
-    this.camera.position
-      .sub(this.controls.target)
-      .multiplyScalar(factor)
-      .add(this.controls.target);
+    const offset = this.camera.position.clone().sub(this.controls.target);
+    offset.setLength(
+      THREE.MathUtils.clamp(
+        offset.length() * factor,
+        this.controls.minDistance,
+        this.controls.maxDistance,
+      ),
+    );
+    this.camera.position.copy(this.controls.target).add(offset);
     this.invalidate();
   }
+  private onHudWheel = (event: WheelEvent) => {
+    if (!this.controls.enabled) return;
+    event.preventDefault();
+    this.renderer.domElement.dispatchEvent(
+      new WheelEvent('wheel', {
+        deltaY: event.deltaY,
+        deltaMode: event.deltaMode,
+        clientX: event.clientX,
+        clientY: event.clientY,
+        ctrlKey: event.ctrlKey,
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+  };
   private manual = () => {
+    this.stroke = undefined;
     this.cancelMotion();
     this.homeView = false;
     this.options.onManual();
   };
   private visibilityChanged = () => {
+    this.lastTime = 0;
+    this.stroke = undefined;
     if (!document.hidden) this.invalidate();
   };
   private contextLost = (event: Event) => {
@@ -367,23 +412,39 @@ export class SparkAdapter implements SceneAdapter {
     );
     const o = toRoom(...ray.ray.origin.toArray()),
       d = toRoom(...ray.ray.direction.toArray());
+    if (Math.abs(d[2]) < 0.08) {
+      this.stroke = undefined;
+      return;
+    }
     const t = (0.2 - o[2]) / d[2];
-    if (t > 0)
-      this.field.brush.value.set(o[0] + d[0] * t, o[1] + d[1] * t, 0.2);
-    this.brushTarget = 1;
-    this.pointerActive = true;
-    this.lastPointerMove = performance.now();
+    if (t <= 0) {
+      this.stroke = undefined;
+      return;
+    }
+    const x = o[0] + d[0] * t,
+      y = o[1] + d[1] * t,
+      time = performance.now();
+    if (this.stroke)
+      this.flow.push(
+        this.stroke.x,
+        this.stroke.y,
+        x,
+        y,
+        (time - this.stroke.time) / 1000,
+      );
+    this.stroke = { x, y, time };
     this.invalidate();
   };
   private onPointerLeave = () => {
-    this.brushTarget = 0;
-    this.pointerActive = false;
-    this.invalidate();
+    this.stroke = undefined;
+  };
+  private onPointerCancel = () => {
+    this.stroke = undefined;
+    this.pointerDown = undefined;
   };
   private onPointerDown = (event: PointerEvent) => {
     this.pointerDown = { x: event.clientX, y: event.clientY };
-    this.brushTarget = 0;
-    this.pointerActive = false;
+    this.stroke = undefined;
   };
   private onPointerUp = (event: PointerEvent) => {
     const down = this.pointerDown;
@@ -409,8 +470,8 @@ export class SparkAdapter implements SceneAdapter {
       field: {
         progress: this.field.progress.value,
         time: this.field.time.value,
-        brush: this.field.brush.value.toArray(),
-        strength: this.field.strength.value,
+        ambient: this.field.ambient.value,
+        flow: { values: this.flow.values },
       },
       requestId: ++this.requestId,
       origin: ray.ray.origin.toArray(),
@@ -425,23 +486,31 @@ export class SparkAdapter implements SceneAdapter {
   private render = (now: number) => {
     this.frameId = 0;
     if (this.disposed || !this.visible || document.hidden) return;
+    // Gentle idle flow at 30 fps; direct camera/pointer input can render sooner.
+    const directInput =
+      this.pointerDown || (this.stroke && now - this.stroke.time < 100);
+    if (
+      !this.reducedMotion &&
+      !directInput &&
+      !this.motion &&
+      now - this.lastTime < 32
+    ) {
+      this.frameId = requestAnimationFrame(this.render);
+      return;
+    }
     const dt = this.lastTime
       ? Math.min(0.05, (now - this.lastTime) / 1000)
-      : 0.016;
+      : 1 / 60;
     this.lastTime = now;
-    if (now - this.lastPointerMove > 550) {
-      this.pointerActive = false;
-      this.brushTarget = 0;
+    const fieldActive = !this.reducedMotion;
+    if (fieldActive) {
+      this.flowAccumulator += dt;
+      while (this.flowAccumulator >= 1 / 60) {
+        this.flow.step(1 / 60);
+        this.flowAccumulator -= 1 / 60;
+      }
+      this.flowTexture.needsUpdate = true;
     }
-    const fieldActive =
-      this.pointerActive ||
-      Math.abs(this.field.strength.value - this.brushTarget) > 0.003;
-    this.field.strength.value = THREE.MathUtils.lerp(
-      this.field.strength.value,
-      this.brushTarget,
-      1 - Math.exp(-dt * 7),
-    );
-    if (!fieldActive) this.field.strength.value = this.brushTarget;
     const moving = !!this.motion;
     if (this.motion) {
       const m = this.motion,
@@ -456,11 +525,9 @@ export class SparkAdapter implements SceneAdapter {
     const revealing =
       Math.abs(this.field.progress.value - this.revealTarget) > 0.001;
     if (revealing) {
-      this.field.progress.value = THREE.MathUtils.lerp(
-        this.field.progress.value,
-        this.revealTarget,
-        1 - Math.exp(-dt * 3.5),
-      );
+      const delta = this.revealTarget - this.field.progress.value;
+      this.field.progress.value +=
+        Math.sign(delta) * Math.min(Math.abs(delta), dt / 5.2);
       if (Math.abs(this.field.progress.value - this.revealTarget) < 0.001)
         this.field.progress.value = this.revealTarget;
     }
@@ -480,11 +547,13 @@ export class SparkAdapter implements SceneAdapter {
       this.hud?.update(this.camera, {
         progress: this.field.progress.value,
         time: this.field.time.value,
-        brush: this.field.brush.value.toArray(),
-        strength: this.field.strength.value,
+        ambient: this.field.ambient.value,
+        flow: { values: this.flow.values },
       });
     }
-    if (moving || revealing || fieldActive) this.invalidate();
+    // Spark may have scheduled a sorting redraw while render() was running.
+    if ((moving || revealing || fieldActive) && !this.frameId)
+      this.frameId = requestAnimationFrame(this.render);
   };
   dispose() {
     if (this.disposed) return;
@@ -510,11 +579,17 @@ export class SparkAdapter implements SceneAdapter {
       'webglcontextlost',
       this.contextLost,
     );
+    this.renderer.domElement.removeEventListener(
+      'pointercancel',
+      this.onPointerCancel,
+    );
+    this.options.hud.removeEventListener('wheel', this.onHudWheel);
     this.controls.dispose();
     this.worker.terminate();
     this.hud?.dispose();
     this.mesh?.dispose();
     this.overlay.dispose();
+    this.flowTexture.dispose();
     this.spark.dispose();
     this.renderer.dispose();
     this.renderer.domElement.remove();

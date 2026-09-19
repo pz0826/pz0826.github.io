@@ -342,16 +342,14 @@
   margin: 0 -3vw;
 }
 .room-stage::after {
-  background: radial-gradient(
-    ellipse at center,
-    transparent 46%,
-    var(--bg) 78%
-  );
-  z-index: 1;
+  background: none;
 }
 .room-canvas,
-.room-poster {
-  mask-image: radial-gradient(ellipse at center, #000 46%, transparent 78%);
+.room-poster,
+.scene-hud {
+  mask-image: url('/media/room-mask.svg');
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
 }
 .scene-heading {
   top: 14px;
@@ -438,13 +436,6 @@
   }
   .scene-bottom > .eyebrow {
     max-width: 145px;
-  }
-  .room-stage:after {
-    background: radial-gradient(
-      ellipse at center,
-      transparent 48%,
-      var(--bg) 82%
-    );
   }
 }
 .scene-hud {

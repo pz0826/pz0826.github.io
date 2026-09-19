@@ -1,6 +1,7 @@
 // A local diagnostic, not a field benchmark. Run separately from other GPU tests.
 import { chromium } from '@playwright/test';
 import { writeFile, mkdir } from 'node:fs/promises';
+import assert from 'node:assert/strict';
 const browser = await chromium.launch({
   executablePath: '/usr/bin/google-chrome',
   headless: true,
@@ -49,7 +50,7 @@ try {
     window.__times = [];
   });
   await page.getByRole('button', { name: 'AI', exact: true }).click();
-  await page.waitForTimeout(2800);
+  await page.waitForTimeout(6200);
   const result = await page.evaluate(() => {
     const gl = document.querySelector('canvas').getContext('webgl2');
     const ext = gl.getExtension('WEBGL_debug_renderer_info');
@@ -83,12 +84,13 @@ try {
   const off1 = await page.evaluate(() => window.__draws);
   Object.assign(result, {
     readyMs,
-    idleDraws: idle1 - idle0,
+    ambientDrawsOver2s: idle1 - idle0,
     offscreenDraws: off1 - off0,
     viewport: [1440, 1000],
     dpr: 1,
     note: 'Single local run. Draw-submission intervals, not GPU completion times or field Core Web Vitals.',
   });
+  assert.equal(off1 - off0, 0, 'offscreen flow must stop rendering');
   await mkdir('.preview', { recursive: true });
   await writeFile('.preview/performance.json', JSON.stringify(result, null, 2));
   console.log(JSON.stringify(result, null, 2));

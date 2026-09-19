@@ -1,3 +1,4 @@
+import { sampleFlow, type FlowSnapshot } from './flow-field.ts';
 // The installation's coordinate frame. Source tensors and entity IDs stay intact.
 // Basis fitted to the floor/back wall; local Z is up. All distances are scene units.
 export const ROOM_AXES = [
@@ -59,34 +60,41 @@ export function cropWeight(p: readonly number[]) {
 export interface FieldState {
   progress: number;
   time: number;
-  brush: readonly number[];
-  strength: number;
+  ambient: number;
+  flow?: FlowSnapshot;
 }
-/** Kept algebraically identical to the GLSL field, for picking and attached tags. */
+export function revealWave(p: readonly number[], progress: number) {
+  const radius = Math.hypot(p[0] + 0.2, p[1]);
+  return (
+    Math.exp(-6 * (radius - (-0.45 + 2.9 * progress)) ** 2) *
+    Math.sin(Math.PI * progress)
+  );
+}
+/** Same field algebra in GLSL, the picking worker and attached labels. */
 export function displace(
   p: readonly number[],
   field: FieldState,
 ): [number, number, number] {
   const [x, y, z] = p,
-    { progress: t, time, brush, strength } = field;
-  const front = -2.3 + 4.4 * t;
-  const wave = Math.exp(-14 * (x - front) ** 2) * Math.sin(Math.PI * t);
-  const dx = x - brush[0],
-    dy = y - brush[1];
-  const falloff = Math.exp(-(dx * dx + dy * dy) / 0.14) * strength;
+    { progress, time, ambient } = field;
+  const flow = sampleFlow(field.flow, x, y);
+  const wave = revealWave(p, progress);
+  const n = [
+    Math.sin(
+      y * 1.7 + z * 1.1 + time * 0.21 + 0.35 * Math.sin(x * 2.3 - time * 0.11),
+    ),
+    Math.cos(
+      x * 1.5 - z * 1.3 - time * 0.19 + 0.4 * Math.sin(y * 2.1 + time * 0.13),
+    ),
+    Math.sin(
+      x * 2.1 - y * 1.6 + time * 0.17 + 0.3 * Math.cos(z * 2.4 + time * 0.1),
+    ),
+  ];
+  const amplitude = 0.006 * ambient + flow[3] * 0.055 + wave * 0.045;
   return [
-    x +
-      wave * 0.1 * Math.sin(y * 9 + time * 1.5) -
-      dy * falloff * 0.24 +
-      Math.sin(y * 18 + time * 3) * falloff * 0.024,
-    y +
-      wave * 0.12 * Math.cos(x * 7 + time) -
-      wave * y * 0.12 +
-      dx * falloff * 0.24 +
-      Math.cos(x * 17 - time * 2) * falloff * 0.024,
-    z +
-      wave * 0.08 * Math.sin(y * 8 + time * 2) +
-      Math.sin((x + y) * 13 + time * 3) * falloff * 0.034,
+    x + flow[0] + n[0] * amplitude + (x + 0.2) * wave * 0.06,
+    y + flow[1] + n[1] * amplitude + y * wave * 0.06,
+    z + flow[2] + n[2] * amplitude * 0.7,
   ];
 }
 export function pointScale(sx: number, sy: number, progress: number) {
@@ -100,13 +108,17 @@ export function pointScale(sx: number, sy: number, progress: number) {
   );
 }
 export const FIELD_GLSL = `
-vec3 artDisplace(vec3 p, float progress, float time, vec3 brush, float strength) {
-  float front=-2.3+4.4*progress;
-  float wave=exp(-14.0*pow(p.x-front,2.0))*sin(3.14159265*progress);
-  vec2 d=p.xy-brush.xy;
-  float falloff=exp(-dot(d,d)/.14)*strength;
-  return p+vec3(wave*.10*sin(p.y*9.0+time*1.5)-d.y*falloff*.24+sin(p.y*18.0+time*3.0)*falloff*.024,
-    wave*.12*cos(p.x*7.0+time)-wave*p.y*.12+d.x*falloff*.24+cos(p.x*17.0-time*2.0)*falloff*.024,
-    wave*.08*sin(p.y*8.0+time*2.0)+sin((p.x+p.y)*13.0+time*3.0)*falloff*.034);
+float artWave(vec3 p,float progress) {
+  float radius=length(p.xy+vec2(.2,0.));
+  return exp(-6.*pow(radius-(-.45+2.9*progress),2.))*sin(3.14159265*progress);
+}
+vec3 artDisplace(vec3 p,float progress,float time,float ambient,vec4 flow) {
+  float wave=artWave(p,progress);
+  vec3 n=vec3(
+    sin(p.y*1.7+p.z*1.1+time*.21+.35*sin(p.x*2.3-time*.11)),
+    cos(p.x*1.5-p.z*1.3-time*.19+.4*sin(p.y*2.1+time*.13)),
+    sin(p.x*2.1-p.y*1.6+time*.17+.3*cos(p.z*2.4+time*.1)));
+  float amplitude=.006*ambient+flow.w*.055+wave*.045;
+  return p+flow.xyz+n*amplitude*vec3(1.,1.,.7)+vec3((p.x+.2)*wave*.06,p.y*wave*.06,0.);
 }
 `;

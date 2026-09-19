@@ -114,8 +114,15 @@ try {
   await page.mouse.wheel(0, 600);
   await page.waitForTimeout(400);
   assert.ok(
+    Math.abs((await page.evaluate(() => scrollY)) - before) < 2,
+    'wheel over scene must zoom without scrolling the document',
+  );
+  await page.mouse.move(15, stage.y + stage.height / 2);
+  await page.mouse.wheel(0, 500);
+  await page.waitForTimeout(400);
+  assert.ok(
     (await page.evaluate(() => scrollY)) > before,
-    'wheel over scene must scroll the document',
+    'outside the scene, wheel still scrolls the page',
   );
   await page
     .getByRole('navigation')

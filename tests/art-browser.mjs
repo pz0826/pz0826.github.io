@@ -18,6 +18,7 @@ try {
     viewport: { width: 1440, height: 1000 },
   });
   const errors = [];
+  page.setDefaultTimeout(20000);
   page.on('pageerror', (error) => errors.push(error.message));
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(message.text());
@@ -43,6 +44,7 @@ try {
     null,
     { timeout: 60000 },
   );
+  console.log('Art room ready');
   await page.waitForTimeout(2500);
   const canvas = page.locator('.room-canvas canvas');
   const box = await canvas.boundingBox();
@@ -56,15 +58,16 @@ try {
     await page.waitForTimeout(50);
   }
   await page.screenshot({ path: '.preview/art/disturbance.png' });
+  console.log('Stroke captured');
   const hoverDraws = (await count()) - before;
   assert.ok(hoverDraws > 10, 'hover must animate the particle field');
   await page.waitForTimeout(2500);
-  const settled = await count();
+  const resting = await count();
   await page.waitForTimeout(1000);
-  assert.equal(
-    await count(),
-    settled,
-    'a stationary cursor must let the field settle',
+  const ambientDraws = (await count()) - resting;
+  assert.ok(
+    ambientDraws > 10 && ambientDraws < 50,
+    'ambient flow must continue at a bounded frame rate, without duplicate RAF chains',
   );
   await page.mouse.click(x, y);
   await page.waitForFunction(
@@ -72,6 +75,7 @@ try {
     null,
     { timeout: 15000 },
   );
+  console.log('Canvas picked');
   const picked = await page
     .locator('.room-experience')
     .getAttribute('data-selected');
@@ -79,10 +83,19 @@ try {
     name: 'Observe Plant',
     exact: true,
   });
-  await plant.click();
+  // Labels move with the fluid, so use a real pointer at the current bounds
+  // instead of Playwright's stationary-element actionability wait.
+  const plantBox = await plant.locator('span').boundingBox();
+  await page.mouse.click(
+    plantBox.x + plantBox.width / 2,
+    plantBox.y + plantBox.height / 2,
+  );
   await page.waitForFunction(
     () => document.querySelector('.room-experience')?.dataset.selected === '24',
+    null,
+    { timeout: 10000 },
   );
+  console.log('Plant selected');
   await page.waitForTimeout(800);
   const tagBefore = await plant.boundingBox();
   const outlineBefore = await page
@@ -103,16 +116,33 @@ try {
     outlineBefore,
   );
   await page.screenshot({ path: '.preview/art/orbit-selection.png' });
+  const zoomBefore = await page.locator('.hud-outline').getAttribute('points');
+  const scrollBefore = await page.evaluate(() => scrollY);
+  await page.mouse.move(x, y);
+  await page.mouse.wheel(0, -300);
+  await page.waitForTimeout(450);
+  assert.notEqual(
+    await page.locator('.hud-outline').getAttribute('points'),
+    zoomBefore,
+  );
+  assert.equal(await page.evaluate(() => scrollY), scrollBefore);
+
   await page
     .getByRole('button', { name: 'Reset camera and selection' })
     .click();
   await page.getByRole('button', { name: 'AI', exact: true }).click();
   await page.waitForTimeout(280);
   await page.screenshot({ path: '.preview/art/spread.png' });
-  await page.waitForTimeout(2500);
+  await page.waitForTimeout(5500);
   await page.screenshot({ path: '.preview/art/ai.png' });
   assert.deepEqual(errors, []);
-  const result = { passed: true, hoverDraws, settledDraws: 0, picked, errors };
+  const result = {
+    passed: true,
+    hoverDraws,
+    ambientDraws,
+    picked,
+    errors,
+  };
   await writeFile('.preview/art/result.json', JSON.stringify(result, null, 2));
   console.log(result);
 } finally {

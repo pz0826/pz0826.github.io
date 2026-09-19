@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import * as art from '../src/lib/scene/art-direction.ts';
+import { FlowField } from '../src/lib/scene/flow-field.ts';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
@@ -152,8 +153,7 @@ test('room crop rejects exterior debris and the art transform settles to origina
     const p = art.displace(local, {
       progress,
       time: 3,
-      brush: [0, 0, 0],
-      strength: 0,
+      ambient: 0,
     });
     for (let i = 0; i < 3; i++) assert.ok(Math.abs(p[i] - local[i]) < 1e-8);
   }
@@ -190,7 +190,15 @@ test('particle picking follows the disturbed center and ignores cropped geometry
     bytes[i * 32 + 27] = 255;
   }
   worker.onmessage!({ data: { type: 'init', buffer } });
-  const field = { progress: 0.5, time: 2, brush: [0.05, 0, 0.2], strength: 1 };
+  const fluid = new FlowField();
+  fluid.push(-0.2, 0, 0.1, 0, 0.05);
+  for (let i = 0; i < 30; i++) fluid.step(1 / 60);
+  const field = {
+    progress: 0.5,
+    time: 2,
+    ambient: 1,
+    flow: { values: fluid.values },
+  };
   const p = art.displace([0, 0, 0.2], field);
   worker.onmessage!({
     data: {

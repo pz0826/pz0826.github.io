@@ -1,5 +1,7 @@
 # Ways of seeing — installation pass
 
+The subsequent [flow-motion pass](flow-motion-v0.3.md) replaces the short cursor disturbance, elliptical mask, transition timing, and wheel behavior described below. The image-focus proposal remains unchanged.
+
 Baseline: local tag `homepage-v0.1`, commit `2ded66b`. This pass changes presentation; the source scene, hierarchy IDs, recorded queries, and research files are preserved.
 
 ## Implemented

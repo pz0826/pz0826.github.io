@@ -54,6 +54,7 @@ src/
     data.ts                Manifest and lazy binary-table loader
     state.ts               Selection, hierarchy, relations, query state
     art-direction.ts       Room frame, crop, camera and shared displacement
+    flow-field.ts          Momentum, advection, pressure and lingering wake
     art-modifier.ts        GPU particle material and Human/AI wave
     art-anchors.ts         Curated object landmarks and spatial bounds
     scene-hud.ts           Projected tags, selection envelope and links
@@ -74,13 +75,13 @@ Edit profile/publications in `src/content/`; add normal page sections in `src/co
 
 - Original Mip-NeRF 360 **room** demo: 1,064,578 ordered 2D Gaussians and five normalized hierarchy levels.
 - A softly cropped room floats in an elevated view, rendered as small Gaussian particles. Human/AI uses a spatial wave while keeping camera and selection; feature colors load by level.
-- Pointer movement briefly disturbs the field. Four floating object tags, a sampled selection envelope, and fine links follow the scene's camera and deformation.
+- Pointer speed and direction stir a persistent flow that decays over tens of seconds. Subtle ambient movement continues while visible. Four floating object tags, a sampled selection envelope, and fine links follow the scene's camera and deformation.
 - Clicking a surface picks a source Gaussian through a worker and selects its current-level cluster. Parent/part controls follow actual node IDs.
 - Nearby uses center distance; Similar uses saved CLIP affinities. These are geometric/feature links, not inferred relationship names.
 - Six featured recorded COR queries replay original cameras and intermediate selections. All ten cached final candidates are painted by their normalized scores. No live LLM endpoint is required.
-- Manual input cancels playback. Wheel scrolling always scrolls the page; touch devices explicitly enter/exit Explore. Offscreen/hidden scenes stop requesting frames. Static content and the room poster remain usable on load/WebGL failure.
+- Manual input cancels playback. Wheel input over the room zooms; outside it the page scrolls. Touch devices explicitly enter/exit Explore. Offscreen/hidden scenes stop requesting frames. Static content and the room poster remain usable on load/WebGL failure.
 
-The browser export uses DC RGB and 8-bit quaternions in `.splat`, with zero local Z scale. The current artistic modifier turns these into small isotropic particles at render time. It does not retain degree-3 view-dependent spherical harmonics, and is not pixel-identical to the original gsplat renderer. It retains all Gaussians and IDs. Gzip compression is lossless; browser-side `DecompressionStream` decodes assets before use. See [installation notes and motion proposal](docs/art-direction-v0.2.md) for the current presentation and [baseline browser notes](docs/browser-demo-2026-09-20.md) for the original data contract.
+The browser export uses DC RGB and 8-bit quaternions in `.splat`, with zero local Z scale. The current artistic modifier turns these into small isotropic particles at render time. It does not retain degree-3 view-dependent spherical harmonics, and is not pixel-identical to the original gsplat renderer. It retains all Gaussians and IDs. Gzip compression is lossless; browser-side `DecompressionStream` decodes assets before use. See [current flow and interaction notes](docs/flow-motion-v0.3.md), [installation notes and cover-motion proposal](docs/art-direction-v0.2.md) and [baseline browser notes](docs/browser-demo-2026-09-20.md) for the original data contract.
 
 Regenerate assets on the research machine:
 

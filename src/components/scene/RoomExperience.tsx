@@ -301,7 +301,7 @@ export default function RoomExperience() {
                 : 'A room, remembered'}
               <span className="desktop-hint">
                 {' '}
-                · Move to disturb · Drag to orbit
+                · Move to stir · Drag to orbit · Scroll to zoom
               </span>
             </span>
             <div className="camera-controls">

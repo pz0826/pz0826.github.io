@@ -184,10 +184,21 @@ test('material wave responds early in both directions and restores original huma
     'reverse transition reaches outer geometry promptly',
   );
   const sizes = art.splatScales(0.013, 0.009, 0, [0, 0, 0.1], 0);
-  assert.deepEqual(sizes, [0.013, 0.009, 0]);
+  assert.ok(Math.abs(sizes[0] - 0.013) < 1e-10);
+  assert.ok(Math.abs(sizes[1] - 0.009) < 1e-10);
+  assert.ok(sizes[2] > 0 && sizes[2] <= 0.0003 + 1e-12);
+  for (let t = 0; t <= 1; t += 0.001) {
+    const scale = art.splatScales(0.013, 0.009, 0, [0, 0, 0.1], t);
+    assert.ok(scale.every((s) => Number.isFinite(s) && s > 0));
+  }
   const ai = art.splatScales(0.013, 0.009, 0, [0, 0, 0.1], 1);
   assert.ok(ai.every((v) => Math.abs(v - ai[0]) < 1e-9));
   assert.ok(ai[0] < 0.009);
+  const outlier = art.splatScales(0.5, 0.001, 0, [0, 0, 0.1], 0);
+  assert.ok(
+    outlier[0] <= 0.016 + 1e-10,
+    'long reconstruction splats cannot become needles',
+  );
 });
 
 test('particle picking follows the disturbed center and ignores cropped geometry', () => {

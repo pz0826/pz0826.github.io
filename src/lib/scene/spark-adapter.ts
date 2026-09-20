@@ -16,6 +16,7 @@ interface Options {
   hud: HTMLElement;
   onNode: (id: number, level: number) => void;
   data: SceneData;
+  tables: SceneTables;
   signal: AbortSignal;
   onSelect: (node: number | null, index: number) => void;
   onManual: () => void;
@@ -68,14 +69,18 @@ export class SparkAdapter implements SceneAdapter {
   private pointerDown?: { x: number; y: number };
 
   private constructor(private options: Options) {
-    const { host, data, signal } = options;
-    this.tables = new SceneTables(signal, data.manifest.count);
+    const { host, data } = options;
+    this.tables = options.tables;
     this.renderer = new THREE.WebGLRenderer({
       antialias: false,
       alpha: true,
       powerPreference: 'high-performance',
     });
     this.renderer.setClearColor(0x090909, 1);
+    // Background clearing must use the active render target's color space.
+    // RenderPass clears before scene rendering, so a cached screen-space clear
+    // color would otherwise become gray after OutputPass.
+    this.scene.background = new THREE.Color(0x090909);
     this.renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
     this.renderer.domElement.setAttribute(
       'aria-label',
@@ -85,10 +90,10 @@ export class SparkAdapter implements SceneAdapter {
     host.append(this.renderer.domElement);
     this.spark = new SparkRenderer({
       renderer: this.renderer,
-      enable2DGS: true,
+      enable2DGS: false,
       accumExtSplats: true,
       sortRadial: false,
-      preBlurAmount: 0,
+      preBlurAmount: 0.15,
       blurAmount: 0,
       onDirty: () => this.invalidate(),
     });
@@ -167,7 +172,6 @@ export class SparkAdapter implements SceneAdapter {
       this.renderer.setSize(width, height);
       this.glow.resize(width, height);
       this.flow.setViewport(width, height);
-      this.flow.clear();
       this.camera.aspect = width / height;
       if (this.homeView) this.placeHome();
       this.camera.updateProjectionMatrix();
@@ -284,7 +288,6 @@ export class SparkAdapter implements SceneAdapter {
   }
 
   moveTo(pose: SceneCamera, animate = true) {
-    this.flow.clear();
     this.homeView = false;
     const [w, x, y, z] = pose.wxyz;
     const q = new THREE.Quaternion(x, y, z, w).multiply(
@@ -344,7 +347,6 @@ export class SparkAdapter implements SceneAdapter {
     this.invalidate();
   }
   home() {
-    this.flow.clear();
     this.homeView = true;
     this.placeHome();
   }
@@ -371,7 +373,6 @@ export class SparkAdapter implements SceneAdapter {
       ),
     );
     this.camera.position.copy(this.controls.target).add(offset);
-    this.flow.clear();
     this.invalidate();
   }
   private onHudWheel = (event: WheelEvent) => {
@@ -390,12 +391,12 @@ export class SparkAdapter implements SceneAdapter {
     );
   };
   private onCameraChange = () => {
-    this.flow.clear();
     this.stroke = undefined;
     this.invalidate();
   };
   private updateFieldFrame() {
     const m = this.camera.matrixWorld.elements;
+    const previous = this.flowFrame;
     this.flowFrame = {
       eye: toRoom(...this.camera.position.toArray()),
       right: toRoom(m[0], m[1], m[2]),
@@ -405,6 +406,17 @@ export class SparkAdapter implements SceneAdapter {
       aspect: this.camera.aspect,
     };
     const f = this.flowFrame;
+    if (
+      previous &&
+      (previous.eye.some((v, i) => Math.abs(v - f.eye[i]) > 1e-8) ||
+        previous.forward.some((v, i) => Math.abs(v - f.forward[i]) > 1e-8) ||
+        previous.up.some((v, i) => Math.abs(v - f.up[i]) > 1e-8) ||
+        previous.tanFov !== f.tanFov ||
+        previous.aspect !== f.aspect)
+    ) {
+      this.flow.reproject(previous, f, ART.target);
+      this.flowTexture.needsUpdate = true;
+    }
     this.field.eye.value.set(...(f.eye as [number, number, number]));
     this.field.right.value.set(...(f.right as [number, number, number]));
     this.field.up.value.set(...(f.up as [number, number, number]));

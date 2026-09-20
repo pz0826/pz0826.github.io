@@ -91,3 +91,42 @@ test('same screen gesture has the same projected displacement at different zoom 
     ) < 1e-5,
   );
 });
+
+test('camera pan and zoom carry a live wake rather than clearing its state', () => {
+  const f = new FlowField();
+  f.setViewport(1440, 700);
+  f.push(-0.08, 0, 0.08, 0, 0.04);
+  advance(f, 0.3);
+  const before = peak(f);
+  const previous = {
+    eye: [0, 0, 4],
+    right: [1, 0, 0],
+    up: [0, 1, 0],
+    forward: [0, 0, -1],
+    tanFov: 0.3,
+    aspect: 2,
+  };
+  const next = { ...previous, eye: [0.2, 0, 3] };
+  f.reproject(previous, next, [0, 0, 0]);
+  const after = peak(f);
+  assert.ok(
+    after.energy > before.energy * 0.65,
+    'camera motion preserves wake energy',
+  );
+  assert.ok(
+    after.distance > before.distance * 0.8,
+    'camera motion preserves displacement',
+  );
+  const atWorldOrigin = sampleFlow(
+    { values: f.values },
+    -0.2 / (3 * 0.3 * 2),
+    0,
+  );
+  assert.ok(
+    atWorldOrigin[3] > before.energy * 0.6,
+    'wake follows the same room location',
+  );
+  const unchanged = f.values.slice();
+  f.reproject(next, next, [0, 0, 0]);
+  assert.ok(f.values.every((v, i) => Math.abs(v - unchanged[i]) < 1e-6));
+});

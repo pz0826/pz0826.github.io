@@ -1,5 +1,7 @@
 # Room focus and material pass
 
+Historical v0.4 description. See [v0.5 corrections](material-continuity-v0.5.md), particularly the corrected color-space explanation and camera-wake continuity.
+
 Preserved baseline: `homepage-v0.3` at `baacf1e`. Research geometry, source ordering, labels and recorded query data remain unchanged.
 
 ## Presentation

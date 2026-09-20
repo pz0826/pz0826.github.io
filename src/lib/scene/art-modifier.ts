@@ -15,7 +15,7 @@ export function createArtField(
     up = dyno.dynoVec3(new THREE.Vector3(0, 1, 0)),
     forward = dyno.dynoVec3(new THREE.Vector3(0, 0, -1));
   const lens = dyno.dynoVec2(new THREE.Vector2(0.3, 2)),
-    emission = dyno.dynoFloat(1.5);
+    emission = dyno.dynoFloat(0.22);
   const flowTable = dyno.dynoSampler2D(flowTexture);
   const dim = dyno.dynoFloat(1),
     tint = dyno.dynoVec3(new THREE.Vector3(0.8, 0.93, 1));
@@ -106,11 +106,14 @@ export function createArtField(
           `vec3 moved=artDisplace(p,${i.progress},${i.time},${i.ambient},flow,${i.right},${i.up},depth,${i.lens}.x,${i.lens}.y);`,
           `${o.gsplat}.center=transpose(${i.frame})*moved;`,
           `float size=clamp(min(${i.gsplat}.scales.x,${i.gsplat}.scales.y)*${ART.aiScale},${ART.minScale},${ART.maxScale});`,
-          `${o.gsplat}.scales=mix(${i.gsplat}.scales,vec3(size),blend)*(1.-.25*wave);`,
-          `vec3 human=${i.gsplat}.rgba.rgb;`,
-          `vec3 base=mix(human,feature.rgb*.90+.04,blend);`,
-          `${o.gsplat}.rgba.rgb=mix(base*(feature.a>0.0?1.0:${i.dim}),${i.tint},feature.a*.7)+${i.tint}*feature.a*${i.emission}+wave*.08;`,
-          `${o.gsplat}.rgba.a*=crop*mix(artFocus(p,${i.eye},${i.forward}),1.,min(1.,feature.a*2.))* .98;`,
+          `vec3 nativeScale=${i.gsplat}.scales;`,
+          `nativeScale.z=max(nativeScale.z,min(.0003,min(nativeScale.x,nativeScale.y)*.04));`,
+          `nativeScale.xy=min(nativeScale.xy,vec2(min(.05,max(.001,min(nativeScale.x,nativeScale.y)*16.))));`,
+          `${o.gsplat}.scales=exp(mix(log(max(nativeScale,vec3(.000001))),vec3(log(size)),blend))*(1.-.25*wave);`,
+          `vec3 human=${i.gsplat}.rgba.rgb*1.03+.025;`,
+          `vec3 base=mix(human,feature.rgb*.92+.035,blend);`,
+          `${o.gsplat}.rgba.rgb=mix(base*(feature.a>0.0?1.0:${i.dim}),${i.tint},feature.a*.35)+${i.tint}*feature.a*${i.emission}+wave*.04;`,
+          `${o.gsplat}.rgba.a*=crop*mix(artFocus(p,${i.eye},${i.forward}),1.,feature.a*.25)* .98;`,
         ],
       }).outputs.gsplat,
     }),

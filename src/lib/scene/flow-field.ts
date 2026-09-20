@@ -71,8 +71,81 @@ export class FlowField {
   private radiusX = 0.04;
   private radiusY = 0.07;
   setViewport(width: number, height: number) {
-    this.radiusX = (2 * 24) / width;
-    this.radiusY = (2 * 24) / height;
+    this.radiusX = (2 * 36) / width;
+    this.radiusY = (2 * 36) / height;
+  }
+  /** Carry the wake with the room when the camera moves. A focal-plane
+   * reprojection preserves momentum and displacement instead of resetting them.
+   * This is a 2.5D approximation; foreground/background share the focal plane. */
+  reproject(previous: FlowFrame, next: FlowFrame, focus: readonly number[]) {
+    const dot = (a: readonly number[], b: readonly number[]) =>
+      a.reduce((s, v, i) => s + v * b[i], 0);
+    const distance = dot(
+      focus.map((v, i) => v - next.eye[i]),
+      previous.forward,
+    );
+    this.nextValues.fill(0);
+    this.nextU.fill(0);
+    this.nextV.fill(0);
+    for (let y = 1; y < H - 1; y++) {
+      for (let x = 1; x < W - 1; x++) {
+        const nx = FLOW.minX + x * hx,
+          ny = FLOW.minY + y * hy;
+        const ray = next.forward.map(
+          (v, i) =>
+            v +
+            next.tanFov * (next.right[i] * nx * next.aspect + next.up[i] * ny),
+        );
+        const denominator = dot(ray, previous.forward);
+        if (Math.abs(denominator) < 1e-4) continue;
+        const depth = distance / denominator;
+        if (depth <= 0.05) continue;
+        const point = next.eye.map((v, i) => v + ray[i] * depth);
+        const oldDelta = point.map((v, i) => v - previous.eye[i]);
+        const oldDepth = dot(oldDelta, previous.forward);
+        if (oldDepth <= 0.05) continue;
+        const ox =
+          dot(oldDelta, previous.right) /
+          (oldDepth * previous.tanFov * previous.aspect);
+        const oy = dot(oldDelta, previous.up) / (oldDepth * previous.tanFov);
+        if (Math.abs(ox) > 1 || Math.abs(oy) > 1) continue;
+        const gx = (ox + 1) / hx,
+          gy = (oy + 1) / hy,
+          index = y * W + x;
+        // Jacobian of the perspective projection maps vectors, not just positions.
+        const transform = (u: number, v: number) => {
+          const world = previous.right.map(
+            (r, i) =>
+              oldDepth *
+              previous.tanFov *
+              (r * u * previous.aspect + previous.up[i] * v),
+          );
+          const dz = dot(world, next.forward);
+          return [
+            (dot(world, next.right) / (next.tanFov * next.aspect) - nx * dz) /
+              depth,
+            (dot(world, next.up) / next.tanFov - ny * dz) / depth,
+          ];
+        };
+        const velocity = transform(
+          sample(this.u, gx, gy),
+          sample(this.v, gx, gy),
+        );
+        const displacement = transform(
+          sample(this.values, gx, gy, 4, 0),
+          sample(this.values, gx, gy, 4, 1),
+        );
+        this.nextU[index] = velocity[0];
+        this.nextV[index] = velocity[1];
+        this.nextValues[index * 4] = displacement[0];
+        this.nextValues[index * 4 + 1] = displacement[1];
+        this.nextValues[index * 4 + 2] = sample(this.values, gx, gy, 4, 2);
+        this.nextValues[index * 4 + 3] = sample(this.values, gx, gy, 4, 3);
+      }
+    }
+    [this.u, this.nextU] = [this.nextU, this.u];
+    [this.v, this.nextV] = [this.nextV, this.v];
+    this.values.set(this.nextValues);
   }
   clear() {
     for (const a of [

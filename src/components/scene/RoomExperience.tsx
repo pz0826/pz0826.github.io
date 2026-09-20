@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useRef, useState } from 'react';
-import { loadSceneData } from '../../lib/scene/data';
+import { loadSceneData, SceneTables } from '../../lib/scene/data';
 import {
   initialState,
   nodeAtLevel,
@@ -63,8 +63,23 @@ export default function RoomExperience() {
     let observer: IntersectionObserver | undefined;
     setStatus('loading');
     (async () => {
-      const [sceneData, { SparkAdapter }] = await Promise.all([
-        loadSceneData(abort.signal),
+      // Start the large geometry transfer as soon as the manifest arrives,
+      // while the browser is still downloading/parsing the renderer module.
+      const sceneRequest = loadSceneData(abort.signal).then(
+        async (sceneData) => {
+          const tables = new SceneTables(
+            abort.signal,
+            sceneData.manifest.count,
+          );
+          await Promise.all([
+            tables.bytes(sceneData.manifest.geometry),
+            tables.level(1),
+          ]);
+          return { sceneData, tables };
+        },
+      );
+      const [{ sceneData, tables }, { SparkAdapter }] = await Promise.all([
+        sceneRequest,
         import('../../lib/scene/spark-adapter'),
       ]);
       abort.signal.throwIfAborted();
@@ -78,6 +93,7 @@ export default function RoomExperience() {
           dispatch({ type: 'select', id, level });
         },
         data: sceneData,
+        tables,
         signal: abort.signal,
         onSelect: (id, index) => {
           picked.current = index;

@@ -103,7 +103,7 @@ export function focusWeight(p: readonly number[], field: FieldState) {
     p[1] / 1.05,
     (p[2] - 0.15) / 1.05,
   );
-  let weight = 1 - 0.72 * smooth(0.62, 1.15, radius);
+  let weight = 1 - 0.38 * smooth(0.78, 1.25, radius);
   const frame = field.flow?.frame;
   if (frame) {
     const depth = p.reduce(
@@ -115,7 +115,7 @@ export function focusWeight(p: readonly number[], field: FieldState) {
       0,
     );
     weight *=
-      (1 - 0.65 * smooth(0.65, 1.9, Math.abs(depth - focus))) *
+      (1 - 0.28 * smooth(0.9, 2.2, Math.abs(depth - focus))) *
       smooth(0.04, 0.28, depth);
   }
   return weight;
@@ -143,7 +143,7 @@ export function displace(
     fy = d.reduce((s, v, i) => s + v * frame.up[i], 0) / (depth * frame.tanFov);
   }
   const flow = sampleFlow(field.flow, fx, fy);
-  const gate = smooth(0.002, 0.035, flow[3]);
+  const gate = 0.5 * smooth(0, 0.02, flow[3]);
   const shift = frame
     ? [0, 1, 2].map(
         (i) =>
@@ -152,7 +152,7 @@ export function displace(
           (frame.right[i] * flow[0] * frame.aspect + frame.up[i] * flow[1]),
       )
     : [flow[0], flow[1], flow[2]];
-  const flowAmplitude = frame ? depth * frame.tanFov * 0.01 : 0.018;
+  const flowAmplitude = frame ? depth * frame.tanFov * 0.005 : 0.009;
   const wave = revealWave(p, progress);
   const n = [
     Math.sin(
@@ -188,7 +188,22 @@ export function splatScales(
   const blend = appearanceBlend(p, progress),
     small = pointScale(sx, sy),
     wave = revealWave(p, progress);
-  return [sx, sy, sz].map((v) => (v + (small - v) * blend) * (1 - 0.25 * wave));
+  // Stay on the covariance projection path even at the Human endpoint. A tiny
+  // thickness prevents a zero/nonzero switch into Spark's oriented-quad path.
+  // Guard long reconstruction outliers without inflating ordinary surfaces.
+  const limit = Math.min(0.05, Math.max(0.001, Math.min(sx, sy) * 16));
+  const native = [
+    Math.min(sx, limit),
+    Math.min(sy, limit),
+    Math.max(sz, Math.min(0.0003, Math.min(sx, sy) * 0.04)),
+  ];
+  return native.map(
+    (v) =>
+      Math.exp(
+        Math.log(Math.max(v, 1e-6)) * (1 - blend) + Math.log(small) * blend,
+      ) *
+      (1 - 0.25 * wave),
+  );
 }
 export const FIELD_GLSL = `
 float artFront(float t){return -.15+2.25*(t+.09*sin(6.2831853*t));}
@@ -208,7 +223,7 @@ float artInteriorCut(vec3 p){
 float artFocus(vec3 p,vec3 eye,vec3 forward){
   float r=length((p-vec3(-.2,0.,.15))/vec3(2.,1.05,1.05));
   float depth=dot(p-eye,forward),focus=dot(vec3(-.2,0.,.23)-eye,forward);
-  return (1.-.72*smoothstep(.62,1.15,r))*(1.-.65*smoothstep(.65,1.9,abs(depth-focus)))*smoothstep(.04,.28,depth);
+  return (1.-.38*smoothstep(.78,1.25,r))*(1.-.28*smoothstep(.9,2.2,abs(depth-focus)))*smoothstep(.04,.28,depth);
 }
 vec3 artDisplace(vec3 p,float progress,float time,float ambient,vec4 flow,vec3 right,vec3 up,float depth,float tanFov,float aspect) {
   float wave=artWave(p,progress);
@@ -216,8 +231,8 @@ vec3 artDisplace(vec3 p,float progress,float time,float ambient,vec4 flow,vec3 r
     sin(p.y*1.7+p.z*1.1+time*.21+.35*sin(p.x*2.3-time*.11)),
     cos(p.x*1.5-p.z*1.3-time*.19+.4*sin(p.y*2.1+time*.13)),
     sin(p.x*2.1-p.y*1.6+time*.17+.3*cos(p.z*2.4+time*.1)));
-  float amplitude=.014*ambient+flow.w*depth*tanFov*.01+wave*.045;
-  vec3 shift=depth*tanFov*(right*flow.x*aspect+up*flow.y)*smoothstep(.002,.035,flow.w);
+  float amplitude=.014*ambient+flow.w*depth*tanFov*.005+wave*.045;
+  vec3 shift=depth*tanFov*(right*flow.x*aspect+up*flow.y)*.5*smoothstep(0.,.02,flow.w);
   return p+shift+n*amplitude*vec3(1.,1.,.7)+vec3((p.x+.2)*wave*.06,p.y*wave*.06,0.);
 }
 `;

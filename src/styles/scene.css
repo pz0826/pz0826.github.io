@@ -431,9 +431,10 @@
   fill: none;
   stroke: #bacbd0;
   stroke-width: 0.8;
-  stroke-dasharray: 0.1 3;
+  stroke-dasharray: 3 3;
   stroke-linecap: round;
-  opacity: 0.6;
+  opacity: 0.85;
+  filter: drop-shadow(0 1px 1px #090909);
 }
 .object-tag {
   position: absolute;
@@ -450,6 +451,15 @@
   opacity: 0.75;
   transition: opacity 0.25s;
   white-space: nowrap;
+}
+.object-tag[hidden] {
+  display: none;
+}
+.object-tag[data-occluded='true'] {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none;
+  transition: none;
 }
 .object-tag i {
   width: 4px;
@@ -504,89 +514,118 @@
   color: #bec9cb;
 }
 
-/* A quiet lens-like scale; kept outside the room's canvas mask. */
+/* Fixed index, cylindrical moving ribs, and a full-size pointer target. */
 .feature-dial {
   position: absolute;
   z-index: 4;
   right: 3vw;
   top: 50%;
   transform: translateY(-50%);
-  width: 65px;
+  width: 44px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  color: #9a9a93;
+  align-items: center;
+  gap: 8px;
+  color: #c0c0b5;
   font: 10px var(--mono);
   user-select: none;
 }
-.feature-dial > .eyebrow {
-  font-size: 9px;
-  letter-spacing: 0.04em;
-}
 .dial-end {
-  font-size: 9px;
-  color: #777772;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 32px;
+  padding: 0;
+  color: #c0c0b5;
+  background: transparent !important;
 }
-.dial-scale {
-  height: 200px;
+.dial-end svg {
+  display: block;
+  width: 24px;
+  height: 32px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+}
+.dial-end:disabled {
+  opacity: 0.42;
+}
+.dial-end:hover:not(:disabled),
+.dial-end:focus-visible {
+  color: #fff;
+}
+.dial-arrow {
+  stroke-width: 1.4;
+  --arrow-travel: -3px;
+}
+.dial-end-flower .dial-arrow {
+  --arrow-travel: 3px;
+}
+.dial-end:not(:disabled) .dial-arrow {
+  animation: dial-invite 5.2s infinite;
+}
+@keyframes dial-invite {
+  0%,
+  64%,
+  100% {
+    transform: translateY(0);
+  }
+  74% {
+    transform: translateY(var(--arrow-travel));
+  }
+  85% {
+    transform: translateY(0);
+  }
+  91% {
+    transform: translateY(calc(var(--arrow-travel) * 0.18));
+  }
+}
+.dial-end:not(:disabled) .dial-arrow {
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.feature-dial:has(.dial-wheel[data-dragging]) .dial-arrow {
+  animation: none;
+}
+.dial-wheel {
+  width: 44px;
+  height: 208px;
   position: relative;
+  touch-action: none;
+  cursor: grab;
+}
+.dial-wheel[data-dragging] {
+  cursor: grabbing;
+}
+.dial-wheel:focus,
+.feature-dial button:focus {
+  outline: none;
+}
+.dial-wheel:focus-visible .dial-needle,
+.feature-dial button:focus-visible svg {
+  filter: drop-shadow(0 0 2px #fff9);
 }
 .dial-ticks {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 17px;
-  background: repeating-linear-gradient(
-    to bottom,
-    #62625c 0 1px,
-    transparent 1px 10px
-  );
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  stroke: #9b9b92;
+  stroke-width: 1;
+}
+.dial-ticks .major-tick {
+  stroke: #d1d1c6;
+}
+.dial-ticks .current-tick {
+  stroke: #fffdf1;
+  stroke-width: 1.5;
 }
 .dial-needle {
-  position: absolute;
-  left: -6px;
-  width: 30px;
-  height: 1px;
-  top: var(--level-position);
-  background: #f0eee3;
-  box-shadow: 0 0 7px #ffffff25;
-  transition: top 0.35s cubic-bezier(0.2, 0.7, 0.3, 1);
-}
-.dial-scale input {
-  position: absolute;
-  left: -10px;
-  top: -10px;
-  width: 40px;
-  height: calc(100% + 20px);
-  writing-mode: vertical-lr;
-  direction: ltr;
-  opacity: 0;
-  margin: 0;
-  cursor: ns-resize;
-}
-.dial-scale:has(input:focus-visible) {
-  outline: 1px solid #777;
-  outline-offset: 9px;
-}
-.dial-labels {
-  position: absolute;
-  inset: -12px 0 -12px 27px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.dial-labels button {
-  font: 10px var(--mono);
-  height: 24px;
-  width: 30px;
-  color: #777772;
-  text-align: center;
-  background: transparent;
-}
-.dial-labels button[aria-pressed='true'] {
-  color: #f0eee3;
-}
-.feature-dial:has(input:disabled) {
-  opacity: 0.55;
+  fill: none;
+  stroke: #fffdf1;
+  stroke-width: 1.2;
 }
 .scene-tools {
   justify-content: flex-end;
@@ -594,16 +633,45 @@
 @media (max-width: 700px) {
   .feature-dial {
     right: 4vw;
-    width: 50px;
-    gap: 9px;
+    gap: 5px;
   }
-  .dial-scale {
-    height: 140px;
+  .dial-wheel {
+    height: 168px;
   }
-  .dial-ticks {
-    background-size: 100% 7px;
-  }
-  .dial-labels {
-    left: 20px;
-  }
+}
+
+/* Compact backing supports contrast without changing control hit areas. */
+.feature-dial,
+.view-switch,
+.camera-controls,
+.scene-bottom > .eyebrow {
+  isolation: isolate;
+}
+.camera-controls,
+.scene-bottom > .eyebrow {
+  position: relative;
+}
+.feature-dial::before,
+.view-switch::before,
+.camera-controls::before,
+.scene-bottom > .eyebrow::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0 -2px;
+  background: #09090990;
+  pointer-events: none;
+}
+.feature-dial::before {
+  /* 3px arrow travel + stroke + at least 8px of clear end padding. */
+  inset: -12px 4px;
+}
+.feature-dial {
+  color: #c0c0b5;
+}
+.scene-bottom > .eyebrow {
+  color: #aaa99f;
+}
+.camera-controls button {
+  color: #aaa99f;
 }

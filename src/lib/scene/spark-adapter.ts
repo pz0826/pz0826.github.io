@@ -4,15 +4,10 @@ import { SparkRenderer, SplatMesh } from '@sparkjsdev/spark';
 import { withinAnchor } from './art-anchors';
 import { SceneHud } from './scene-hud';
 import { createArtField } from './art-modifier';
-import {
-  ART,
-  ROOM_AXES,
-  fromRoom,
-  toRoom,
-  appearanceBlend,
-} from './art-direction';
+import { ART, ROOM_AXES, fromRoom, toRoom } from './art-direction';
 import { FLOW, FlowField, type FlowFrame } from './flow-field';
 import { SelectionGlow } from './selection-glow';
+import { LevelTransitions } from './level-transitions';
 import { SceneTables } from './data';
 import { initialState, nodeAtLevel, queryWeights } from './state';
 import type { SceneAdapter, SceneCamera, SceneData, SceneState } from './types';
@@ -42,9 +37,12 @@ export class SparkAdapter implements SceneAdapter {
   private worker: Worker;
   private overlay: THREE.DataTexture;
   private pixels: Uint8Array;
-  private previousPixels: Uint8Array;
-  private previousOverlay: THREE.DataTexture;
-  private colorLevel?: number;
+  private levelPixels: Uint8Array<ArrayBuffer>;
+  private levelTexture: THREE.DataArrayTexture;
+  private loadedLevels = new Set<number>();
+  private levels = new LevelTransitions();
+  private wavePixels = new Float32Array(16 * 4);
+  private wavesTexture: THREE.DataTexture;
   private state = initialState;
   private version = 0;
   private disposed = false;
@@ -152,16 +150,26 @@ export class SparkAdapter implements SceneAdapter {
     );
     this.overlay.minFilter = this.overlay.magFilter = THREE.NearestFilter;
     this.overlay.needsUpdate = true;
-    this.previousPixels = this.pixels.slice();
-    this.previousOverlay = new THREE.DataTexture(
-      this.previousPixels,
+    this.levelPixels = new Uint8Array(this.pixels.length * 5);
+    this.levelTexture = new THREE.DataArrayTexture(
+      this.levelPixels,
       WIDTH,
-      this.previousPixels.length / 4 / WIDTH,
-      THREE.RGBAFormat,
+      this.pixels.length / 4 / WIDTH,
+      5,
     );
-    this.previousOverlay.minFilter = this.previousOverlay.magFilter =
+    this.levelTexture.minFilter = this.levelTexture.magFilter =
       THREE.NearestFilter;
-    this.previousOverlay.needsUpdate = true;
+    this.levelTexture.needsUpdate = true;
+    this.wavesTexture = new THREE.DataTexture(
+      this.wavePixels,
+      16,
+      1,
+      THREE.RGBAFormat,
+      THREE.FloatType,
+    );
+    this.wavesTexture.minFilter = this.wavesTexture.magFilter =
+      THREE.NearestFilter;
+    this.wavesTexture.needsUpdate = true;
     this.flowTexture = new THREE.DataTexture(
       this.flow.values,
       FLOW.width,
@@ -175,7 +183,8 @@ export class SparkAdapter implements SceneAdapter {
     this.field = createArtField(
       this.overlay,
       this.flowTexture,
-      this.previousOverlay,
+      this.levelTexture,
+      this.wavesTexture,
     );
     this.field.ambient.value = this.reducedMotion ? 0 : 1;
     this.worker = new Worker(new URL('./picking.worker.ts', import.meta.url), {
@@ -278,38 +287,26 @@ export class SparkAdapter implements SceneAdapter {
     await this.hud?.select(state);
     if (version !== this.version || this.disposed) return;
     const selected = state.selected;
-    const changedLevel =
-      !!table.pca &&
-      this.colorLevel !== undefined &&
-      this.colorLevel !== state.level;
-    if (changedLevel) {
-      // A rapid second change starts from the currently visible mixture.
-      if (this.field.levelProgress.value < 1) {
+    if (table.pca) {
+      if (!this.loadedLevels.has(state.level)) {
+        const offset = (state.level - 1) * this.pixels.length;
         for (let i = 0; i < this.options.data.manifest.count; i++) {
-          const blend = appearanceBlend(
-            toRoom(
-              this.geometry[i * 8],
-              this.geometry[i * 8 + 1],
-              this.geometry[i * 8 + 2],
-            ),
-            this.field.levelProgress.value,
-          );
-          for (let c = 0; c < 3; c++) {
-            const p = i * 4 + c;
-            this.previousPixels[p] +=
-              (this.pixels[p] - this.previousPixels[p]) * blend;
-          }
+          this.levelPixels[offset + i * 4] = table.pca[i * 3];
+          this.levelPixels[offset + i * 4 + 1] = table.pca[i * 3 + 1];
+          this.levelPixels[offset + i * 4 + 2] = table.pca[i * 3 + 2];
         }
-      } else this.previousPixels.set(this.pixels);
-      this.previousOverlay.needsUpdate = true;
+        this.loadedLevels.add(state.level);
+        this.levelTexture.addLayerUpdate(state.level - 1);
+        this.levelTexture.needsUpdate = true;
+      }
+      this.levels.choose(
+        state.level,
+        state.view === 'ai' && !this.reducedMotion,
+      );
+      this.syncLevelWaves();
     }
     for (let i = 0; i < this.options.data.manifest.count; i++) {
       const p = i * 4;
-      if (table.pca) {
-        this.pixels[p] = table.pca[i * 3];
-        this.pixels[p + 1] = table.pca[i * 3 + 1];
-        this.pixels[p + 2] = table.pca[i * 3 + 2];
-      }
       this.pixels[p + 3] = weights
         ? weights[i]
         : selected !== null &&
@@ -325,10 +322,6 @@ export class SparkAdapter implements SceneAdapter {
           ? 115
           : 0;
     }
-    if (table.pca) this.colorLevel = state.level;
-    if (changedLevel)
-      this.field.levelProgress.value =
-        state.view === 'ai' && !this.reducedMotion ? 0 : 1;
     this.field.dim.value = state.complete && query ? 0.8 : 1;
     if (state.complete && query) this.field.tint.value.set(1, 0, 0);
     else this.field.tint.value.set(0.75, 0.9, 1);
@@ -337,6 +330,26 @@ export class SparkAdapter implements SceneAdapter {
     this.revealTarget = state.view === 'ai' ? 1 : 0;
     if (this.reducedMotion) this.field.progress.value = this.revealTarget;
     this.invalidate();
+  }
+
+  private syncLevelWaves() {
+    const count = this.levels.waves.length;
+    if (count * 4 > this.wavePixels.length) {
+      this.wavePixels = new Float32Array(4 * 2 ** Math.ceil(Math.log2(count)));
+      this.wavesTexture.dispose();
+      this.wavesTexture.image = {
+        data: this.wavePixels,
+        width: this.wavePixels.length / 4,
+        height: 1,
+      };
+    }
+    this.levels.waves.forEach((wave, i) => {
+      this.wavePixels[i * 4] = wave.level - 1;
+      this.wavePixels[i * 4 + 1] = wave.progress;
+    });
+    this.wavesTexture.needsUpdate = true;
+    this.field.levelCount.value = count;
+    this.field.baseLevel.value = this.levels.base - 1;
   }
 
   moveTo(pose: SceneCamera, animate = true) {
@@ -549,7 +562,7 @@ export class SparkAdapter implements SceneAdapter {
       type: 'pick',
       field: {
         progress: this.field.progress.value,
-        levelProgress: this.field.levelProgress.value,
+        levelWaves: this.levels.progresses(),
         time: this.field.time.value,
         ambient: this.field.ambient.value,
         flow: { values: this.flow.values, frame: this.flowFrame },
@@ -612,12 +625,11 @@ export class SparkAdapter implements SceneAdapter {
       if (Math.abs(this.field.progress.value - this.revealTarget) < 0.001)
         this.field.progress.value = this.revealTarget;
     }
-    const changingLevel = this.field.levelProgress.value < 1;
-    if (changingLevel)
-      this.field.levelProgress.value = Math.min(
-        1,
-        this.field.levelProgress.value + dt / 3.2,
-      );
+    const changingLevel = this.levels.waves.length > 0;
+    if (changingLevel) {
+      this.levels.advance(dt);
+      this.syncLevelWaves();
+    }
     if (revealing || changingLevel || fieldActive) this.field.time.value += dt;
     if (this.redraw || moving || revealing || changingLevel || fieldActive) {
       this.redraw = false;
@@ -637,7 +649,7 @@ export class SparkAdapter implements SceneAdapter {
       this.glow.render(this.state.selected !== null);
       this.hud?.update(this.camera, {
         progress: this.field.progress.value,
-        levelProgress: this.field.levelProgress.value,
+        levelWaves: this.levels.progresses(),
         time: this.field.time.value,
         ambient: this.field.ambient.value,
         flow: { values: this.flow.values, frame: this.flowFrame },
@@ -681,7 +693,8 @@ export class SparkAdapter implements SceneAdapter {
     this.hud?.dispose();
     this.mesh?.dispose();
     this.overlay.dispose();
-    this.previousOverlay.dispose();
+    this.levelTexture.dispose();
+    this.wavesTexture.dispose();
     this.flowTexture.dispose();
     this.glow.dispose();
     this.spark.dispose();

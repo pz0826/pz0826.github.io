@@ -68,7 +68,7 @@ export function artifactWeight(p: readonly number[], sx: number, sy: number) {
 }
 export interface FieldState {
   progress: number;
-  levelProgress?: number;
+  levelWaves?: readonly number[];
   time: number;
   ambient: number;
   flow?: FlowSnapshot;
@@ -97,6 +97,15 @@ export function revealWave(p: readonly number[], progress: number) {
       -10 * (Math.hypot(p[0] + 0.2, p[1]) - revealFront(progress)) ** 2,
     ) * Math.sin(Math.PI * progress)
   );
+}
+export function fieldWave(
+  p: readonly number[],
+  progress: number,
+  levelWaves: readonly number[] = [],
+) {
+  let wave = revealWave(p, progress);
+  for (const t of levelWaves) wave = Math.max(wave, 0.65 * revealWave(p, t));
+  return wave;
 }
 export function focusWeight(p: readonly number[], field: FieldState) {
   // A rounded room-shaped envelope: nearly flat inside, steep at the perimeter.
@@ -155,10 +164,7 @@ export function displace(
       )
     : [flow[0], flow[1], flow[2]];
   const flowAmplitude = frame ? depth * frame.tanFov * 0.005 : 0.009;
-  const wave = Math.max(
-    revealWave(p, progress),
-    0.65 * revealWave(p, field.levelProgress ?? 1),
-  );
+  const wave = fieldWave(p, progress, field.levelWaves);
   const n = [
     Math.sin(
       y * 1.7 + z * 1.1 + time * 0.21 + 0.35 * Math.sin(x * 2.3 - time * 0.11),
@@ -189,14 +195,11 @@ export function splatScales(
   sz: number,
   p: readonly number[],
   progress: number,
-  levelProgress = 1,
+  levelWaves: readonly number[] = [],
 ) {
   const blend = appearanceBlend(p, progress),
     small = pointScale(sx, sy),
-    wave = Math.max(
-      revealWave(p, progress),
-      0.65 * revealWave(p, levelProgress),
-    );
+    wave = fieldWave(p, progress, levelWaves);
   // Stay on the covariance projection path even at the Human endpoint. A tiny
   // thickness prevents a zero/nonzero switch into Spark's oriented-quad path.
   // Guard long reconstruction outliers without inflating ordinary surfaces.
@@ -235,8 +238,7 @@ float artFocus(vec3 p,vec3 eye,vec3 forward,vec3 target){
   float depth=dot(p-eye,forward),focus=dot(target-eye,forward);
   return exp(-4.*pow(r,14.))*(1.-.60*smoothstep(.5,1.5,abs(depth-focus)))*smoothstep(.04,.28,depth);
 }
-vec3 artDisplace(vec3 p,float progress,float levelProgress,float time,float ambient,vec4 flow,vec3 right,vec3 up,float depth,float tanFov,float aspect) {
-  float wave=max(artWave(p,progress),.65*artWave(p,levelProgress));
+vec3 artDisplace(vec3 p,float wave,float time,float ambient,vec4 flow,vec3 right,vec3 up,float depth,float tanFov,float aspect) {
   vec3 n=vec3(
     sin(p.y*1.7+p.z*1.1+time*.21+.35*sin(p.x*2.3-time*.11)),
     cos(p.x*1.5-p.z*1.3-time*.19+.4*sin(p.y*2.1+time*.13)),

@@ -48,10 +48,9 @@ try {
   await page.waitForTimeout(1800);
   assert.equal(await room.getAttribute('data-view'), 'ai');
   await page.screenshot({ path: '.preview/screenshots/desktop-ai.png' });
-  await page
-    .getByRole('group', { name: 'Feature granularity' })
-    .getByRole('button', { name: 'Feature level 3', exact: true })
-    .click();
+  await page.getByRole('slider', { name: 'Scene level', exact: true }).focus();
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
   await page.waitForFunction(
     () => document.querySelector('.room-experience')?.dataset.level === '3',
   );

@@ -157,7 +157,37 @@ export class SceneHud {
   }
   update(camera: THREE.Camera, field: FieldState) {
     if (this.disposed) return;
-    const { width, height } = this.host.getBoundingClientRect();
+    const hostRect = this.host.getBoundingClientRect();
+    const { width, height } = hostRect;
+    // Read all layout before moving labels. Include the label's translated span,
+    // not just its anchor or untransformed button (which misses its upper edge).
+    const controls = [
+      ...(this.host.parentElement?.querySelectorAll<HTMLElement>(
+        '.feature-dial, .view-switch, .camera-controls, .scene-bottom > .eyebrow, .explore-button',
+      ) ?? []),
+    ].map((control) => {
+      const r = control.getBoundingClientRect();
+      const pad = control.classList.contains('feature-dial') ? 14 : 6;
+      return {
+        left: r.left - hostRect.left - pad,
+        right: r.right - hostRect.left + pad,
+        top: r.top - hostRect.top - pad,
+        bottom: r.bottom - hostRect.top + pad,
+      };
+    });
+    const extents = this.items.map(({ button }) => {
+      const origin = button.getBoundingClientRect();
+      const rects = [
+        origin,
+        ...[...button.children].map((child) => child.getBoundingClientRect()),
+      ];
+      return {
+        left: Math.min(...rects.map((r) => r.left)) - origin.left,
+        right: Math.max(...rects.map((r) => r.right)) - origin.left,
+        top: Math.min(...rects.map((r) => r.top)) - origin.top,
+        bottom: Math.max(...rects.map((r) => r.bottom)) - origin.top,
+      };
+    });
     this.svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
     const project = (point: Point) => {
       const p = new THREE.Vector3(
@@ -169,16 +199,31 @@ export class SceneHud {
         z: p.z,
       };
     };
-    const positions = this.items.map((item) => {
+    const positions = this.items.map((item, index) => {
       const p = project(item.point);
+      const extent = extents[index];
+      // A small release margin avoids flicker at the collision boundary. Never
+      // clamp a label onto the control: its projection keeps following the scene.
+      const release = item.button.dataset.occluded === 'true' ? 4 : 0;
+      const occluded = controls.some(
+        (r) =>
+          p.x + extent.right + release > r.left &&
+          p.x + extent.left - release < r.right &&
+          p.y + extent.bottom + release > r.top &&
+          p.y + extent.top - release < r.bottom,
+      );
       const visible =
         p.z > -1 &&
         p.z < 1 &&
-        p.x > 30 &&
-        p.x < width - 100 &&
-        p.y > 30 &&
-        p.y < height - 80;
+        p.x + extent.left > 12 &&
+        p.x + extent.right < width - 12 &&
+        p.y + extent.top > 12 &&
+        p.y + extent.bottom < height - 20 &&
+        !occluded;
+      item.button.dataset.occluded = String(occluded);
       item.button.style.visibility = visible ? 'visible' : 'hidden';
+      item.button.setAttribute('aria-hidden', String(!visible));
+      item.button.tabIndex = visible ? 0 : -1;
       item.button.style.transform = `translate(${p.x}px,${p.y}px)`;
       return { id: item.id, ...p };
     });

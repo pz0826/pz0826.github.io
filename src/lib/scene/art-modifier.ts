@@ -6,10 +6,12 @@ import { FLOW } from './flow-field';
 export function createArtField(
   texture: THREE.DataTexture,
   flowTexture: THREE.DataTexture,
-  previousTexture: THREE.DataTexture,
+  levelTexture: THREE.DataArrayTexture,
+  wavesTexture: THREE.DataTexture,
 ) {
   const progress = dyno.dynoFloat(0),
-    levelProgress = dyno.dynoFloat(1),
+    levelCount = dyno.dynoInt(0),
+    baseLevel = dyno.dynoInt(0),
     time = dyno.dynoFloat(0),
     ambient = dyno.dynoFloat(1);
   const focus = dyno.dynoVec3(new THREE.Vector3(...ART.target)),
@@ -38,7 +40,8 @@ export function createArtField(
     ),
   );
   const table = dyno.dynoSampler2D(texture);
-  const previousTable = dyno.dynoSampler2D(previousTexture);
+  const levelTable = dyno.dynoSampler2DArray(levelTexture);
+  const levelWaves = dyno.dynoSampler2D(wavesTexture);
   const min = dyno.dynoVec3(new THREE.Vector3(...ART.min)),
     max = dyno.dynoVec3(new THREE.Vector3(...ART.max)),
     feather = dyno.dynoVec3(new THREE.Vector3(...ART.feather));
@@ -50,8 +53,10 @@ export function createArtField(
         inTypes: {
           gsplat: dyno.Gsplat,
           table: 'sampler2D',
-          previousTable: 'sampler2D',
-          levelProgress: 'float',
+          levelTable: 'sampler2DArray',
+          levelWaves: 'sampler2D',
+          levelCount: 'int',
+          baseLevel: 'int',
           focus: 'vec3',
           progress: 'float',
           time: 'float',
@@ -74,8 +79,10 @@ export function createArtField(
         inputs: {
           gsplat,
           table,
-          previousTable,
-          levelProgress,
+          levelTable,
+          levelWaves,
+          levelCount,
+          baseLevel,
           focus,
           progress,
           time,
@@ -103,11 +110,17 @@ export function createArtField(
           `crop*=1.-smoothstep(.02,.065,max(${i.gsplat}.scales.x,${i.gsplat}.scales.y))*smoothstep(.25,.55,p.z);`,
           `crop*=1.0-smoothstep(.38,.52,p.y)*smoothstep(.27,.4,p.z);`,
           `crop*=1.0-max(1.0-smoothstep(-1.86,-1.60,p.x),smoothstep(1.28,1.49,p.x))*smoothstep(.48,.77,p.z);`,
-          `vec4 feature=texelFetch(${i.table},ivec2(${i.gsplat}.index%2048,${i.gsplat}.index/2048),0);`,
-          `vec3 oldFeature=texelFetch(${i.previousTable},ivec2(${i.gsplat}.index%2048,${i.gsplat}.index/2048),0).rgb;`,
-          `feature.rgb=mix(oldFeature,feature.rgb,artBlend(p,${i.levelProgress}));`,
+          `ivec2 featureCoord=ivec2(${i.gsplat}.index%2048,${i.gsplat}.index/2048);`,
+          `vec4 feature=texelFetch(${i.table},featureCoord,0);`,
+          `feature.rgb=texelFetch(${i.levelTable},ivec3(featureCoord,${i.baseLevel}),0).rgb;`,
+          `float wave=artWave(p,${i.progress});`,
+          `for(int e=0;e<${i.levelCount};e++){`,
+          `  vec4 event=texelFetch(${i.levelWaves},ivec2(e,0),0);`,
+          `  vec3 nextColor=texelFetch(${i.levelTable},ivec3(featureCoord,int(event.x)),0).rgb;`,
+          `  feature.rgb=mix(feature.rgb,nextColor,artBlend(p,event.y));`,
+          `  wave=max(wave,.65*artWave(p,event.y));`,
+          `}`,
           `float blend=artBlend(p,${i.progress});`,
-          `float wave=max(artWave(p,${i.progress}),.65*artWave(p,${i.levelProgress}));`,
           `vec3 viewDelta=p-${i.eye};`,
           `float depth=max(.05,dot(viewDelta,${i.forward}));`,
           `vec2 screen=vec2(dot(viewDelta,${i.right})/(depth*${i.lens}.x*${i.lens}.y),dot(viewDelta,${i.up})/(depth*${i.lens}.x));`,
@@ -115,7 +128,7 @@ export function createArtField(
           `ivec2 cell=ivec2(min(floor(grid),vec2(${FLOW.width - 2}.,${FLOW.height - 2}.)));`,
           `vec2 fraction=grid-vec2(cell);`,
           `vec4 flow=mix(mix(texelFetch(${i.flowTable},cell,0),texelFetch(${i.flowTable},cell+ivec2(1,0),0),fraction.x),mix(texelFetch(${i.flowTable},cell+ivec2(0,1),0),texelFetch(${i.flowTable},cell+ivec2(1,1),0),fraction.x),fraction.y);`,
-          `vec3 moved=artDisplace(p,${i.progress},${i.levelProgress},${i.time},${i.ambient},flow,${i.right},${i.up},depth,${i.lens}.x,${i.lens}.y);`,
+          `vec3 moved=artDisplace(p,wave,${i.time},${i.ambient},flow,${i.right},${i.up},depth,${i.lens}.x,${i.lens}.y);`,
           `${o.gsplat}.center=transpose(${i.frame})*moved;`,
           `float size=clamp(min(${i.gsplat}.scales.x,${i.gsplat}.scales.y)*${ART.aiScale},${ART.minScale},${ART.maxScale});`,
           `vec3 nativeScale=${i.gsplat}.scales;`,
@@ -133,7 +146,8 @@ export function createArtField(
   return {
     modifier,
     progress,
-    levelProgress,
+    levelCount,
+    baseLevel,
     focus,
     time,
     ambient,

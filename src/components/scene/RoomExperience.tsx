@@ -278,7 +278,7 @@ export default function RoomExperience() {
             AI
           </button>
         </div>
-        {state.view === 'ai' && status === 'ready' && (
+        {status === 'ready' && (
           <FeatureDial
             level={state.level}
             disabled={disabled}

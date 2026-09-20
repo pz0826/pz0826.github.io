@@ -1,5 +1,9 @@
 # Focus envelope, selection consistency and feature dial
 
+Follow-up: the dial is now shared by Human and AI. Mountain and flower icons replace mode-dependent labels, indicating whole objects and fine parts. In Human it changes picking granularity; in AI it also changes PCA features.
+
+The dial appearance and interrupted-transition behavior below are superseded by [overlay and overlapping-wave notes](overlay-motion-v0.7.md).
+
 ## Selection compositing
 
 v0.5 switched from display-space blending to linear offscreen blending on selection. Correct output encoding did not remove the difference between those two compositing operations; the previous 9% brightness change was perceptible, and the regression tolerance was too broad.
@@ -22,7 +26,7 @@ The depth reference now comes from OrbitControls' current target (or the recorde
 
 ## Dial and transitions
 
-`FeatureDial.tsx` implements an AI-only vertical scale on the right of the canvas: Whole → Parts, levels 1–5, clickable labels, a draggable native range input and keyboard control. No focal-length units are invented: this changes semantic feature granularity, not camera FOV or geometry detail. The former Human “Detail level” label was misleading; it changed selection membership, not visible geometric resolution, and has been removed. The AI level is retained across view changes. Existing child-part choices and parent navigation remain available.
+`FeatureDial.tsx` implements an shared vertical scale on the right of the canvas: mountain → flower, levels 1–5, clickable labels, a draggable native range input and keyboard control. No focal-length units are invented: this changes semantic feature granularity, not camera FOV or geometry detail. The former Human “Detail level” label was misleading; it changed selection membership, not visible geometric resolution, and has been replaced by neutral accessible labels. The selected level is retained across view changes. Existing child-part choices and parent navigation remain available.
 
 A level change keeps the previous PCA texture and reveals the new one along the Human/AI radial wave, with a small scale pulse and displacement over 3.2 seconds. Rapid changes snapshot the currently mixed color before continuing. Loaded PCA maps remain fixed per level; no new random colors are generated. Reduced-motion bypasses the transition. The slider remains operable during table loading so a fetch cannot interrupt an ongoing drag; existing request epochs discard obsolete choices.
 
@@ -30,4 +34,4 @@ Relation edges now use round-capped dots spaced approximately three CSS pixels a
 
 ## Checks
 
-13 unit tests cover focus and existing geometry/flow contracts. Browser suites cover both-mode brightness consistency, queries and cancellation, picking and wheel zoom, AI-only dial visibility, interrupted transitions, keyboard and pointer dial input, and mobile layout. Current screenshots are in ignored `.preview/dial/`. The renderer continues to suspend offscreen rendering; local performance results are stored in `.preview/performance.json`.
+13 unit tests cover focus and existing geometry/flow contracts. Browser suites cover both-mode brightness consistency, queries and cancellation, picking and wheel zoom, shared Human/AI dial visibility, interrupted transitions, keyboard and pointer dial input, and mobile layout. Current screenshots are in ignored `.preview/dial/`. The renderer continues to suspend offscreen rendering; local performance results are stored in `.preview/performance.json`.

@@ -33,51 +33,57 @@ try {
       .removeAlpha()
       .raw()
       .toBuffer({ resolveWithObject: true });
-  const human = await capture();
-  await page
-    .getByRole('button', { name: 'Observe Plant', exact: true })
-    .click();
-  await page.waitForTimeout(800);
-  const selected = await capture();
-  const { width, height } = human.info;
-  const corner = (data) => [
-    ...data.subarray(
-      (Math.floor(height * 0.15) * width + Math.floor(width * 0.1)) * 3,
-      (Math.floor(height * 0.15) * width + Math.floor(width * 0.1)) * 3 + 3,
-    ),
-  ];
-  for (const state of [human, selected])
-    assert.ok(
-      corner(state.data).every((v) => Math.abs(v - 9) <= 2),
-      'background stays #090909',
-    );
-  let before = 0,
-    after = 0;
-  // Compare the unselected sofa/left wall, excluding plant and its halo.
-  for (let y = Math.floor(height * 0.3); y < height * 0.78; y++)
-    for (let x = Math.floor(width * 0.22); x < width * 0.48; x++) {
-      const i = (y * width + x) * 3;
-      const a = human.data[i] + human.data[i + 1] + human.data[i + 2];
-      if (a > 75) {
-        before += a;
-        after += selected.data[i] + selected.data[i + 1] + selected.data[i + 2];
+  const results = [];
+  for (const mode of ['Human', 'AI']) {
+    await page.keyboard.press('Escape');
+    await page.getByRole('button', { name: mode, exact: true }).click();
+    await page.waitForTimeout(500);
+    const human = await capture();
+    await page
+      .getByRole('button', { name: 'Observe Plant', exact: true })
+      .click();
+    await page.waitForTimeout(800);
+    const selected = await capture();
+    const { width, height } = human.info;
+    const corner = (data) => [
+      ...data.subarray(
+        (Math.floor(height * 0.15) * width + Math.floor(width * 0.1)) * 3,
+        (Math.floor(height * 0.15) * width + Math.floor(width * 0.1)) * 3 + 3,
+      ),
+    ];
+    for (const state of [human, selected])
+      assert.ok(
+        corner(state.data).every((v) => Math.abs(v - 9) <= 2),
+        'background stays #090909',
+      );
+    let before = 0,
+      after = 0;
+    // Compare the unselected sofa/left wall, excluding plant and its halo.
+    for (let y = Math.floor(height * 0.3); y < height * 0.78; y++)
+      for (let x = Math.floor(width * 0.22); x < width * 0.48; x++) {
+        const i = (y * width + x) * 3;
+        const a = human.data[i] + human.data[i + 1] + human.data[i + 2];
+        if (a > 75) {
+          before += a;
+          after +=
+            selected.data[i] + selected.data[i + 1] + selected.data[i + 2];
+        }
       }
-    }
-  assert.ok(before > 1000);
-  const ratio = after / before;
-  assert.ok(
-    ratio > 0.9 && ratio < 1.3,
-    `selection preserves room brightness: ${ratio}`,
-  );
-  assert.deepEqual(errors, []);
-  console.log(
-    JSON.stringify({
-      unselectedRoomBrightnessRatio: ratio,
+    assert.ok(before > 1000);
+    const ratio = after / before;
+    assert.ok(
+      ratio > 0.99 && ratio < 1.01,
+      `selection preserves room brightness: ${ratio}`,
+    );
+    results.push({
+      mode,
+      ratio,
       backgroundBefore: corner(human.data),
       backgroundSelected: corner(selected.data),
-      errors,
-    }),
-  );
+    });
+  }
+  assert.deepEqual(errors, []);
+  console.log(JSON.stringify({ results, errors }));
 } finally {
   await browser.close();
 }

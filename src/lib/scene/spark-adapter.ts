@@ -4,7 +4,13 @@ import { SparkRenderer, SplatMesh } from '@sparkjsdev/spark';
 import { withinAnchor } from './art-anchors';
 import { SceneHud } from './scene-hud';
 import { createArtField } from './art-modifier';
-import { ART, ROOM_AXES, fromRoom, toRoom } from './art-direction';
+import {
+  ART,
+  ROOM_AXES,
+  fromRoom,
+  toRoom,
+  appearanceBlend,
+} from './art-direction';
 import { FLOW, FlowField, type FlowFrame } from './flow-field';
 import { SelectionGlow } from './selection-glow';
 import { SceneTables } from './data';
@@ -36,6 +42,9 @@ export class SparkAdapter implements SceneAdapter {
   private worker: Worker;
   private overlay: THREE.DataTexture;
   private pixels: Uint8Array;
+  private previousPixels: Uint8Array;
+  private previousOverlay: THREE.DataTexture;
+  private colorLevel?: number;
   private state = initialState;
   private version = 0;
   private disposed = false;
@@ -143,6 +152,16 @@ export class SparkAdapter implements SceneAdapter {
     );
     this.overlay.minFilter = this.overlay.magFilter = THREE.NearestFilter;
     this.overlay.needsUpdate = true;
+    this.previousPixels = this.pixels.slice();
+    this.previousOverlay = new THREE.DataTexture(
+      this.previousPixels,
+      WIDTH,
+      this.previousPixels.length / 4 / WIDTH,
+      THREE.RGBAFormat,
+    );
+    this.previousOverlay.minFilter = this.previousOverlay.magFilter =
+      THREE.NearestFilter;
+    this.previousOverlay.needsUpdate = true;
     this.flowTexture = new THREE.DataTexture(
       this.flow.values,
       FLOW.width,
@@ -153,7 +172,11 @@ export class SparkAdapter implements SceneAdapter {
     this.flowTexture.minFilter = this.flowTexture.magFilter =
       THREE.NearestFilter;
     this.flowTexture.needsUpdate = true;
-    this.field = createArtField(this.overlay, this.flowTexture);
+    this.field = createArtField(
+      this.overlay,
+      this.flowTexture,
+      this.previousOverlay,
+    );
     this.field.ambient.value = this.reducedMotion ? 0 : 1;
     this.worker = new Worker(new URL('./picking.worker.ts', import.meta.url), {
       type: 'module',
@@ -255,6 +278,31 @@ export class SparkAdapter implements SceneAdapter {
     await this.hud?.select(state);
     if (version !== this.version || this.disposed) return;
     const selected = state.selected;
+    const changedLevel =
+      !!table.pca &&
+      this.colorLevel !== undefined &&
+      this.colorLevel !== state.level;
+    if (changedLevel) {
+      // A rapid second change starts from the currently visible mixture.
+      if (this.field.levelProgress.value < 1) {
+        for (let i = 0; i < this.options.data.manifest.count; i++) {
+          const blend = appearanceBlend(
+            toRoom(
+              this.geometry[i * 8],
+              this.geometry[i * 8 + 1],
+              this.geometry[i * 8 + 2],
+            ),
+            this.field.levelProgress.value,
+          );
+          for (let c = 0; c < 3; c++) {
+            const p = i * 4 + c;
+            this.previousPixels[p] +=
+              (this.pixels[p] - this.previousPixels[p]) * blend;
+          }
+        }
+      } else this.previousPixels.set(this.pixels);
+      this.previousOverlay.needsUpdate = true;
+    }
     for (let i = 0; i < this.options.data.manifest.count; i++) {
       const p = i * 4;
       if (table.pca) {
@@ -277,6 +325,10 @@ export class SparkAdapter implements SceneAdapter {
           ? 115
           : 0;
     }
+    if (table.pca) this.colorLevel = state.level;
+    if (changedLevel)
+      this.field.levelProgress.value =
+        state.view === 'ai' && !this.reducedMotion ? 0 : 1;
     this.field.dim.value = state.complete && query ? 0.8 : 1;
     if (state.complete && query) this.field.tint.value.set(1, 0, 0);
     else this.field.tint.value.set(0.75, 0.9, 1);
@@ -404,6 +456,7 @@ export class SparkAdapter implements SceneAdapter {
       forward: toRoom(-m[8], -m[9], -m[10]),
       tanFov: Math.tan(THREE.MathUtils.degToRad(this.camera.fov) * 0.5),
       aspect: this.camera.aspect,
+      focus: toRoom(...this.controls.target.toArray()),
     };
     const f = this.flowFrame;
     if (
@@ -414,9 +467,10 @@ export class SparkAdapter implements SceneAdapter {
         previous.tanFov !== f.tanFov ||
         previous.aspect !== f.aspect)
     ) {
-      this.flow.reproject(previous, f, ART.target);
+      this.flow.reproject(previous, f, f.focus!);
       this.flowTexture.needsUpdate = true;
     }
+    this.field.focus.value.set(...(f.focus as [number, number, number]));
     this.field.eye.value.set(...(f.eye as [number, number, number]));
     this.field.right.value.set(...(f.right as [number, number, number]));
     this.field.up.value.set(...(f.up as [number, number, number]));
@@ -495,6 +549,7 @@ export class SparkAdapter implements SceneAdapter {
       type: 'pick',
       field: {
         progress: this.field.progress.value,
+        levelProgress: this.field.levelProgress.value,
         time: this.field.time.value,
         ambient: this.field.ambient.value,
         flow: { values: this.flow.values, frame: this.flowFrame },
@@ -557,8 +612,14 @@ export class SparkAdapter implements SceneAdapter {
       if (Math.abs(this.field.progress.value - this.revealTarget) < 0.001)
         this.field.progress.value = this.revealTarget;
     }
-    if (revealing || fieldActive) this.field.time.value += dt;
-    if (this.redraw || moving || revealing || fieldActive) {
+    const changingLevel = this.field.levelProgress.value < 1;
+    if (changingLevel)
+      this.field.levelProgress.value = Math.min(
+        1,
+        this.field.levelProgress.value + dt / 3.2,
+      );
+    if (revealing || changingLevel || fieldActive) this.field.time.value += dt;
+    if (this.redraw || moving || revealing || changingLevel || fieldActive) {
       this.redraw = false;
       this.camera.updateMatrixWorld();
       this.updateFieldFrame();
@@ -568,18 +629,22 @@ export class SparkAdapter implements SceneAdapter {
       );
       const cameraChanged = !projection.equals(this.projection);
       this.projection.copy(projection);
-      if (this.mesh && (cameraChanged || moving || revealing || fieldActive))
+      if (
+        this.mesh &&
+        (cameraChanged || moving || revealing || changingLevel || fieldActive)
+      )
         this.mesh.needsUpdate = true;
       this.glow.render(this.state.selected !== null);
       this.hud?.update(this.camera, {
         progress: this.field.progress.value,
+        levelProgress: this.field.levelProgress.value,
         time: this.field.time.value,
         ambient: this.field.ambient.value,
         flow: { values: this.flow.values, frame: this.flowFrame },
       });
     }
     // Spark may have scheduled a sorting redraw while render() was running.
-    if ((moving || revealing || fieldActive) && !this.frameId)
+    if ((moving || revealing || changingLevel || fieldActive) && !this.frameId)
       this.frameId = requestAnimationFrame(this.render);
   };
   dispose() {
@@ -616,6 +681,7 @@ export class SparkAdapter implements SceneAdapter {
     this.hud?.dispose();
     this.mesh?.dispose();
     this.overlay.dispose();
+    this.previousOverlay.dispose();
     this.flowTexture.dispose();
     this.glow.dispose();
     this.spark.dispose();

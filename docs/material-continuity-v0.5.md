@@ -1,5 +1,7 @@
 # Material and interaction continuity
 
+Historical v0.5 notes. See [v0.6](feature-dial-v0.6.md) for consistent compositing in both selection states, gaze-based depth and the AI feature dial.
+
 This pass corrects v0.4 (`716a126`). The research assets, Gaussian IDs, label files and query results are unchanged.
 
 ## Projection and color corrections

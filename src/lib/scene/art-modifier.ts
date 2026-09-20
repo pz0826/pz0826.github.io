@@ -6,16 +6,19 @@ import { FLOW } from './flow-field';
 export function createArtField(
   texture: THREE.DataTexture,
   flowTexture: THREE.DataTexture,
+  previousTexture: THREE.DataTexture,
 ) {
   const progress = dyno.dynoFloat(0),
+    levelProgress = dyno.dynoFloat(1),
     time = dyno.dynoFloat(0),
     ambient = dyno.dynoFloat(1);
-  const eye = dyno.dynoVec3(new THREE.Vector3()),
+  const focus = dyno.dynoVec3(new THREE.Vector3(...ART.target)),
+    eye = dyno.dynoVec3(new THREE.Vector3()),
     right = dyno.dynoVec3(new THREE.Vector3(1, 0, 0)),
     up = dyno.dynoVec3(new THREE.Vector3(0, 1, 0)),
     forward = dyno.dynoVec3(new THREE.Vector3(0, 0, -1));
   const lens = dyno.dynoVec2(new THREE.Vector2(0.3, 2)),
-    emission = dyno.dynoFloat(0.22);
+    emission = dyno.dynoFloat(0.55);
   const flowTable = dyno.dynoSampler2D(flowTexture);
   const dim = dyno.dynoFloat(1),
     tint = dyno.dynoVec3(new THREE.Vector3(0.8, 0.93, 1));
@@ -35,6 +38,7 @@ export function createArtField(
     ),
   );
   const table = dyno.dynoSampler2D(texture);
+  const previousTable = dyno.dynoSampler2D(previousTexture);
   const min = dyno.dynoVec3(new THREE.Vector3(...ART.min)),
     max = dyno.dynoVec3(new THREE.Vector3(...ART.max)),
     feather = dyno.dynoVec3(new THREE.Vector3(...ART.feather));
@@ -46,6 +50,9 @@ export function createArtField(
         inTypes: {
           gsplat: dyno.Gsplat,
           table: 'sampler2D',
+          previousTable: 'sampler2D',
+          levelProgress: 'float',
+          focus: 'vec3',
           progress: 'float',
           time: 'float',
           ambient: 'float',
@@ -67,6 +74,9 @@ export function createArtField(
         inputs: {
           gsplat,
           table,
+          previousTable,
+          levelProgress,
+          focus,
           progress,
           time,
           ambient,
@@ -94,8 +104,10 @@ export function createArtField(
           `crop*=1.0-smoothstep(.38,.52,p.y)*smoothstep(.27,.4,p.z);`,
           `crop*=1.0-max(1.0-smoothstep(-1.86,-1.60,p.x),smoothstep(1.28,1.49,p.x))*smoothstep(.48,.77,p.z);`,
           `vec4 feature=texelFetch(${i.table},ivec2(${i.gsplat}.index%2048,${i.gsplat}.index/2048),0);`,
+          `vec3 oldFeature=texelFetch(${i.previousTable},ivec2(${i.gsplat}.index%2048,${i.gsplat}.index/2048),0).rgb;`,
+          `feature.rgb=mix(oldFeature,feature.rgb,artBlend(p,${i.levelProgress}));`,
           `float blend=artBlend(p,${i.progress});`,
-          `float wave=artWave(p,${i.progress});`,
+          `float wave=max(artWave(p,${i.progress}),.65*artWave(p,${i.levelProgress}));`,
           `vec3 viewDelta=p-${i.eye};`,
           `float depth=max(.05,dot(viewDelta,${i.forward}));`,
           `vec2 screen=vec2(dot(viewDelta,${i.right})/(depth*${i.lens}.x*${i.lens}.y),dot(viewDelta,${i.up})/(depth*${i.lens}.x));`,
@@ -103,7 +115,7 @@ export function createArtField(
           `ivec2 cell=ivec2(min(floor(grid),vec2(${FLOW.width - 2}.,${FLOW.height - 2}.)));`,
           `vec2 fraction=grid-vec2(cell);`,
           `vec4 flow=mix(mix(texelFetch(${i.flowTable},cell,0),texelFetch(${i.flowTable},cell+ivec2(1,0),0),fraction.x),mix(texelFetch(${i.flowTable},cell+ivec2(0,1),0),texelFetch(${i.flowTable},cell+ivec2(1,1),0),fraction.x),fraction.y);`,
-          `vec3 moved=artDisplace(p,${i.progress},${i.time},${i.ambient},flow,${i.right},${i.up},depth,${i.lens}.x,${i.lens}.y);`,
+          `vec3 moved=artDisplace(p,${i.progress},${i.levelProgress},${i.time},${i.ambient},flow,${i.right},${i.up},depth,${i.lens}.x,${i.lens}.y);`,
           `${o.gsplat}.center=transpose(${i.frame})*moved;`,
           `float size=clamp(min(${i.gsplat}.scales.x,${i.gsplat}.scales.y)*${ART.aiScale},${ART.minScale},${ART.maxScale});`,
           `vec3 nativeScale=${i.gsplat}.scales;`,
@@ -112,8 +124,8 @@ export function createArtField(
           `${o.gsplat}.scales=exp(mix(log(max(nativeScale,vec3(.000001))),vec3(log(size)),blend))*(1.-.25*wave);`,
           `vec3 human=${i.gsplat}.rgba.rgb*1.03+.025;`,
           `vec3 base=mix(human,feature.rgb*.92+.035,blend);`,
-          `${o.gsplat}.rgba.rgb=mix(base*(feature.a>0.0?1.0:${i.dim}),${i.tint},feature.a*.35)+${i.tint}*feature.a*${i.emission}+wave*.04;`,
-          `${o.gsplat}.rgba.a*=crop*mix(artFocus(p,${i.eye},${i.forward}),1.,feature.a*.25)* .98;`,
+          `${o.gsplat}.rgba.rgb=mix(base*(feature.a>0.0?1.0:${i.dim}),${i.tint},feature.a*.5)+${i.tint}*feature.a*${i.emission}+wave*.04;`,
+          `${o.gsplat}.rgba.a*=crop*mix(artFocus(p,${i.eye},${i.forward},${i.focus}),1.,feature.a*.25)* .98;`,
         ],
       }).outputs.gsplat,
     }),
@@ -121,6 +133,8 @@ export function createArtField(
   return {
     modifier,
     progress,
+    levelProgress,
+    focus,
     time,
     ambient,
     dim,

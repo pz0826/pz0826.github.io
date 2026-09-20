@@ -4,52 +4,43 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
-/** Allocate and compile postprocessing only on selection, never on first load. */
+/** Use identical linear compositing in every state. Only the halo is optional. */
 export class SelectionGlow {
-  private composer?: EffectComposer;
-  private renderPass?: RenderPass;
+  private composer: EffectComposer;
+  private renderPass: RenderPass;
   private bloom?: UnrealBloomPass;
-  private output?: OutputPass;
-  private width = 1;
-  private height = 1;
+  private output = new OutputPass();
   constructor(
-    private renderer: THREE.WebGLRenderer,
-    private scene: THREE.Scene,
-    private camera: THREE.Camera,
-  ) {}
+    renderer: THREE.WebGLRenderer,
+    scene: THREE.Scene,
+    camera: THREE.Camera,
+  ) {
+    this.composer = new EffectComposer(renderer);
+    this.renderPass = new RenderPass(scene, camera);
+    this.composer.addPass(this.renderPass);
+    this.composer.addPass(this.output);
+  }
   resize(width: number, height: number) {
-    this.width = width;
-    this.height = height;
-    this.composer?.setSize(width, height);
+    this.composer.setSize(width, height);
   }
   render(selected: boolean) {
-    if (!selected) {
-      this.renderer.render(this.scene, this.camera);
-      return;
-    }
-    if (!this.composer) {
-      this.composer = new EffectComposer(this.renderer);
-      this.renderPass = new RenderPass(this.scene, this.camera);
+    if (selected && !this.bloom) {
+      // Ordinary RGB stays below this threshold. Bloom targets selection emission.
       this.bloom = new UnrealBloomPass(
         new THREE.Vector2(1, 1),
-        0.1,
+        0.12,
         0.15,
-        1.04,
+        1.3,
       );
-      // Spark encodes linear RGB when rendering into a target. Convert once
-      // on output; a CopyShader would visibly darken the whole room.
-      this.output = new OutputPass();
-      this.composer.addPass(this.renderPass);
-      this.composer.addPass(this.bloom);
-      this.composer.addPass(this.output);
-      this.composer.setSize(this.width, this.height);
+      this.composer.insertPass(this.bloom, 1);
     }
+    if (this.bloom) this.bloom.enabled = selected;
     this.composer.render();
   }
   dispose() {
     this.bloom?.dispose();
-    this.output?.dispose();
-    this.renderPass?.dispose();
-    this.composer?.dispose();
+    this.output.dispose();
+    this.renderPass.dispose();
+    this.composer.dispose();
   }
 }

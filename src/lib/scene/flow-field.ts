@@ -14,6 +14,7 @@ export interface FlowFrame {
   right: readonly number[];
   up: readonly number[];
   forward: readonly number[];
+  focus?: readonly number[];
   tanFov: number;
   aspect: number;
 }

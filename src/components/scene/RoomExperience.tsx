@@ -1,3 +1,4 @@
+import FeatureDial from './FeatureDial';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import { loadSceneData, SceneTables } from '../../lib/scene/data';
 import {
@@ -277,6 +278,13 @@ export default function RoomExperience() {
             AI
           </button>
         </div>
+        {state.view === 'ai' && status === 'ready' && (
+          <FeatureDial
+            level={state.level}
+            disabled={disabled}
+            onChange={(value) => void level(value).catch(fail)}
+          />
+        )}
         {mobile && (
           <button
             className="explore-button"
@@ -349,26 +357,6 @@ export default function RoomExperience() {
         )}
       </div>
       <div className="scene-tools">
-        <div
-          className="level-control"
-          role="group"
-          aria-label="Scene detail level"
-        >
-          <span className="eyebrow">
-            {state.view === 'ai' ? 'Feature level' : 'Detail level'}
-          </span>
-          {[1, 2, 3, 4, 5].map((value) => (
-            <button
-              key={value}
-              disabled={disabled || tableBusy}
-              aria-pressed={state.level === value}
-              onClick={() => void level(value).catch(fail)}
-            >
-              {value}
-            </button>
-          ))}
-          <span className="eyebrow level-range">whole → parts</span>
-        </div>
         <span className="scene-status eyebrow" role="status">
           {status === 'ready'
             ? tableBusy

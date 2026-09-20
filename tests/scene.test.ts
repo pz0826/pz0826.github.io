@@ -263,3 +263,32 @@ test('particle picking follows the disturbed center and ignores cropped geometry
   });
   assert.equal(result?.index, -1);
 });
+
+test('focus envelope preserves the room interior but suppresses its perimeter, and follows gaze', () => {
+  const field = { progress: 0, time: 0, ambient: 0 };
+  assert.ok(art.focusWeight([0, 0, 0.2], field) > 0.99);
+  assert.ok(art.focusWeight([1.6, 0, 0.2], field) < 0.03);
+  const camera = {
+    eye: [0, 0, 4],
+    right: [1, 0, 0],
+    up: [0, 1, 0],
+    forward: [0, 0, -1],
+    tanFov: 0.3,
+    aspect: 2,
+  };
+  const near = art.focusWeight([0, 0, 0.2], {
+    ...field,
+    flow: {
+      values: new Float32Array(128 * 72 * 4),
+      frame: { ...camera, focus: [0, 0, 0.2] },
+    },
+  });
+  const far = art.focusWeight([0, 0, 0.2], {
+    ...field,
+    flow: {
+      values: new Float32Array(128 * 72 * 4),
+      frame: { ...camera, focus: [0, 0, 2] },
+    },
+  });
+  assert.ok(near > 0.99 && far < 0.42);
+});

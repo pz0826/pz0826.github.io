@@ -1,5 +1,7 @@
 # Room motion — momentum and lingering flow
 
+Historical baseline at `homepage-v0.3`. The [focus/material pass](focus-material-v0.4.md) narrows the brush in screen space, shortens its wake, restores native Human scales, and adds 3D fading and selection glow.
+
 This pass replaces the v0.2 cursor-centered oscillation. The visual target is a room that yields to a gesture, retains its wake, and gradually recovers while a much smaller ambient movement continues.
 
 ## References and implementation decision

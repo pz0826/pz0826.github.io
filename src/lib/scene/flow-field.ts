@@ -1,16 +1,25 @@
-// Small room-space fluid grid. Semi-Lagrangian transport, pressure projection,
+// Small view-space fluid grid with depth-aware reconstruction into the room. Semi-Lagrangian transport, pressure projection,
 // vorticity confinement and an advected displacement/energy field.
 // CPU grid + GPU texture keeps picking and labels on the same deformed surface.
 export const FLOW = {
-  width: 64,
-  height: 36,
-  minX: -2.2,
-  minY: -1.15,
-  spanX: 4.1,
-  spanY: 2.3,
+  width: 128,
+  height: 72,
+  minX: -1,
+  minY: -1,
+  spanX: 2,
+  spanY: 2,
 };
+export interface FlowFrame {
+  eye: readonly number[];
+  right: readonly number[];
+  up: readonly number[];
+  forward: readonly number[];
+  tanFov: number;
+  aspect: number;
+}
 export interface FlowSnapshot {
   values: Float32Array;
+  frame?: FlowFrame;
 }
 const clamp = (x: number, a: number, b: number) => Math.max(a, Math.min(b, x));
 const W = FLOW.width,
@@ -59,15 +68,43 @@ export class FlowField {
   private nextPressure = new Float32Array(N);
   private divergence = new Float32Array(N);
 
+  private radiusX = 0.04;
+  private radiusY = 0.07;
+  setViewport(width: number, height: number) {
+    this.radiusX = (2 * 24) / width;
+    this.radiusY = (2 * 24) / height;
+  }
+  clear() {
+    for (const a of [
+      this.values,
+      this.nextValues,
+      this.u,
+      this.v,
+      this.nextU,
+      this.nextV,
+      this.pressure,
+      this.nextPressure,
+      this.curl,
+      this.divergence,
+    ])
+      a.fill(0);
+  }
   // Integrated impulse from a stroke segment. No pointer motion means no force.
   push(x0: number, y0: number, x1: number, y1: number, seconds: number) {
     const dx = x1 - x0,
       dy = y1 - y0,
       distance = Math.hypot(dx, dy);
     if (!distance || distance > 1.4 || seconds <= 0 || seconds > 0.25) return;
-    const speed = Math.min(5, distance / Math.max(0.008, seconds));
-    const steps = Math.max(1, Math.ceil(distance / 0.055));
-    const impulse = (10 * (0.25 + speed * 0.4)) / steps;
+    const speed = Math.min(
+      5,
+      (Math.hypot(dx / this.radiusX, dy / this.radiusY) * 0.04) /
+        Math.max(0.008, seconds),
+    );
+    const steps = Math.max(
+      1,
+      Math.ceil(Math.hypot(dx / this.radiusX, dy / this.radiusY) * 2),
+    );
+    const impulse = ((10 / 3) * (0.25 + speed * 0.4)) / steps;
     for (let s = 1; s <= steps; s++) {
       const x = x0 + (dx * s) / steps,
         y = y0 + (dy * s) / steps;
@@ -75,7 +112,9 @@ export class FlowField {
         for (let col = 1; col < W - 1; col++) {
           const px = FLOW.minX + col * hx - x,
             py = FLOW.minY + row * hy - y;
-          const weight = Math.exp(-(px * px + py * py) / 0.035);
+          const weight = Math.exp(
+            -((px / this.radiusX) ** 2 + (py / this.radiusY) ** 2),
+          );
           const i = row * W + col;
           this.u[i] = clamp(this.u[i] + dx * impulse * weight, -1.8, 1.8);
           this.v[i] = clamp(this.v[i] + dy * impulse * weight, -1.8, 1.8);
@@ -88,7 +127,7 @@ export class FlowField {
   }
   step(dt: number) {
     dt = Math.min(dt, 1 / 30);
-    const decay = Math.exp(-dt / 8);
+    const decay = Math.exp(-dt / (8 / 3));
     // Advect momentum by its own velocity, retaining a wake after input stops.
     for (let y = 1; y < H - 1; y++)
       for (let x = 1; x < W - 1; x++) {
@@ -149,22 +188,22 @@ export class FlowField {
         this.v[i] -= (this.pressure[i + W] - this.pressure[i - W]) / (2 * hy);
         const bx = x - (this.u[i] * dt) / hx,
           by = y - (this.v[i] * dt) / hy;
-        const spring = Math.exp(-dt / 4);
+        const spring = Math.exp(-dt / (4 / 3));
         this.nextValues[i * 4] = clamp(
           sample(this.values, bx, by, 4, 0) * spring + this.u[i] * dt * 0.7,
-          -0.28,
-          0.28,
+          -this.radiusX * 0.6,
+          this.radiusX * 0.6,
         );
         this.nextValues[i * 4 + 1] = clamp(
           sample(this.values, bx, by, 4, 1) * spring + this.v[i] * dt * 0.7,
-          -0.28,
-          0.28,
+          -this.radiusY * 0.6,
+          this.radiusY * 0.6,
         );
         this.nextValues[i * 4 + 2] =
           sample(this.values, bx, by, 4, 2) * spring +
-          Math.tanh(this.curl[i]) * dt * 0.018;
+          Math.tanh(this.curl[i]) * dt * 0.006;
         this.nextValues[i * 4 + 3] =
-          sample(this.values, bx, by, 4, 3) * Math.exp(-dt / 12);
+          sample(this.values, bx, by, 4, 3) * Math.exp(-dt / 4);
       }
     this.values.set(this.nextValues);
   }

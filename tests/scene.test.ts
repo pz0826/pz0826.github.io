@@ -145,6 +145,21 @@ test('room crop rejects exterior debris and the art transform settles to origina
   assert.equal(art.cropWeight([0, 0, 0.2]), 1);
   assert.equal(art.cropWeight([3, 0, 0.2]), 0);
   assert.equal(art.cropWeight([0, 0, 1.8]), 0);
+  assert.equal(
+    art.cropWeight([-0.58, 0.35, 0.74]),
+    0,
+    'interior ceiling fragment',
+  );
+  assert.equal(
+    art.cropWeight([0.35, -0.45, 0.72]),
+    0,
+    'second interior ceiling fragment',
+  );
+  assert.equal(
+    art.cropWeight([-0.5, -0.4, 0.4]),
+    1,
+    'plant must survive the ceiling crop',
+  );
   const world = art.fromRoom(0.3, -0.2, 0.4);
   const local = art.toRoom(...world);
   for (let i = 0; i < 3; i++)
@@ -157,6 +172,22 @@ test('room crop rejects exterior debris and the art transform settles to origina
     });
     for (let i = 0; i < 3; i++) assert.ok(Math.abs(p[i] - local[i]) < 1e-8);
   }
+});
+
+test('material wave responds early in both directions and restores original human splats', () => {
+  assert.ok(
+    art.appearanceBlend([0, 0, 0.1], 0.1) > 0.2,
+    'visible central response within half a second',
+  );
+  assert.ok(
+    art.appearanceBlend([1.6, 0, 0.1], 0.9) < 0.8,
+    'reverse transition reaches outer geometry promptly',
+  );
+  const sizes = art.splatScales(0.013, 0.009, 0, [0, 0, 0.1], 0);
+  assert.deepEqual(sizes, [0.013, 0.009, 0]);
+  const ai = art.splatScales(0.013, 0.009, 0, [0, 0, 0.1], 1);
+  assert.ok(ai.every((v) => Math.abs(v - ai[0]) < 1e-9));
+  assert.ok(ai[0] < 0.009);
 });
 
 test('particle picking follows the disturbed center and ignores cropped geometry', () => {

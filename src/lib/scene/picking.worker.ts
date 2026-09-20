@@ -3,11 +3,12 @@ import {
   fromRoom,
   cropWeight,
   displace,
-  pointScale,
-  revealWave,
+  splatScales,
+  focusWeight,
+  artifactWeight,
 } from './art-direction.ts';
-// Exact source index from ray/2D Gaussian intersections. Work stays off the UI thread.
-// Choose the strongest front-to-back alpha contribution, not a cluster bounding box.
+// Same source-index geometry, material interpolation and displacement as rendering.
+// Ray response approximates projected Gaussian coverage (without subpixel filtering).
 let geometry: Float32Array;
 let rgba: Uint8Array;
 self.onmessage = ({ data }) => {
@@ -23,29 +24,24 @@ self.onmessage = ({ data }) => {
     const b = i * 32,
       f = i * 8;
     let opacity = rgba[b + 27] / 255;
+    let center = [geometry[f], geometry[f + 1], geometry[f + 2]],
+      scales = [geometry[f + 3], geometry[f + 4], geometry[f + 5]];
     if (data.field) {
-      const local = toRoom(geometry[f], geometry[f + 1], geometry[f + 2]);
-      opacity *= cropWeight(local) * 0.94;
+      const local = toRoom(center[0], center[1], center[2]);
+      opacity *=
+        cropWeight(local) *
+        artifactWeight(local, scales[0], scales[1]) *
+        focusWeight(local, data.field) *
+        0.98;
       if (opacity < 0.03) continue;
-      const shifted = displace(local, data.field);
-      const center = fromRoom(...shifted);
-      const vx = center[0] - o[0],
-        vy = center[1] - o[1],
-        vz = center[2] - o[2];
-      const t = vx * d[0] + vy * d[1] + vz * d[2];
-      if (t < 0.02 || t > 100) continue;
-      const dx = vx - t * d[0],
-        dy = vy - t * d[1],
-        dz = vz - t * d[2];
-      const wave = revealWave(local, data.field.progress);
-      const size =
-        pointScale(geometry[f + 3], geometry[f + 4], data.field.progress) *
-        (1 - 0.45 * wave);
-      const r2 = (dx * dx + dy * dy + dz * dz) / (size * size);
-      if (r2 > 8) continue;
-      const alpha = Math.min(0.99, opacity * Math.exp(-0.5 * r2));
-      if (alpha > 0.01) hits.push({ index: i, t, alpha });
-      continue;
+      center = fromRoom(...displace(local, data.field));
+      scales = splatScales(
+        scales[0],
+        scales[1],
+        scales[2],
+        local,
+        data.field.progress,
+      );
     }
     if (opacity < 0.03) continue;
     let w = (rgba[b + 28] - 128) / 128,
@@ -57,31 +53,30 @@ self.onmessage = ({ data }) => {
     x *= inv;
     y *= inv;
     z *= inv;
-    const nx = 2 * (x * z + w * y),
-      ny = 2 * (y * z - w * x),
-      nz = 1 - 2 * (x * x + y * y);
-    const dot = nx * d[0] + ny * d[1] + nz * d[2];
-    if (Math.abs(dot) < 1e-7) continue;
-    const cx = geometry[f] - o[0],
-      cy = geometry[f + 1] - o[1],
-      cz = geometry[f + 2] - o[2];
-    const t = (nx * cx + ny * cy + nz * cz) / dot;
-    if (t < 0.02 || t > 100) continue;
-    const px = t * d[0] - cx,
-      py = t * d[1] - cy,
-      pz = t * d[2] - cz;
-    const u =
-      ((1 - 2 * (y * y + z * z)) * px +
-        2 * (x * y + w * z) * py +
-        2 * (x * z - w * y) * pz) /
-      geometry[f + 3];
-    const v =
-      (2 * (x * y - w * z) * px +
-        (1 - 2 * (x * x + z * z)) * py +
-        2 * (y * z + w * x) * pz) /
-      geometry[f + 4];
-    const r2 = u * u + v * v;
-    if (r2 > 8) continue;
+    const axes = [
+      [1 - 2 * (y * y + z * z), 2 * (x * y + w * z), 2 * (x * z - w * y)],
+      [2 * (x * y - w * z), 1 - 2 * (x * x + z * z), 2 * (y * z + w * x)],
+      [2 * (x * z + w * y), 2 * (y * z - w * x), 1 - 2 * (x * x + y * y)],
+    ];
+    const v = center.map((c, j) => c - o[j]);
+    const vc = axes.map((a) => a[0] * v[0] + a[1] * v[1] + a[2] * v[2]);
+    const dc = axes.map((a) => a[0] * d[0] + a[1] * d[1] + a[2] * d[2]);
+    let t: number, r2: number;
+    if (scales[2] < 1e-7) {
+      if (Math.abs(dc[2]) < 1e-7) continue;
+      t = vc[2] / dc[2];
+      r2 =
+        ((t * dc[0] - vc[0]) / scales[0]) ** 2 +
+        ((t * dc[1] - vc[1]) / scales[1]) ** 2;
+    } else {
+      const a = dc.map((v, j) => v / scales[j]),
+        c = vc.map((v, j) => v / scales[j]);
+      t =
+        (a[0] * c[0] + a[1] * c[1] + a[2] * c[2]) /
+        (a[0] ** 2 + a[1] ** 2 + a[2] ** 2);
+      r2 = a.reduce((s, v, j) => s + (t * v - c[j]) ** 2, 0);
+    }
+    if (t < 0.02 || t > 100 || r2 > 8) continue;
     const alpha = Math.min(0.99, opacity * Math.exp(-0.5 * r2));
     if (alpha > 0.01) hits.push({ index: i, t, alpha });
   }

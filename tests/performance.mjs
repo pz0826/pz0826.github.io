@@ -74,6 +74,28 @@ try {
         })),
     };
   });
+  const tag = await page
+    .getByRole('button', { name: 'Observe Plant' })
+    .locator('span')
+    .boundingBox();
+  await page.mouse.click(tag.x + tag.width / 2, tag.y + tag.height / 2);
+  await page.waitForTimeout(1200);
+  await page.evaluate(() => {
+    window.__times = [];
+  });
+  await page.waitForTimeout(1800);
+  const glowTiming = await page.evaluate(() => {
+    const intervals = window.__times
+      .slice(1)
+      .map((t, i) => t - window.__times[i])
+      .filter((t) => t > 1)
+      .sort((a, b) => a - b);
+    return {
+      selectionIntervalP50: intervals[Math.floor(intervals.length * 0.5)],
+      selectionIntervalP95: intervals[Math.floor(intervals.length * 0.95)],
+    };
+  });
+  Object.assign(result, glowTiming);
   await page
     .getByRole('navigation')
     .getByRole('link', { name: 'Arts', exact: true })

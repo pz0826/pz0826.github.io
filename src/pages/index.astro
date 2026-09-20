@@ -1,4 +1,5 @@
 ---
+import LinkArrow from '../components/LinkArrow.astro';
 import Page from '../layouts/Page.astro';
 import Navigation from '../components/Navigation.astro';
 import RoomExperience from '../components/scene/RoomExperience';
@@ -15,13 +16,15 @@ import { profile } from '../content/profile';
   <main>
     <section class="hero" aria-label="Ways of seeing">
       <div class="hero-intro">
-        <span class="eyebrow">{profile.role}</span>
+        <span class="eyebrow">Ways of seeing</span>
         <p>{profile.statement}</p>
       </div>
       <RoomExperience client:visible />
       <div class="hero-caption eyebrow">
         <span>A room. More than meets the eye.</span>
-        <a href="#info">Scroll to discover ↓</a>
+        <a href="#info">
+          Scroll to discover <LinkArrow direction="down" />
+        </a>
       </div>
     </section>
     <Info />
@@ -35,11 +38,13 @@ import { profile } from '../content/profile';
     </p>
     <div class="text-links">
       {profile.links.map((link) => (
-        <a href={link.href}>{link.label} ↗</a>
+        <a href={link.href}>
+          {link.label} <LinkArrow />
+        </a>
       ))}
     </div>
     <a class="eyebrow" href="#top">
-      Back to top ↑
+      Back to top <LinkArrow direction="up" />
     </a>
   </footer>
 </Page>

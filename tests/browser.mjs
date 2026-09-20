@@ -38,12 +38,40 @@ try {
   );
   console.log(`Room ready in ${Date.now() - start}ms`);
   await page.waitForTimeout(2200);
+  assert.equal(
+    await page.locator('.hud-links').getAttribute('data-look'),
+    'bridges',
+  );
+  assert.equal(
+    await page
+      .locator('[data-query-id="room-query-02"]')
+      .getAttribute('aria-label'),
+    'Find the head of the stuffed toy resting on the sofa.',
+  );
+  assert.ok(
+    await page
+      .locator('.lego-credit img')
+      .evaluate((e) => e.complete && e.naturalWidth > 0),
+  );
+  const cue = await page.locator('.hero-caption').evaluate((e) =>
+    [...e.children].map((c) => {
+      const r = c.getBoundingClientRect();
+      return { x: r.x + r.width / 2, y: r.y };
+    }),
+  );
+  assert.ok(
+    Math.abs(cue[0].x - 720) < 2 &&
+      Math.abs(cue[1].x - 720) < 2 &&
+      cue[1].y > cue[0].y,
+  );
+  await page
+    .locator('.hero')
+    .screenshot({ path: '.preview/screenshots/hero-v11.png' });
   await page.screenshot({ path: '.preview/screenshots/desktop-human.png' });
   await page.getByRole('button', { name: 'AI', exact: true }).click();
   await page.waitForFunction(
     () =>
-      document.querySelector('.scene-status')?.textContent ===
-      'Ready to explore',
+      document.querySelector('.room-experience')?.dataset.tableBusy === 'false',
   );
   await page.waitForTimeout(1800);
   assert.equal(await room.getAttribute('data-view'), 'ai');
@@ -56,14 +84,11 @@ try {
   );
   await page.waitForFunction(
     () =>
-      document.querySelector('.scene-status')?.textContent ===
-      'Ready to explore',
+      document.querySelector('.room-experience')?.dataset.tableBusy === 'false',
   );
   await page.getByRole('button', { name: 'Human', exact: true }).click();
   await page.waitForTimeout(1000);
-  await page
-    .getByRole('button', { name: 'Observe Plant', exact: true })
-    .click();
+  await page.locator('[data-query-id="room-query-12"]').click();
   await page.waitForFunction(
     () => !!document.querySelector('.room-experience')?.dataset.selected,
     { timeout: 10000 },
@@ -73,16 +98,21 @@ try {
     await room.getAttribute('data-selected'),
   );
   await page.screenshot({ path: '.preview/screenshots/desktop-selection.png' });
-  assert.equal(await room.getAttribute('data-selected'), '24');
+  assert.equal(await room.getAttribute('data-selected'), '429');
+  await page.getByRole('button', { name: 'Stop', exact: true }).click();
   assert.ok(
     (await page.locator('.hud-outline').getAttribute('points')).length > 10,
   );
-  await page.getByRole('button', { name: 'Nearby', exact: true }).click();
-  assert.ok(await page.locator('.relation-list button').count());
+  await page.getByRole('button', { name: 'Network', exact: true }).click();
+  assert.ok(
+    Number(await page.locator('.hud-links').getAttribute('data-edge-count')) >
+      2,
+  );
+  assert.equal(await page.locator('.selection-panel').count(), 0);
   await page
     .getByRole('button', { name: 'Reset camera and selection' })
     .click();
-  await page.getByRole('button', { name: /sofa → toy/ }).click();
+  await page.locator('[data-query-id="room-query-02"]').click();
   await page.waitForTimeout(1600);
   await page.getByRole('button', { name: 'AI', exact: true }).click();
   const stopped = await room.getAttribute('data-selected');
@@ -90,18 +120,21 @@ try {
   assert.equal(await room.getAttribute('data-playing'), 'false');
   assert.equal(await room.getAttribute('data-selected'), stopped);
   await page.getByRole('button', { name: 'Human', exact: true }).click();
-  await page.getByRole('button', { name: /piano → logo/ }).click();
+  await page.keyboard.press('Escape');
+  await page
+    .getByRole('button', { name: 'Reset camera and selection' })
+    .click();
+  await page.locator('[data-query-id="room-query-19"]').click();
   await page.waitForFunction(
     () =>
       document
         .querySelector('.query-steps')
-        ?.textContent.includes('10 candidate matches'),
+        ?.textContent.includes('A detail, found'),
     { timeout: 20000 },
   );
   await page.waitForFunction(
     () =>
-      document.querySelector('.scene-status')?.textContent ===
-      'Ready to explore',
+      document.querySelector('.room-experience')?.dataset.tableBusy === 'false',
   );
   await page.waitForTimeout(2000);
   console.log('Final query cluster', await room.getAttribute('data-selected'));

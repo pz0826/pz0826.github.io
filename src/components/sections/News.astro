@@ -1,4 +1,5 @@
 ---
+import LinkArrow from '../LinkArrow.astro';
 import { news } from '../../content/profile';
 ---
 
@@ -12,7 +13,7 @@ import { news } from '../../content/profile';
         <time class="eyebrow">{item.date}</time>
         <a href={item.href}>
           {item.text}
-          <span aria-hidden="true">↗</span>
+          <LinkArrow />
         </a>
       </li>
     ))}

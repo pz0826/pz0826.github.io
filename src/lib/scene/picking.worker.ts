@@ -41,7 +41,7 @@ self.onmessage = ({ data }) => {
         scales[2],
         local,
         data.field.progress,
-        data.field.levelWaves,
+        data.field.levelWaves, data.field.origin, data.field.levelOrigins, data.field.reverse,
       );
     }
     if (opacity < 0.03) continue;

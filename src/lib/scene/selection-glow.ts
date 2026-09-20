@@ -30,7 +30,7 @@ export class SelectionGlow {
         new THREE.Vector2(1, 1),
         0.12,
         0.15,
-        1.3,
+        1.17,
       );
       this.composer.insertPass(this.bloom, 1);
     }

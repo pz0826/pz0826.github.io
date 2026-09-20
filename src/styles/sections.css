@@ -163,20 +163,37 @@
   border-top: 1px solid var(--line);
   margin-top: 55px;
   padding-top: 32px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px 30px;
 }
-.experience h3 {
-  font-size: 24px;
+.experience-identity {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16/10;
 }
-.experience p {
-  grid-column: 2;
-  font-size: 13px;
+.experience-identity img {
+  width: 68%;
+  height: auto;
+}
+.experience-role {
   color: #aaa;
+  font-size: 13px;
+  margin-top: 16px;
 }
-.experience p span {
-  margin-left: 20px;
+.experience-date {
+  margin-top: 6px;
+}
+.experience-details {
+  padding-left: 17px;
+  margin: 22px 0 0;
+  color: #a6a6a0;
+  font-size: 13px;
+  line-height: 1.85;
+}
+.experience-details li + li {
+  margin-top: 16px;
+}
+.experience-details strong {
+  color: #d3d3cc;
 }
 .arts-section {
   padding-bottom: 80px;
@@ -277,15 +294,14 @@
   .authors {
     font-size: 10px;
   }
-  .experience {
-    display: block;
+  .experience-identity {
+    aspect-ratio: 3/1;
   }
-  .experience h3 {
-    margin: 16px 0 8px;
+  .experience-identity img {
+    width: 60%;
   }
-  .experience p span {
-    display: block;
-    margin: 8px 0;
+  .experience-details {
+    font-size: 12px;
   }
   .empty-contact-sheet {
     height: 135px;

@@ -69,6 +69,12 @@ export class FlowField {
   private nextPressure = new Float32Array(N);
   private divergence = new Float32Array(N);
 
+  private taps: { x: number; y: number; age: number }[] = [];
+  tap(x: number, y: number) {
+    this.taps.push({ x, y, age: 0 });
+    if (this.taps.length > 6) this.taps.shift();
+  }
+
   private radiusX = 0.04;
   private radiusY = 0.07;
   setViewport(width: number, height: number) {
@@ -149,6 +155,7 @@ export class FlowField {
     this.values.set(this.nextValues);
   }
   clear() {
+    this.taps = [];
     for (const a of [
       this.values,
       this.nextValues,
@@ -279,6 +286,30 @@ export class FlowField {
         this.nextValues[i * 4 + 3] =
           sample(this.values, bx, by, 4, 3) * Math.exp(-dt / 4);
       }
+    // A short surface ring, separate from the divergence-free stroke velocity.
+    // Radius is in viewport pixels; there is no sustained force from a held click.
+    for (const tap of this.taps) {
+      tap.age += dt;
+      const radius = 0.18 + tap.age * 1.9;
+      const decay = Math.exp(-tap.age * 5);
+      for (let y = 1; y < H - 1; y++)
+        for (let x = 1; x < W - 1; x++) {
+          const dx = (FLOW.minX + x * hx - tap.x) / this.radiusX;
+          const dy = (FLOW.minY + y * hy - tap.y) / this.radiusY;
+          const r = Math.hypot(dx, dy);
+          const wave = Math.exp(-(((r - radius) / 0.26) ** 2)) * decay;
+          const i = (y * W + x) * 4;
+          this.nextValues[i] +=
+            (dx / Math.max(0.1, r)) * this.radiusX * wave * dt * 0.8;
+          this.nextValues[i + 1] +=
+            (dy / Math.max(0.1, r)) * this.radiusY * wave * dt * 0.8;
+          this.nextValues[i + 3] = Math.min(
+            1,
+            this.nextValues[i + 3] + wave * dt * 1.8,
+          );
+        }
+    }
+    this.taps = this.taps.filter((tap) => tap.age < 0.85);
     this.values.set(this.nextValues);
   }
 }

@@ -1,0 +1,160 @@
+import assert from 'node:assert/strict';
+import { mkdir } from 'node:fs/promises';
+import { chromium } from '@playwright/test';
+await mkdir('.preview/v12', { recursive: true });
+const browser = await chromium.launch({
+  executablePath: '/usr/bin/google-chrome',
+  args: [
+    '--no-sandbox',
+    '--use-angle=vulkan',
+    '--enable-features=Vulkan',
+    '--disable-vulkan-surface',
+    '--ignore-gpu-blocklist',
+  ],
+});
+try {
+  const page = await browser.newPage({
+      viewport: { width: 1600, height: 1150 },
+    }),
+    errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  page.on('console', (e) => {
+    if (e.type() === 'error') errors.push(e.text());
+  });
+  await page.goto(process.env.PREVIEW_URL || 'http://127.0.0.1:4323');
+  await page.waitForFunction(
+    () =>
+      document.querySelector('.room-experience')?.dataset.sceneStatus ===
+      'ready',
+    null,
+    { timeout: 60000 },
+  );
+  assert.equal(await page.locator('.scene-heading').count(), 0);
+  assert.equal(
+    await page.locator('.hero-intro > span').textContent(),
+    'Ways of seeing',
+  );
+  const role = await page.locator('.masthead-role').boundingBox(),
+    name = await page.locator('.wordmark').boundingBox();
+  assert.ok(
+    role.x > name.x + name.width &&
+      Math.abs(role.y + role.height / 2 - name.y - name.height / 2) < 2,
+  );
+  await page.waitForTimeout(600); // let the existing poster crossfade finish
+  await page.screenshot({ path: '.preview/v12/header.png' });
+  await page
+    .locator('[data-query-id="room-query-09"]')
+    .evaluate((e) => e.click());
+  await page.waitForFunction(
+    () => document.querySelector('.room-experience')?.dataset.selected === '37',
+  );
+  await page.waitForTimeout(1300);
+  await page.getByRole('button', { name: 'Stop', exact: true }).click();
+  await page.waitForTimeout(1500);
+  const summary = await page.locator('.query-summary').boundingBox();
+  const sentence = await page.locator('.query-replay > p').boundingBox(),
+    steps = await page.locator('.query-steps').boundingBox(),
+    credit = await page.locator('.query-note').boundingBox();
+  assert.ok(
+    Math.abs(steps.x + steps.width / 2 - summary.x - summary.width / 2) < 2,
+    'stages centered',
+  );
+  assert.ok(
+    Math.abs(sentence.x - summary.x) < 2 &&
+      Math.abs(credit.x + credit.width - summary.x - summary.width) < 2,
+  );
+  assert.ok(
+    Math.abs(sentence.y + sentence.height / 2 - credit.y - credit.height / 2) <
+      2,
+    'sentence and credit share one row',
+  );
+  await page
+    .locator('.query-summary')
+    .screenshot({ path: '.preview/v12/query-bar.png' });
+  await page.getByRole('button', { name: 'AI', exact: true }).click();
+  await page.waitForTimeout(3400);
+  const strokes = page.locator('.connection-spine, .connection-packet');
+  assert.ok(
+    (
+      await strokes.evaluateAll((es) =>
+        es
+          .filter((e) => e.style.display !== 'none')
+          .map((e) => e.getAttribute('stroke-width')),
+      )
+    ).every((w) => w === '.85'),
+  );
+  const packet = () =>
+    page.locator('.connection-packet').evaluateAll((es) =>
+      es
+        .filter((e) => e.style.display !== 'none')
+        .map((e) => e.getAttribute('d'))
+        .join(''),
+    );
+  const signatures = new Set();
+  for (let i = 0; i < 12; i++) {
+    signatures.add(await packet());
+    await page.waitForTimeout(140);
+  }
+  assert.ok(signatures.size > 3, 'light packets move over time');
+  await page
+    .locator('.room-stage')
+    .screenshot({ path: '.preview/v12/fiber-ai.png' });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.waitForTimeout(150);
+  assert.equal(await packet(), '', 'reduced motion disables travelling light');
+  await page.locator('.experience').scrollIntoViewIfNeeded();
+  await page.locator('.experience-identity img').evaluate((e) => e.decode());
+  const copy = await page.locator('#forest .work-copy').boundingBox(),
+    experience = await page.locator('.experience .work-copy').boundingBox();
+  assert.ok(
+    Math.abs(copy.x - experience.x) < 2,
+    'experience uses the paper copy column',
+  );
+  assert.ok(
+    await page
+      .locator('.experience-identity img')
+      .evaluate((e) => e.complete && e.naturalWidth > 0),
+  );
+  assert.ok(
+    (await page.locator('.experience').textContent()).includes(
+      '2026.05 — 2026.09',
+    ),
+  );
+  assert.ok(
+    (await page.locator('#forest .work-metadata').textContent())
+      .replace(/\s+/g, ' ')
+      .includes('Remote sensing · Forests 2023'),
+  );
+  await page
+    .locator('.experience')
+    .screenshot({ path: '.preview/v12/experience.png' });
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  const link = page.locator('#lego .text-links a').first();
+  await link.scrollIntoViewIfNeeded();
+  const shaft = link.locator('.arrow-stem');
+  await page.mouse.move(5, 5);
+  const rest = await shaft.evaluate((e) => getComputedStyle(e).transform);
+  await link.hover();
+  await page.waitForTimeout(300);
+  assert.notEqual(
+    await shaft.evaluate((e) => getComputedStyle(e).transform),
+    rest,
+  );
+  for (const width of [390, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.waitForTimeout(100);
+    assert.equal(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth > innerWidth,
+      ),
+      false,
+      `no overflow at ${width}px`,
+    );
+  }
+  assert.deepEqual(errors, []);
+  console.log(
+    'Fiber motion/reduced motion, fixed widths, aligned summary/header/experience, logo, separators and link feedback passed.',
+  );
+} finally {
+  await browser.close();
+}

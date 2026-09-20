@@ -105,6 +105,14 @@
     "installation-poster.webp": {
       "bytes": 58278,
       "sha256": "6b59af9641f3dccfc24f3820a494fa2c3a731299714ce7fd07dceec1e99b72c0"
+    },
+    "graph.json": {
+      "bytes": 167727,
+      "sha256": "b6be49520e942926434b7dac96b7fba613ca3989e1bae31630a67dd9abff05fa"
+    },
+    "graph.bits.gz": {
+      "bytes": 197658,
+      "sha256": "707dc99424c26ec1119f8ff320868b46fd26e8fec2383fd4ff1560f6df54a685"
     }
   }
 }

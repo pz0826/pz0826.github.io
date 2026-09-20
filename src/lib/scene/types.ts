@@ -39,6 +39,13 @@ export interface SceneData {
   manifest: SceneManifest;
   nodes: Map<number, SceneNode>;
   queries: SceneQuery[];
+  graph: {
+    ids: number[];
+    centers: Vec3[];
+    index: Map<number, number>;
+    stride: number;
+    bits: Uint8Array;
+  };
   neighbors: Map<number, { node_id: number; cosine: number }[]>;
 }
 export interface SceneState {

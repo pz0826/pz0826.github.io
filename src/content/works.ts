@@ -16,7 +16,7 @@ export const works: Work[] = [
       'LifePlanner: Evaluating LLM Agents for Geo-spatial Planning with Social Media Data',
     authors:
       'Zhen Dong*, Yuning Peng*, Yutao Shi, Lei Zhong, Yongsen Mao, Yuan Liu, Haiping Wang†',
-    venue: 'arXiv · 2026',
+    venue: 'arXiv 2026',
     theme: 'Spatial agents',
     summary:
       'A benchmark that connects maps with local social-media evidence to evaluate LLM agents across four geo-spatial planning tasks and three difficulty levels.',
@@ -29,7 +29,7 @@ export const works: Work[] = [
     title: 'LEGO: Leveled Language Gaussian Splatting',
     authors:
       'Yuning Peng, Haiping Wang, Yuan Liu, Yipeng Lu, Zhen Dong, Bisheng Yang',
-    venue: 'ECCV · 2026',
+    venue: 'ECCV 2026',
     theme: 'Hierarchical scene understanding',
     summary:
       'Understanding a scene from objects to their parts: a leveled 3D representation for open-vocabulary and relational queries.',
@@ -47,7 +47,7 @@ export const works: Work[] = [
       'GAGS: Granularity-Aware 3D Feature Distillation for Gaussian Splatting',
     authors:
       'Yuning Peng*, Haiping Wang*, Yuan Liu, Chenglu Wen, Zhen Dong, Bisheng Yang',
-    venue: 'AAAI · 2026',
+    venue: 'AAAI 2026',
     theme: 'Open-vocabulary 3D vision',
     summary:
       'Distilling 2D CLIP features into Gaussian splatting with adaptive granularity, enabling open-vocabulary queries from arbitrary viewpoints.',
@@ -65,7 +65,7 @@ export const works: Work[] = [
       'The Neural City: A Next-generation Spatio-Temporal Intelligence Paradigm for Urban Holistic Governance',
     authors:
       'Zhen Dong, Haiping Wang, Zhe Chen, Chen Long, Yuning Peng, Yuan Liu, Fuxun Liang, Jian Zhou, Yiping Chen, Fan Zhang, Bisheng Yang†, Deren Li',
-    venue: 'The Innovation · 2025',
+    venue: 'The Innovation 2025',
     theme: 'Spatial intelligence systems',
     summary:
       'A framework connecting raw urban observations with holistic urban governance through the “6W+4R” paradigm.',
@@ -82,7 +82,7 @@ export const works: Work[] = [
     title:
       'Fine-Resolution Forest Height Estimation by Integrating ICESat-2 and Landsat 8 OLI Data with a Spatial Downscaling Method for Aboveground Biomass Quantification',
     authors: 'Yingxuan Wang*, Yuning Peng*, Xudong Hu, Penglin Zhang',
-    venue: 'Forests · 2023',
+    venue: 'Forests 2023',
     theme: 'Remote sensing',
     summary:
       'Mapping forest height and aboveground biomass at 15-m resolution by combining satellite imagery and spaceborne LiDAR.',

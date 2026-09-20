@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { SparkRenderer, SplatMesh } from '@sparkjsdev/spark';
+import { stepBounds, withinBounds, type FocusBounds } from './query-direction';
 import { withinAnchor } from './art-anchors';
 import { SceneHud } from './scene-hud';
 import { createArtField } from './art-modifier';
@@ -9,13 +10,19 @@ import { FLOW, FlowField, type FlowFrame } from './flow-field';
 import { SelectionGlow } from './selection-glow';
 import { LevelTransitions } from './level-transitions';
 import { SceneTables } from './data';
-import { initialState, nodeAtLevel, queryWeights } from './state';
-import type { SceneAdapter, SceneCamera, SceneData, SceneState } from './types';
+import { initialState, nodeAtLevel } from './state';
+import type {
+  SceneAdapter,
+  SceneCamera,
+  SceneData,
+  SceneState,
+  SceneQuery,
+} from './types';
 
 interface Options {
   host: HTMLElement;
   hud: HTMLElement;
-  onNode: (id: number, level: number) => void;
+  onQuery: (query: SceneQuery) => void;
   data: SceneData;
   tables: SceneTables;
   signal: AbortSignal;
@@ -58,6 +65,8 @@ export class SparkAdapter implements SceneAdapter {
     q1: THREE.Quaternion;
     f0: number;
     f1: number;
+    target0?: THREE.Vector3;
+    target1?: THREE.Vector3;
   };
   private field!: ReturnType<typeof createArtField>;
   private projection = new THREE.Matrix4();
@@ -73,6 +82,8 @@ export class SparkAdapter implements SceneAdapter {
   private reducedMotion = matchMedia('(prefers-reduced-motion: reduce)')
     .matches;
   private requestId = 0;
+  private selectionStarted = 0;
+  private paintedSelection: number | null = null;
   private pointerDown?: { x: number; y: number };
 
   private constructor(private options: Options) {
@@ -246,7 +257,8 @@ export class SparkAdapter implements SceneAdapter {
         options.data,
         adapter.geometry,
         adapter.tables,
-        options.onNode,
+        options.onQuery,
+        adapter.invalidate,
       );
       await adapter.hud.initialize();
       await adapter.apply(initialState);
@@ -260,33 +272,21 @@ export class SparkAdapter implements SceneAdapter {
 
   async apply(state: SceneState) {
     const version = ++this.version;
+    const previousOrigin = this.hud?.selectionCenter();
     this.state = state;
-    const query = this.options.data.queries.find(
-      (query) => query.id === state.queryId,
-    );
     const table = await this.tables.level(
       state.level,
       state.view === 'ai' || this.field.progress.value > 0,
     );
-    if (state.complete && query)
-      await Promise.all(
-        this.options.data.manifest.levels.map((level) =>
-          this.tables.level(level),
-        ),
-      );
     if (version !== this.version || this.disposed) return;
-    const weights =
-      state.complete && query
-        ? queryWeights(
-            query,
-            this.options.data.nodes,
-            this.tables.labels,
-            this.options.data.manifest.count,
-          )
-        : undefined;
     await this.hud?.select(state);
     if (version !== this.version || this.disposed) return;
+    const waveOrigin =
+      state.selected === null
+        ? ART.target
+        : (this.hud?.selectionCenter() ?? previousOrigin ?? ART.target);
     const selected = state.selected;
+    const bounds = stepBounds(state.queryId, state.step);
     if (table.pca) {
       if (!this.loadedLevels.has(state.level)) {
         const offset = (state.level - 1) * this.pixels.length;
@@ -302,32 +302,53 @@ export class SparkAdapter implements SceneAdapter {
       this.levels.choose(
         state.level,
         state.view === 'ai' && !this.reducedMotion,
+        waveOrigin,
       );
       this.syncLevelWaves();
     }
     for (let i = 0; i < this.options.data.manifest.count; i++) {
       const p = i * 4;
-      this.pixels[p + 3] = weights
-        ? weights[i]
-        : selected !== null &&
-            table.labels[i] === selected &&
-            withinAnchor(
-              selected,
-              toRoom(
-                this.geometry[i * 8],
-                this.geometry[i * 8 + 1],
-                this.geometry[i * 8 + 2],
-              ),
-            )
+      this.pixels[p + 3] =
+        selected !== null &&
+        table.labels[i] === selected &&
+        withinBounds(
+          toRoom(
+            this.geometry[i * 8],
+            this.geometry[i * 8 + 1],
+            this.geometry[i * 8 + 2],
+          ),
+          bounds,
+        ) &&
+        withinAnchor(
+          selected,
+          toRoom(
+            this.geometry[i * 8],
+            this.geometry[i * 8 + 1],
+            this.geometry[i * 8 + 2],
+          ),
+        )
           ? 115
           : 0;
     }
-    this.field.dim.value = state.complete && query ? 0.8 : 1;
-    if (state.complete && query) this.field.tint.value.set(1, 0, 0);
-    else this.field.tint.value.set(0.75, 0.9, 1);
+    if (selected !== this.paintedSelection) {
+      this.paintedSelection = selected;
+      this.selectionStarted = performance.now();
+      this.field.selectionGain.value =
+        this.reducedMotion || selected === null ? 1 : 0;
+    }
+    this.field.dim.value = 1;
+    this.field.tint.value.set(0.75, 0.9, 1);
     this.overlay.needsUpdate = true;
     this.mesh.needsUpdate = true;
-    this.revealTarget = state.view === 'ai' ? 1 : 0;
+    const target = state.view === 'ai' ? 1 : 0;
+    if (
+      target !== this.revealTarget &&
+      (this.field.progress.value === 0 || this.field.progress.value === 1)
+    ) {
+      this.field.origin.value.set(waveOrigin[0], waveOrigin[1]);
+      this.field.reverse.value = target === 0 ? 1 : 0;
+    }
+    this.revealTarget = target;
     if (this.reducedMotion) this.field.progress.value = this.revealTarget;
     this.invalidate();
   }
@@ -346,6 +367,8 @@ export class SparkAdapter implements SceneAdapter {
     this.levels.waves.forEach((wave, i) => {
       this.wavePixels[i * 4] = wave.level - 1;
       this.wavePixels[i * 4 + 1] = wave.progress;
+      this.wavePixels[i * 4 + 2] = wave.origin[0];
+      this.wavePixels[i * 4 + 3] = wave.origin[1];
     });
     this.wavesTexture.needsUpdate = true;
     this.field.levelCount.value = count;
@@ -380,6 +403,70 @@ export class SparkAdapter implements SceneAdapter {
       this.camera.fov = fov;
       this.syncControls();
     }
+    this.invalidate();
+  }
+  async frameNode(
+    id: number,
+    pose: SceneCamera,
+    context = 1.6,
+    bounds?: FocusBounds,
+  ) {
+    const epoch = this.requestId;
+    const points = await this.hud?.points(id, bounds);
+    if (!points?.length || this.disposed || epoch !== this.requestId) return;
+    const box = new THREE.Box3().setFromPoints(
+      points.map((p) => new THREE.Vector3(...fromRoom(...p))),
+    );
+    const target = box.getCenter(new THREE.Vector3());
+    const radius = box.getSize(new THREE.Vector3()).length() / 2;
+    const [w, x, y, z] = pose.wxyz;
+    const recorded = new THREE.Quaternion(x, y, z, w).multiply(
+      new THREE.Quaternion().setFromAxisAngle(
+        new THREE.Vector3(1, 0, 0),
+        Math.PI,
+      ),
+    );
+    const direction = new THREE.Vector3(0, 0, 1).applyQuaternion(recorded);
+    const fov = 46;
+    const halfFov = Math.atan(
+      Math.tan(THREE.MathUtils.degToRad(fov / 2)) *
+        Math.min(1, this.camera.aspect),
+    );
+    const distance = Math.max(0.38, (radius * context) / Math.sin(halfFov));
+    const position = target.clone().addScaledVector(direction, distance);
+    const facing = new THREE.Quaternion().setFromRotationMatrix(
+      new THREE.Matrix4().lookAt(position, target, this.camera.up),
+    );
+    this.homeView = false;
+    if (this.reducedMotion) {
+      this.motion = undefined;
+      this.camera.position.copy(position);
+      this.camera.quaternion.copy(facing);
+      this.camera.fov = fov;
+      this.controls.target.copy(target);
+      this.camera.updateProjectionMatrix();
+    } else {
+      this.motion = {
+        start: performance.now(),
+        from: this.camera.position.clone(),
+        to: position,
+        q0: this.camera.quaternion.clone(),
+        q1: facing,
+        f0: this.camera.fov,
+        f1: fov,
+        target0: this.controls.target.clone(),
+        target1: target,
+      };
+    }
+    this.invalidate();
+  }
+  private ripple(clientX: number, clientY: number) {
+    if (this.reducedMotion) return;
+    const rect = this.renderer.domElement.getBoundingClientRect();
+    this.flow.tap(
+      ((clientX - rect.left) / rect.width) * 2 - 1,
+      1 - ((clientY - rect.top) / rect.height) * 2,
+    );
     this.invalidate();
   }
   private syncControls() {
@@ -544,11 +631,13 @@ export class SparkAdapter implements SceneAdapter {
     this.pointerDown = undefined;
     if (
       !this.controls.enabled ||
+      event.button !== 0 ||
       !down ||
       Math.hypot(event.clientX - down.x, event.clientY - down.y) > 5
     )
       return;
     this.manual();
+    this.ripple(event.clientX, event.clientY);
     const rect = this.renderer.domElement.getBoundingClientRect();
     const ray = new THREE.Raycaster();
     ray.setFromCamera(
@@ -563,6 +652,9 @@ export class SparkAdapter implements SceneAdapter {
       field: {
         progress: this.field.progress.value,
         levelWaves: this.levels.progresses(),
+        origin: this.field.origin.value.toArray(),
+        levelOrigins: this.levels.origins(),
+        reverse: this.field.reverse.value > 0.5,
         time: this.field.time.value,
         ambient: this.field.ambient.value,
         flow: { values: this.flow.values, frame: this.flowFrame },
@@ -605,6 +697,10 @@ export class SparkAdapter implements SceneAdapter {
       }
       this.flowTexture.needsUpdate = true;
     }
+    if (this.field.selectionGain.value < 1) {
+      const t = Math.min(1, (now - this.selectionStarted) / 300);
+      this.field.selectionGain.value = t * t * (3 - 2 * t);
+    }
     const moving = !!this.motion;
     if (this.motion) {
       const m = this.motion,
@@ -614,6 +710,8 @@ export class SparkAdapter implements SceneAdapter {
       this.camera.quaternion.slerpQuaternions(m.q0, m.q1, ease);
       this.camera.fov = THREE.MathUtils.lerp(m.f0, m.f1, ease);
       this.syncControls();
+      if (m.target0 && m.target1)
+        this.controls.target.lerpVectors(m.target0, m.target1, ease);
       if (t === 1) this.motion = undefined;
     }
     const revealing =
@@ -650,6 +748,9 @@ export class SparkAdapter implements SceneAdapter {
       this.hud?.update(this.camera, {
         progress: this.field.progress.value,
         levelWaves: this.levels.progresses(),
+        origin: this.field.origin.value.toArray(),
+        levelOrigins: this.levels.origins(),
+        reverse: this.field.reverse.value > 0.5,
         time: this.field.time.value,
         ambient: this.field.ambient.value,
         flow: { values: this.flow.values, frame: this.flowFrame },

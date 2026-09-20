@@ -50,7 +50,13 @@ export function cropWeight(p: readonly number[]) {
       (1 - smooth(ART.max[i] - ART.feather[i], ART.max[i], x)),
     1,
   );
-  const front = 1 - smooth(0.38, 0.52, p[1]) * smooth(0.27, 0.4, p[2]);
+  // Locally lift the cut around the door. Raising the entire front strip
+  // restored detached fragments above the sofa, so keep that region conservative.
+  // The interior ceiling rejection and anisotropic artifact guard stay intact.
+  const door = smooth(-1.68, -1.48, p[0]) * (1 - smooth(-1.0, -0.8, p[0]));
+  const frontTop = 0.4 + 0.37 * door;
+  const front =
+    1 - smooth(0.38, 0.52, p[1]) * smooth(frontTop - 0.15, frontTop, p[2]);
   const sides =
     1 -
     Math.max(1 - smooth(-1.86, -1.6, p[0]), smooth(1.28, 1.49, p[0])) *
@@ -69,32 +75,70 @@ export function artifactWeight(p: readonly number[], sx: number, sy: number) {
 export interface FieldState {
   progress: number;
   levelWaves?: readonly number[];
+  origin?: readonly number[];
+  levelOrigins?: readonly (readonly number[])[];
+  reverse?: boolean;
   time: number;
   ambient: number;
   flow?: FlowSnapshot;
 }
-export function revealFront(progress: number) {
-  return -0.15 + 2.25 * (progress + 0.09 * Math.sin(2 * Math.PI * progress));
+export function revealExtent(origin: readonly number[] = ART.target) {
+  return (
+    Math.hypot(
+      Math.max(
+        Math.abs(ART.min[0] - origin[0]),
+        Math.abs(ART.max[0] - origin[0]),
+      ),
+      Math.max(
+        Math.abs(ART.min[1] - origin[1]),
+        Math.abs(ART.max[1] - origin[1]),
+      ),
+    ) + 0.1
+  );
 }
-export function appearanceBlend(p: readonly number[], progress: number) {
+export function revealFront(progress: number, extent = 2.1) {
+  return (
+    -0.15 +
+    (extent + 0.15) * (progress + 0.09 * Math.sin(2 * Math.PI * progress))
+  );
+}
+export function appearanceBlend(
+  p: readonly number[],
+  progress: number,
+  origin: readonly number[] = ART.target,
+  reverse = false,
+): number {
+  if (reverse) return 1 - appearanceBlend(p, 1 - progress, origin);
   if (progress <= 0) return 0;
   if (progress >= 1) return 1;
-  const radius = Math.hypot(p[0] + 0.2, p[1]);
+  const radius = Math.hypot(p[0] - origin[0], p[1] - origin[1]);
   const a = smooth(-0.22, 0.22, -0.15 - radius),
-    b = smooth(-0.22, 0.22, 2.1 - radius);
+    b = smooth(-0.22, 0.22, revealExtent(origin) - radius);
   return Math.max(
     0,
     Math.min(
       1,
-      (smooth(-0.22, 0.22, revealFront(progress) - radius) - a) /
+      (smooth(
+        -0.22,
+        0.22,
+        revealFront(progress, revealExtent(origin)) - radius,
+      ) -
+        a) /
         Math.max(0.0001, b - a),
     ),
   );
 }
-export function revealWave(p: readonly number[], progress: number) {
+export function revealWave(
+  p: readonly number[],
+  progress: number,
+  origin: readonly number[] = ART.target,
+) {
   return (
     Math.exp(
-      -10 * (Math.hypot(p[0] + 0.2, p[1]) - revealFront(progress)) ** 2,
+      -10 *
+        (Math.hypot(p[0] - origin[0], p[1] - origin[1]) -
+          revealFront(progress, revealExtent(origin))) **
+          2,
     ) * Math.sin(Math.PI * progress)
   );
 }
@@ -102,9 +146,17 @@ export function fieldWave(
   p: readonly number[],
   progress: number,
   levelWaves: readonly number[] = [],
+  origin: readonly number[] = ART.target,
+  levelOrigins: readonly (readonly number[])[] = [],
+  reverse = false,
 ) {
-  let wave = revealWave(p, progress);
-  for (const t of levelWaves) wave = Math.max(wave, 0.65 * revealWave(p, t));
+  let wave = revealWave(p, reverse ? 1 - progress : progress, origin);
+  levelWaves.forEach((t, i) => {
+    wave = Math.max(
+      wave,
+      0.65 * revealWave(p, t, levelOrigins[i] ?? ART.target),
+    );
+  });
   return wave;
 }
 export function focusWeight(p: readonly number[], field: FieldState) {
@@ -164,7 +216,14 @@ export function displace(
       )
     : [flow[0], flow[1], flow[2]];
   const flowAmplitude = frame ? depth * frame.tanFov * 0.005 : 0.009;
-  const wave = fieldWave(p, progress, field.levelWaves);
+  const wave = fieldWave(
+    p,
+    progress,
+    field.levelWaves,
+    field.origin,
+    field.levelOrigins,
+    field.reverse,
+  );
   const n = [
     Math.sin(
       y * 1.7 + z * 1.1 + time * 0.21 + 0.35 * Math.sin(x * 2.3 - time * 0.11),
@@ -196,10 +255,13 @@ export function splatScales(
   p: readonly number[],
   progress: number,
   levelWaves: readonly number[] = [],
+  origin: readonly number[] = ART.target,
+  levelOrigins: readonly (readonly number[])[] = [],
+  reverse = false,
 ) {
-  const blend = appearanceBlend(p, progress),
+  const blend = appearanceBlend(p, progress, origin, reverse),
     small = pointScale(sx, sy),
-    wave = fieldWave(p, progress, levelWaves);
+    wave = fieldWave(p, progress, levelWaves, origin, levelOrigins, reverse);
   // Stay on the covariance projection path even at the Human endpoint. A tiny
   // thickness prevents a zero/nonzero switch into Spark's oriented-quad path.
   // Guard long reconstruction outliers without inflating ordinary surfaces.
@@ -218,15 +280,21 @@ export function splatScales(
   );
 }
 export const FIELD_GLSL = `
-float artFront(float t){return -.15+2.25*(t+.09*sin(6.2831853*t));}
-float artBlend(vec3 p,float t){
+float artExtent(vec2 o){return length(max(abs(vec2(-1.95,-.84)-o),abs(vec2(1.53,.86)-o)))+.1;}
+float artFront(float t,vec2 o){return -.15+(artExtent(o)+.15)*(t+.09*sin(6.2831853*t));}
+float artBlend(vec3 p,float t,vec2 o){
   if(t<=0.)return 0.;if(t>=1.)return 1.;
-  float r=length(p.xy+vec2(.2,0.));
-  float a=smoothstep(-.22,.22,-.15-r),b=smoothstep(-.22,.22,2.1-r);
-  return clamp((smoothstep(-.22,.22,artFront(t)-r)-a)/max(.0001,b-a),0.,1.);
+  float r=length(p.xy-o);
+  float a=smoothstep(-.22,.22,-.15-r),b=smoothstep(-.22,.22,artExtent(o)-r);
+  return clamp((smoothstep(-.22,.22,artFront(t,o)-r)-a)/max(.0001,b-a),0.,1.);
 }
-float artWave(vec3 p,float t) {
-  return exp(-10.*pow(length(p.xy+vec2(.2,0.))-artFront(t),2.))*sin(3.14159265*t);
+float artWave(vec3 p,float t,vec2 o) {
+  return exp(-10.*pow(length(p.xy-o)-artFront(t,o),2.))*sin(3.14159265*t);
+}
+float artFrontCut(vec3 p){
+  float door=smoothstep(-1.68,-1.48,p.x)*(1.-smoothstep(-1.,-.8,p.x));
+  float top=.4+.37*door;
+  return 1.-smoothstep(.38,.52,p.y)*smoothstep(top-.15,top,p.z);
 }
 float artInteriorCut(vec3 p){
   float inside=smoothstep(-1.4,-1.28,p.x)*(1.-smoothstep(1.03,1.15,p.x))*smoothstep(-.61,-.55,p.y)*(1.-smoothstep(.47,.58,p.y));

@@ -59,3 +59,31 @@ test('completed fronts retire without restarting later fronts; newest choice win
   assert.equal(q.base, 1);
   assert.equal(q.waves.length, 0);
 });
+
+test('selected-object origins travel with their own overlapping fronts', () => {
+  const q = new LevelTransitions();
+  q.choose(1, false);
+  const origin = [1.1, 0.1, 0.15];
+  q.choose(2, true, origin);
+  q.advance(0.2);
+  origin[0] = -1.5;
+  q.choose(3, true, [-1.5, -0.2, 0.3]);
+  assert.deepEqual(q.waves[0].origin, [1.1, 0.1, 0.15]);
+  assert.deepEqual(q.waves[1].origin, [-1.5, -0.2, 0.3]);
+  assert.ok(
+    appearanceBlend([1.1, 0.1, 0.15], 0.1, q.waves[0].origin) >
+      appearanceBlend([-1.5, -0.2, 0.3], 0.1, q.waves[0].origin),
+  );
+  assert.ok(
+    appearanceBlend([1.1, 0.1, 0.15], 0.9, q.waves[0].origin, true) <
+      appearanceBlend([-1.5, -0.2, 0.3], 0.9, q.waves[0].origin, true),
+    'Human reveal also starts at the object',
+  );
+  for (const p of [
+    [-1.94, -0.83, -0.24],
+    [1.52, 0.85, 0.85],
+  ]) {
+    assert.equal(appearanceBlend(p, 1, q.waves[0].origin), 1);
+    assert.equal(appearanceBlend(p, 0, q.waves[0].origin, true), 0);
+  }
+});

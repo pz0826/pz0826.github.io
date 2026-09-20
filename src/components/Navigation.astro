@@ -1,7 +1,14 @@
+---
+import { profile } from '../content/profile';
+---
+
 <header class="masthead">
-  <a class="wordmark" href="#top" aria-label="Yuning Peng, back to top">
-    Yuning Peng
-  </a>
+  <div class="masthead-identity">
+    <a class="wordmark" href="#top" aria-label="Yuning Peng, back to top">
+      Yuning Peng
+    </a>
+    <span class="masthead-role eyebrow">{profile.role}</span>
+  </div>
   <nav aria-label="Main navigation">
     {['Info', 'News', 'Works', 'Arts'].map((label) => (
       <a href={`#${label.toLowerCase()}`}>{label}</a>

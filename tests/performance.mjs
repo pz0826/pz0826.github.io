@@ -75,7 +75,7 @@ try {
     };
   });
   const tag = await page
-    .getByRole('button', { name: 'Observe Plant' })
+    .locator('[data-query-id="room-query-12"]')
     .locator('span')
     .boundingBox();
   await page.mouse.click(tag.x + tag.width / 2, tag.y + tag.height / 2);

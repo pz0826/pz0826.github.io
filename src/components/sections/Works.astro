@@ -1,4 +1,5 @@
 ---
+import LinkArrow from '../LinkArrow.astro';
 import { works } from '../../content/works';
 ---
 
@@ -40,7 +41,7 @@ import { works } from '../../content/works';
           <div class="work-copy">
             <p class="work-metadata eyebrow">
               {work.theme}
-              <span aria-hidden="true"> / </span>
+              <span aria-hidden="true"> · </span>
               {work.venue}
             </p>
             <h3>{work.title}</h3>
@@ -58,7 +59,9 @@ import { works } from '../../content/works';
             <p class="work-summary">{work.summary}</p>
             <div class="text-links">
               {work.links.map((link) => (
-                <a href={link.href}>{link.label} ↗</a>
+                <a href={link.href}>
+                  {link.label} <LinkArrow />
+                </a>
               ))}
             </div>
           </div>
@@ -68,13 +71,39 @@ import { works } from '../../content/works';
     <p class="contribution-note eyebrow">
       * Equal contribution · † Corresponding author
     </p>
-    <div class="experience">
-      <span class="eyebrow">Research experience</span>
-      <h3>ByteDance</h3>
-      <p>
-        Internship · China <span class="eyebrow">2026.05 — present</span>
-      </p>
-    </div>
+    <article class="experience work-grid">
+      <div class="experience-identity">
+        <img
+          src="/media/identity/bytedance_BIG.svg"
+          alt="ByteDance"
+          width="1545"
+          height="268"
+          loading="lazy"
+        />
+      </div>
+      <div class="work-copy">
+        <p class="work-metadata eyebrow">Research experience</p>
+        <h3>ByteDance</h3>
+        <p class="experience-role">Research Intern · Hangzhou, China</p>
+        <p class="experience-date eyebrow">2026.05 — 2026.09</p>
+        <ul class="experience-details">
+          <li>
+            Developed a{' '}
+            <strong>Reinforcement Learning post-training pipeline</strong> for
+            autoregressive 3D mesh generation models, designing reward functions
+            to systematically optimize the geometric fidelity, topological
+            correctness, and visual aesthetics of the generated meshes.
+          </li>
+          <li>
+            Built a scalable pre-training data curation pipeline by developing{' '}
+            <strong>geometry-based filtering operators</strong> for targeted
+            failure modes and a{' '}
+            <strong>VLM-based auto-annotation framework</strong> through
+            instruction tuning and prompt engineering.
+          </li>
+        </ul>
+      </div>
+    </article>
   </div>
 </section>
 <script>

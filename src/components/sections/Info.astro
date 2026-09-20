@@ -1,4 +1,5 @@
 ---
+import LinkArrow from '../LinkArrow.astro';
 import { profile, awards } from '../../content/profile';
 ---
 
@@ -13,20 +14,40 @@ import { profile, awards } from '../../content/profile';
     </p>
     <p>
       I am a master’s student at LIESMARS,{' '}
-      <a href="https://www.whu.edu.cn">Wuhan University</a>, advised by{' '}
-      <a href="https://dongzhenwhu.github.io/index.html">Zhen Dong</a>,{' '}
-      <a href="https://3s.whu.edu.cn/ybs/index.htm">Bisheng Yang</a>,{' '}
-      <a href="https://liuyuan-pal.github.io/">Yuan Liu</a>, and{' '}
-      <a href="https://hpwang-whu.github.io/">Haiping Wang</a> from HKUST.
+      <a href="https://www.whu.edu.cn">
+        Wuhan University <LinkArrow />
+      </a>
+      , advised by{' '}
+      <a href="https://dongzhenwhu.github.io/index.html">
+        Zhen Dong <LinkArrow />
+      </a>
+      ,{' '}
+      <a href="https://3s.whu.edu.cn/ybs/index.htm">
+        Bisheng Yang <LinkArrow />
+      </a>
+      ,{' '}
+      <a href="https://liuyuan-pal.github.io/">
+        Yuan Liu <LinkArrow />
+      </a>
+      , and{' '}
+      <a href="https://hpwang-whu.github.io/">
+        Haiping Wang <LinkArrow />
+      </a>{' '}
+      from HKUST.
     </p>
     <p>
       My research spans 3D scene understanding, reconstruction, and large
       language models. I am part of{' '}
-      <a href="https://github.com/WHU-USI3DV">WHU-USI3DV</a>.
+      <a href="https://github.com/WHU-USI3DV">
+        WHU-USI3DV <LinkArrow />
+      </a>
+      .
     </p>
     <div class="text-links">
       {profile.links.map((link) => (
-        <a href={link.href}>{link.label} ↗</a>
+        <a href={link.href}>
+          {link.label} <LinkArrow />
+        </a>
       ))}
     </div>
     <div class="info-details">

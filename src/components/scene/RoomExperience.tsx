@@ -1,12 +1,8 @@
+import { directedSteps } from '../../lib/scene/query-direction';
 import FeatureDial from './FeatureDial';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import { loadSceneData, SceneTables } from '../../lib/scene/data';
-import {
-  initialState,
-  nodeAtLevel,
-  relatedNodes,
-  sceneReducer,
-} from '../../lib/scene/state';
+import { initialState, nodeAtLevel, sceneReducer } from '../../lib/scene/state';
 import type { SceneData, SceneQuery } from '../../lib/scene/types';
 import type { SparkAdapter } from '../../lib/scene/spark-adapter';
 
@@ -22,18 +18,22 @@ export default function RoomExperience() {
   const [state, dispatch] = useReducer(sceneReducer, initialState);
   const [exploring, setExploring] = useState(false),
     [mobile, setMobile] = useState(false);
-  const [attempt, setAttempt] = useState(0),
-    [tableBusy, setTableBusy] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const playRef = useRef<(query: SceneQuery) => void>(() => {});
   const [detail, setDetail] = useState('');
+  const [tableBusy, setTableBusy] = useState(false);
   const picked = useRef(-1),
     timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const manualEpoch = useRef(0);
+  const finishWait = useRef<(() => void) | null>(null);
   const current = useRef(state);
   current.current = state;
   const cancel = () => {
     ++manualEpoch.current;
     timers.current.forEach(clearTimeout);
     timers.current = [];
+    finishWait.current?.();
+    finishWait.current = null;
     adapter.current?.cancelMotion();
     dispatch({ type: 'stop' });
   };
@@ -88,11 +88,7 @@ export default function RoomExperience() {
       local = await SparkAdapter.create({
         host: host.current!,
         hud: hud.current!,
-        onNode: (id, level) => {
-          cancel();
-          picked.current = -1;
-          dispatch({ type: 'select', id, level });
-        },
+        onQuery: (query) => playRef.current(query),
         data: sceneData,
         tables,
         signal: abort.signal,
@@ -125,6 +121,8 @@ export default function RoomExperience() {
       local?.dispose();
       adapter.current = null;
       timers.current.forEach(clearTimeout);
+      ++manualEpoch.current;
+      finishWait.current?.();
     };
   }, [attempt]);
   useEffect(() => {
@@ -132,16 +130,16 @@ export default function RoomExperience() {
   }, [mobile, exploring, status]);
   useEffect(() => {
     if (!adapter.current || status !== 'ready') return;
-    let active = true;
+    let live = true;
     setTableBusy(true);
     adapter.current
       .apply(state)
       .catch(fail)
       .finally(() => {
-        if (active) setTableBusy(false);
+        if (live) setTableBusy(false);
       });
     return () => {
-      active = false;
+      live = false;
     };
   }, [state, status]);
   useEffect(() => {
@@ -176,41 +174,56 @@ export default function RoomExperience() {
     }
     dispatch({ type: 'level', level: value, selected });
   }
-  function select(id: number) {
+  async function play(query: SceneQuery, startStep = 0) {
     cancel();
-    const node = data?.nodes.get(id);
-    if (!node) return;
-    picked.current = -1;
-    dispatch({ type: 'select', id, level: node.scene_level });
-  }
-  function play(query: SceneQuery) {
-    cancel();
+    const epoch = manualEpoch.current;
+    const engine = adapter.current;
+    if (!engine || !data) return;
     picked.current = -1;
     dispatch({ type: 'start', query });
-    adapter.current?.moveTo(query.camera);
-    query.primary_chain.forEach((step, index) => {
-      timers.current.push(
-        setTimeout(
-          () => {
-            const node = data?.nodes.get(step.node_id);
-            if (!node) return;
-            dispatch({
-              type: 'step',
-              queryId: query.id,
-              step: index,
-              node,
-              complete: index === query.primary_chain.length - 1,
-            });
-          },
-          1350 + index * 1150,
-        ),
+    const steps = directedSteps(query);
+    for (let index = startStep; index < steps.length; index++) {
+      const step = steps[index],
+        node = data.nodes.get(step.node);
+      if (!node) continue;
+      await engine.tables.level(
+        node.scene_level,
+        current.current.view === 'ai',
       );
-    });
+      if (epoch !== manualEpoch.current) return;
+      // Frame the current object, never jump to the saved final close-up first.
+      await engine.frameNode(
+        node.id,
+        query.camera,
+        step.context ?? (index === 0 ? 1.65 : 2),
+        step.bounds,
+      );
+      if (epoch !== manualEpoch.current) return;
+      dispatch({
+        type: 'step',
+        queryId: query.id,
+        step: index,
+        node,
+        complete: index === steps.length - 1,
+      });
+      if (index < steps.length - 1) {
+        await new Promise<void>((resolve) => {
+          finishWait.current = resolve;
+          timers.current.push(
+            setTimeout(() => {
+              finishWait.current = null;
+              resolve();
+            }, 2600),
+          );
+        });
+        if (epoch !== manualEpoch.current) return;
+      }
+    }
   }
-  const node =
-    state.selected === null ? undefined : data?.nodes.get(state.selected);
+  playRef.current = (query) => {
+    void play(query).catch(fail);
+  };
   const query = data?.queries.find((query) => query.id === state.queryId);
-  const relations = data ? relatedNodes(data, state) : [];
   const disabled = status !== 'ready';
   function enter() {
     setExploring(true);
@@ -223,6 +236,7 @@ export default function RoomExperience() {
       className={`room-experience ${exploring ? 'is-exploring' : ''}`}
       ref={container}
       data-scene-status={status}
+      data-table-busy={tableBusy}
       data-view={state.view}
       data-level={state.level}
       data-selected={state.selected ?? ''}
@@ -248,9 +262,6 @@ export default function RoomExperience() {
           role="group"
           aria-label="Objects in the room"
         />
-        <div className="scene-heading eyebrow">
-          <span>Ways of seeing</span>
-        </div>
         <div
           className="view-switch"
           role="group"
@@ -356,124 +367,7 @@ export default function RoomExperience() {
           </div>
         )}
       </div>
-      <div className="scene-tools">
-        <span className="scene-status eyebrow" role="status">
-          {status === 'ready'
-            ? tableBusy
-              ? 'Updating view…'
-              : state.playing
-                ? 'Following a relation…'
-                : 'Ready to explore'
-            : 'LEGO / interactive scene'}
-        </span>
-      </div>
-      {node && (
-        <div className="selection-panel">
-          <div className="eyebrow">
-            Selection #{node.id} <span> / Level {node.scene_level}</span>
-          </div>
-          <div className="selection-actions">
-            <button
-              disabled={!node.parent_id}
-              onClick={() => select(node.parent_id)}
-            >
-              ↑ Parent
-            </button>
-            {node.children.length > 0 && (
-              <label>
-                Parts{' '}
-                <select
-                  aria-label="Select a child part"
-                  value=""
-                  onChange={(event) => select(Number(event.target.value))}
-                >
-                  <option value="" disabled>
-                    Choose ({node.children.length})
-                  </option>
-                  {node.children.map((id) => (
-                    <option value={id} key={id}>
-                      Part #{id}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            )}
-            <button
-              aria-pressed={state.relation === 'nearby'}
-              onClick={() => {
-                cancel();
-                dispatch({
-                  type: 'relation',
-                  relation: state.relation === 'nearby' ? 'none' : 'nearby',
-                });
-              }}
-            >
-              Nearby
-            </button>
-            <button
-              aria-pressed={state.relation === 'similar'}
-              onClick={() => {
-                cancel();
-                dispatch({
-                  type: 'relation',
-                  relation: state.relation === 'similar' ? 'none' : 'similar',
-                });
-              }}
-            >
-              Similar
-            </button>
-            <button
-              aria-label="Clear selection"
-              onClick={() => {
-                cancel();
-                picked.current = -1;
-                dispatch({ type: 'select', id: null });
-              }}
-            >
-              ×
-            </button>
-          </div>
-          {state.relation !== 'none' && (
-            <div className="relation-list eyebrow">
-              {relations.length ? (
-                <>
-                  {state.relation === 'similar'
-                    ? 'Feature affinity'
-                    : 'Nearest centers'}
-                  :{' '}
-                  {relations.map((related) => (
-                    <button key={related.id} onClick={() => select(related.id)}>
-                      #{related.id} ↗
-                    </button>
-                  ))}
-                </>
-              ) : (
-                'No same-level matches in the saved neighbors.'
-              )}
-            </div>
-          )}
-        </div>
-      )}
-      <div className="query-panel">
-        <div className="query-intro">
-          <span className="eyebrow">Follow a thought</span>
-          <p>Find an object through its relationships.</p>
-        </div>
-        <div className="query-options">
-          {(data?.queries.filter((query) => query.featured) ?? []).map(
-            (query) => (
-              <button
-                key={query.id}
-                disabled={disabled}
-                aria-pressed={query.id === state.queryId}
-                onClick={() => play(query)}
-              >
-                {query.terms.join(' → ')}
-                <span aria-hidden="true">↗</span>
-              </button>
-            ),
-          )}
-        </div>
+      <div className="query-summary">
         {query && (
           <div className="query-replay" aria-live="polite">
             <p>“{query.text}”</p>
@@ -482,14 +376,14 @@ export default function RoomExperience() {
                 <button
                   key={`${index}-${term}`}
                   className={index === state.step ? 'current' : ''}
-                  onClick={() => select(query.primary_chain[index].node_id)}
+                  onClick={() => void play(query, index).catch(fail)}
                 >
                   {index + 1}. {term}
                 </button>
               ))}
               <span>
                 {state.complete
-                  ? `${query.cached_results.length} candidate matches`
+                  ? 'A detail, found'
                   : state.playing
                     ? 'Exploring…'
                     : 'Paused'}
@@ -499,8 +393,17 @@ export default function RoomExperience() {
           </div>
         )}
         <p className="query-note eyebrow">
-          Recorded research queries ·{' '}
-          <a href="https://pz0826.github.io/LEGO-Webpage/">About LEGO ↗</a>
+          <a
+            className="lego-credit"
+            href="https://pz0826.github.io/LEGO-Webpage/"
+          >
+            <span>powered by</span>
+            <img src="/media/lego-logo.png" alt="LEGO" width="57" height="20" />
+            <svg className="link-arrow" viewBox="0 0 20 20" aria-hidden="true">
+              <path className="arrow-stem" d="M4 16L14 6" />
+              <path className="arrow-head" d="M7 6H14V13" />
+            </svg>
+          </a>
         </p>
       </div>
     </div>

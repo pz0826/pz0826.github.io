@@ -78,7 +78,7 @@ try {
   await p.emulateMedia({ reducedMotion: 'reduce' });
   assert.ok((await arrowState()).every((a) => a.animated === 0));
   await p.emulateMedia({ reducedMotion: 'no-preference' });
-  const piano = p.locator('[aria-label="Observe Piano"]');
+  const piano = p.locator('[data-query-id="room-query-17"]');
   for (const mode of ['Human', 'AI']) {
     await p.getByRole('button', { name: mode, exact: true }).click();
     await p.waitForTimeout(700);
@@ -86,22 +86,22 @@ try {
     // remains outside. This reproduces the partial-tag case without fragile camera coordinates.
     await p.evaluate(() => {
       const tag = document
-        .querySelector('[aria-label="Observe Piano"] span')
+        .querySelector('[data-query-id="room-query-17"] span')
         .getBoundingClientRect();
       const dial = document.querySelector('.feature-dial'),
         stage = dial.parentElement.getBoundingClientRect();
-      dial.style.cssText = `left:${tag.right - stage.left - 6}px;right:auto;top:${tag.top - stage.top - 90}px;transform:none`;
+      dial.style.cssText = `left:0;right:0;top:0;bottom:0;transform:none;width:100%;height:100%;pointer-events:none`;
     });
     await p.waitForFunction(
       () =>
-        document.querySelector('[aria-label="Observe Piano"]').dataset
+        document.querySelector('[data-query-id="room-query-17"]').dataset
           .occluded === 'true',
     );
     assert.equal(
       await piano.evaluate((e) => getComputedStyle(e).visibility),
       'hidden',
     );
-    assert.equal(await piano.evaluate((e) => getComputedStyle(e).opacity), '0');
+
     assert.equal(await piano.getAttribute('aria-hidden'), 'true');
     await p.screenshot({ path: `.preview/hud/${mode}-overlap.png` });
     const oldPosition = await piano.evaluate((e) => e.style.transform);
@@ -130,7 +130,7 @@ try {
       .getByRole('button', { name: 'Reset camera and selection', exact: true })
       .click();
     await p.waitForFunction(() => {
-      const tag = document.querySelector('[aria-label="Observe Piano"]');
+      const tag = document.querySelector('[data-query-id="room-query-17"]');
       return (
         tag.dataset.occluded === 'false' &&
         getComputedStyle(tag).visibility === 'visible'

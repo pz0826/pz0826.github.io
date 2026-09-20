@@ -39,9 +39,13 @@ try {
     await page.getByRole('button', { name: mode, exact: true }).click();
     await page.waitForTimeout(500);
     const human = await capture();
-    await page
-      .getByRole('button', { name: 'Observe Plant', exact: true })
-      .click();
+    const anchor = await page
+      .locator('[data-query-id="room-query-12"] i')
+      .boundingBox();
+    await page.mouse.click(anchor.x - 6, anchor.y + 12);
+    await page.waitForFunction(
+      () => !!document.querySelector('.room-experience')?.dataset.selected,
+    );
     await page.waitForTimeout(800);
     const selected = await capture();
     const { width, height } = human.info;

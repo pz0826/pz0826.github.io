@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
 import { chromium } from '@playwright/test';
-await mkdir('.preview/v12', { recursive: true });
+await mkdir('.preview/v13', { recursive: true });
 const browser = await chromium.launch({
   executablePath: '/usr/bin/google-chrome',
   args: [
@@ -36,12 +36,37 @@ try {
   );
   const role = await page.locator('.masthead-role').boundingBox(),
     name = await page.locator('.wordmark').boundingBox();
+  assert.ok(role.x > name.x + name.width);
+  await page.evaluate(() => document.fonts.ready);
+  const centers = await page
+    .locator('.wordmark, .masthead-role, .masthead nav a')
+    .evaluateAll((es) =>
+      es.map((e) => {
+        const style = getComputedStyle(e);
+        const ctx = document.createElement('canvas').getContext('2d');
+        ctx.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+        const metrics = ctx.measureText(e.textContent.trim());
+        const probe = document.createElement('span');
+        probe.style.cssText = 'display:inline-block;width:0;height:0';
+        e.append(probe);
+        const baseline = probe.getBoundingClientRect().y;
+        probe.remove();
+        return (
+          baseline +
+          (metrics.actualBoundingBoxDescent - metrics.actualBoundingBoxAscent) /
+            2
+        );
+      }),
+    );
+  const header = await page.locator('.masthead').boundingBox();
   assert.ok(
-    role.x > name.x + name.width &&
-      Math.abs(role.y + role.height / 2 - name.y - name.height / 2) < 2,
+    centers.every(
+      (center) => Math.abs(center - header.y - header.height / 2) < 1,
+    ),
+    'visible glyphs are optically centered in the masthead',
   );
   await page.waitForTimeout(600); // let the existing poster crossfade finish
-  await page.screenshot({ path: '.preview/v12/header.png' });
+  await page.screenshot({ path: '.preview/v13/header.png' });
   await page
     .locator('[data-query-id="room-query-09"]')
     .evaluate((e) => e.click());
@@ -70,7 +95,7 @@ try {
   );
   await page
     .locator('.query-summary')
-    .screenshot({ path: '.preview/v12/query-bar.png' });
+    .screenshot({ path: '.preview/v13/query-bar.png' });
   await page.getByRole('button', { name: 'AI', exact: true }).click();
   await page.waitForTimeout(3400);
   const strokes = page.locator('.connection-spine, .connection-packet');
@@ -81,7 +106,7 @@ try {
           .filter((e) => e.style.display !== 'none')
           .map((e) => e.getAttribute('stroke-width')),
       )
-    ).every((w) => w === '.85'),
+    ).every((w) => w === '1.05'),
   );
   const packet = () =>
     page.locator('.connection-packet').evaluateAll((es) =>
@@ -90,15 +115,68 @@ try {
         .map((e) => e.getAttribute('d'))
         .join(''),
     );
+  // Read packet progress along the rendered SVG arc; all normal motion is idle.
+  const signals = () =>
+    page.locator('.connection-spine').evaluateAll((es) =>
+      es
+        .filter((e) => e.style.display !== 'none')
+        .map((e) => {
+          let packet = e.nextElementSibling;
+          for (let j = 0; j < 8; j++) packet = packet.nextElementSibling;
+          const d = packet.getAttribute('d');
+          let progress = null;
+          if (packet.style.display !== 'none' && d) {
+            const point = packet.getPointAtLength(packet.getTotalLength() / 2);
+            const length = e.getTotalLength();
+            let best = Infinity;
+            for (let j = 0; j <= 200; j++) {
+              const p = e.getPointAtLength((length * j) / 200);
+              const distance = Math.hypot(p.x - point.x, p.y - point.y);
+              if (distance < best) {
+                best = distance;
+                progress = j / 200;
+              }
+            }
+          }
+          return {
+            id: e.dataset.nodeId,
+            progress,
+            opacity: Number(e.style.opacity),
+          };
+        }),
+    );
   const signatures = new Set();
-  for (let i = 0; i < 12; i++) {
+  let previous = [],
+    inward = 0,
+    outward = 0,
+    blinks = 0;
+  for (let i = 0; i < 24; i++) {
     signatures.add(await packet());
+    const current = await signals();
+    for (const edge of current) {
+      const old = previous.find((p) => p.id === edge.id);
+      if (!old) continue;
+      if (Math.abs(edge.opacity - old.opacity) > 0.1) blinks++;
+      if (old.progress === null || edge.progress === null) continue;
+      const delta = edge.progress - old.progress;
+      if (delta < -0.015 && delta > -0.3) inward++;
+      if (delta > 0.015 && delta < 0.3) outward++;
+    }
+    previous = current;
     await page.waitForTimeout(140);
   }
   assert.ok(signatures.size > 3, 'light packets move over time');
+  assert.ok(
+    inward > 3 && outward === 0,
+    'packets converge toward the selected source',
+  );
+  assert.ok(
+    blinks > 0,
+    'independent glints also run with the camera stationary',
+  );
   await page
     .locator('.room-stage')
-    .screenshot({ path: '.preview/v12/fiber-ai.png' });
+    .screenshot({ path: '.preview/v13/fiber-ai.png' });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.waitForTimeout(150);
   assert.equal(await packet(), '', 'reduced motion disables travelling light');
@@ -127,7 +205,7 @@ try {
   );
   await page
     .locator('.experience')
-    .screenshot({ path: '.preview/v12/experience.png' });
+    .screenshot({ path: '.preview/v13/experience.png' });
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   const link = page.locator('#lego .text-links a').first();
   await link.scrollIntoViewIfNeeded();

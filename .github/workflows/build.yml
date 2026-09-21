@@ -18,6 +18,7 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run check:assets
+      - run: npm run check:arts
       - run: npm run build
       - uses: actions/upload-artifact@v4
         with:

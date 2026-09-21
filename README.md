@@ -33,7 +33,7 @@ Astro manages the background server and its lock file; no terminal session needs
 
 ```bash
 ssh -N -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 \
-  -L 4321:127.0.0.1:4321 pyn@100.65.194.90
+  -L 4321:127.0.0.1:4321 your-user@your-server
 ```
 
 An SSH config host alias works in place of the IP. If local port 4321 is already occupied, use `-L 4322:127.0.0.1:4321` and open http://localhost:4322. The page renders on the Mac GPU; SSH carries site assets and development updates.
@@ -70,17 +70,17 @@ tests/                     Interaction invariants and real-browser smoke tests
 docs/                      Design, data provenance, and implementation notes
 ```
 
-Edit profile/publications in `src/content/`; add normal page sections in `src/components/sections/`. Keep renderer-specific code behind `SceneAdapter`. Future photo galleries can be separate islands with their own data manifest, without importing the 3D renderer. Arts currently has a clearly marked placeholder until photographs are supplied.
+Edit profile/publications in `src/content/`; add normal page sections in `src/components/sections/`. Keep renderer-specific code behind `SceneAdapter`. The Arts island contains five photographic collections, a horizontal album, on-demand large-image viewing, real DINO/PCA reveals and cross-theme visual echoes. Edit sequencing in `tools/art-gallery/edit.json`; see `tools/art-gallery/README.md` for export details.
 
 ## Scene and interactions
 
 - Original Mip-NeRF 360 **room** demo: 1,064,578 ordered 2D Gaussians and five normalized hierarchy levels.
 - A softly cropped room floats in an elevated view. Human restores native Gaussian surfaces; AI uses small feature-colored particles. A spatial wave changes geometry and color together while keeping camera and selection.
 - Pointer speed and direction stir a small flow with a zoom-independent screen footprint and roughly 7–13 second recovery. Subtle ambient movement continues while visible. Floating object tags, a sampled selection envelope, emission and fine links follow the scene's camera and deformation.
-- Clicking a surface picks a source Gaussian through a worker and selects its current-level cluster. Parent/part controls follow actual node IDs.
-- Nearby uses center distance; Similar uses saved CLIP affinities. These are geometric/feature links, not inferred relationship names.
-- Six featured recorded COR queries replay original cameras and intermediate selections. All ten cached final candidates are painted by their normalized scores. No live LLM endpoint is required.
-- Manual input cancels playback. Wheel input over the room zooms; outside it the page scrolls. Touch devices explicitly enter/exit Explore. Offscreen/hidden scenes stop requesting frames. Static content and the room poster remain usable on load/WebGL failure.
+- Clicking a surface picks a source Gaussian through a worker and selects its current-level cluster. A photographic thumbwheel follows five hierarchy levels; the floating × clears selection without resetting the camera.
+- Branch / Layer / Network expose real scene-graph connections as upward arches with inward-moving light signals.
+- Six spatial query invitations replay curated intermediate clusters with progressively framed cameras. No live LLM endpoint is required.
+- Manual input cancels playback. Wheel input over the room zooms; outside it the page scrolls. Touch devices explicitly enter/exit Explore. Slow or data-saving connections retain the poster until entry, with a small manifest-latency fallback when network information is unavailable. Offscreen/hidden scenes stop requesting frames. Static content and the room poster remain usable on load/WebGL failure.
 
 The browser export uses DC RGB and 8-bit quaternions in `.splat`, with zero local Z scale. The artistic modifier interpolates between native Human surfaces and small isotropic AI particles at render time. It does not retain degree-3 view-dependent spherical harmonics, and is not pixel-identical to the original gsplat renderer. It retains all Gaussians and IDs. Gzip compression is lossless; browser-side `DecompressionStream` decodes assets before use. See [thumbwheel and contrast study](docs/thumbwheel-v0.8.md), [overlay and overlapping-wave notes](docs/overlay-motion-v0.7.md), [focus, material and flow notes](docs/feature-dial-v0.6.md), [installation notes and cover-motion proposal](docs/art-direction-v0.2.md) and [baseline browser notes](docs/browser-demo-2026-09-20.md) for the original data contract.
 
@@ -99,6 +99,7 @@ Research checkpoints and raw feature tensors stay outside this repository. The s
 ```bash
 npm test                 # Replay races, hierarchy mapping, weighted candidates, occlusion picking
 npm run check:assets     # Checksums, lengths, hierarchy references, query IDs
+npm run check:arts       # All photo derivatives, aspect ratios, PCA and echo candidates
 npm run build            # Astro type check and static production build
 npm run test:browser     # Requires preview server + Chrome (CHROME_PATH can override)
 node tests/art-browser.mjs # Particle movement, settling, picking and attached overlays
@@ -107,3 +108,15 @@ node tests/art-browser.mjs # Particle movement, settling, picking and attached o
 The browser test uses headless Vulkan on this machine's RTX 4090. Set `SOFTWARE_WEBGL=1` for software WebGL; it is much slower on the full scene. Screenshots and test results are saved in `.preview/`. Node/CI checks require no GPU.
 
 The GitHub workflow only builds and uploads a preview artifact. It does not deploy or change the live GitHub Pages site. Hosting can later serve `dist/` as a normal static site; preserve the separate `/LEGO-Webpage/` and `/GAGS-Webpage/` project URLs when changing Pages settings.
+
+## Release assets
+
+Only browser-ready files live in `public/`: research media, used identity artwork,
+compressed room data, and the 330 referenced photo derivatives/PCA previews.
+Original photographs, review databases, feature matrices and model weights stay
+outside Git. `.preview/`, `.astro/`, `dist/`, caches, logs and local environment
+files are ignored. Tests and the reusable photo-review/export tools are retained
+as development source and are not copied into the static deployment.
+
+The first release is v1.0.0. See `docs/CHANGELOG.md` for iteration details and
+`docs/launch-review.md` for browser coverage and remaining verification limits.

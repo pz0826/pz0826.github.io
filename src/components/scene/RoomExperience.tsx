@@ -1,7 +1,11 @@
 import { directedSteps } from '../../lib/scene/query-direction';
 import FeatureDial from './FeatureDial';
 import { useEffect, useReducer, useRef, useState } from 'react';
-import { loadSceneData, SceneTables } from '../../lib/scene/data';
+import {
+  loadSceneData,
+  loadSceneManifest,
+  SceneTables,
+} from '../../lib/scene/data';
 import { initialState, nodeAtLevel, sceneReducer } from '../../lib/scene/state';
 import type { SceneData, SceneQuery } from '../../lib/scene/types';
 import type { SparkAdapter } from '../../lib/scene/spark-adapter';
@@ -19,6 +23,8 @@ export default function RoomExperience() {
   const [exploring, setExploring] = useState(false),
     [mobile, setMobile] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const [deferred, setDeferred] = useState(false);
+  const loadRequested = useRef(false);
   const playRef = useRef<(query: SceneQuery) => void>(() => {});
   const [detail, setDetail] = useState('');
   const [tableBusy, setTableBusy] = useState(false);
@@ -57,16 +63,53 @@ export default function RoomExperience() {
     return () => media.removeEventListener('change', changed);
   }, []);
   useEffect(() => {
-    // Loading is opt-in on touch devices; the poster and all content work immediately.
-    if (matchMedia('(pointer: coarse)').matches && !exploring) return;
+    // Decide before requesting scene data or importing the renderer.
+    const connection = (
+      navigator as Navigator & {
+        connection?: {
+          saveData?: boolean;
+          effectiveType?: string;
+          downlink?: number;
+        };
+      }
+    ).connection;
+    const slow =
+      connection?.saveData ||
+      ['slow-2g', '2g', '3g'].includes(connection?.effectiveType ?? '') ||
+      (connection?.downlink !== undefined && connection.downlink < 1.5);
+    if (
+      !loadRequested.current &&
+      (slow || matchMedia('(pointer: coarse)').matches)
+    ) {
+      setDeferred(true);
+      return;
+    }
     const abort = new AbortController();
+    let probeTimer: ReturnType<typeof setTimeout> | undefined;
     let local: SparkAdapter | undefined;
     let observer: IntersectionObserver | undefined;
     setStatus('loading');
+    setDeferred(false);
     (async () => {
+      // A tiny, reusable manifest request is also a latency fallback for browsers
+      // without Network Information. Do not start large downloads if it stalls.
+      let manifest;
+      if (!loadRequested.current) {
+        probeTimer = setTimeout(() => {
+          setDeferred(true);
+          setStatus('idle');
+          abort.abort();
+        }, 2000);
+        try {
+          manifest = await loadSceneManifest(abort.signal);
+        } finally {
+          clearTimeout(probeTimer);
+        }
+        abort.signal.throwIfAborted();
+      }
       // Start the large geometry transfer as soon as the manifest arrives,
       // while the browser is still downloading/parsing the renderer module.
-      const sceneRequest = loadSceneData(abort.signal).then(
+      const sceneRequest = loadSceneData(abort.signal, manifest).then(
         async (sceneData) => {
           const tables = new SceneTables(
             abort.signal,
@@ -116,6 +159,7 @@ export default function RoomExperience() {
       observer.observe(container.current!);
     })().catch(fail);
     return () => {
+      clearTimeout(probeTimer);
       abort.abort();
       observer?.disconnect();
       local?.dispose();
@@ -144,7 +188,11 @@ export default function RoomExperience() {
   }, [state, status]);
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (
+        event.key === 'Escape' &&
+        !event.defaultPrevented &&
+        !document.querySelector('dialog[open]')
+      ) {
         cancel();
         picked.current = -1;
         setExploring(false);
@@ -226,6 +274,7 @@ export default function RoomExperience() {
   const query = data?.queries.find((query) => query.id === state.queryId);
   const disabled = status !== 'ready';
   function enter() {
+    loadRequested.current = true;
     setExploring(true);
     if (status === 'idle' || status === 'error')
       setAttempt((value) => value + 1);
@@ -296,7 +345,7 @@ export default function RoomExperience() {
             onChange={(value) => void level(value).catch(fail)}
           />
         )}
-        {mobile && (
+        {(mobile || (deferred && status === 'idle')) && (
           <button
             className="explore-button"
             disabled={status === 'loading'}
@@ -315,9 +364,7 @@ export default function RoomExperience() {
             {status === 'error' ? (
               <>
                 <p>{detail}</p>
-                <button onClick={() => setAttempt((value) => value + 1)}>
-                  Retry scene ↻
-                </button>
+                <button onClick={enter}>Retry scene ↻</button>
               </>
             ) : (
               <span>

@@ -1,15 +1,28 @@
+---
+import ArtGallery from '../arts/ArtGallery';
+import gallery from '../../content/art-gallery.json';
+---
+
 <section id="arts" class="section arts-section">
   <div class="section-heading">
     <h2>Arts</h2>
   </div>
-  <div class="arts-body">
-    <p class="lead">Another way of seeing.</p>
-    <p>A photographic journal, in the making.</p>
-    <div class="empty-contact-sheet" aria-hidden="true">
-      <span>Light.</span>
-      <span>Space.</span>
-      <span>Everyday life.</span>
-    </div>
-    <span class="eyebrow">Selected photographs coming soon</span>
-  </div>
+  <ArtGallery client:visible />
+  <noscript>
+    <p>
+      Selected photographs by Yuning Peng. Enable JavaScript to explore the five
+      collections.
+    </p>
+    {gallery.themes.map((theme) => (
+      <a
+        href={
+          gallery.photos[theme.cover as keyof typeof gallery.photos].images[
+            '1920'
+          ].src
+        }
+      >
+        {theme.title} · {theme.zh}
+      </a>
+    ))}
+  </noscript>
 </section>

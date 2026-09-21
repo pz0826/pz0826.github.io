@@ -46,6 +46,6 @@ Screenshots, browser results, and performance JSON are local in `.preview/`. The
 
 ## Preview and next iteration
 
-`npm run dev:background` starts Astro's managed daemon on `127.0.0.1:4321`; status/log/stop scripts are in package.json. The Mac can tunnel with `ssh -N -L 4321:127.0.0.1:4321 pyn@100.65.194.90` and open `http://localhost:4321`. The Linux agent cannot establish a tunnel in the Mac's network namespace; the local terminal command completes that step.
+`npm run dev:background` starts Astro's managed daemon on `127.0.0.1:4321`; status/log/stop scripts are in package.json. The Mac can tunnel with `ssh -N -L 4321:127.0.0.1:4321 your-user@your-server` and open `http://localhost:4321`. The Linux agent cannot establish a tunnel in the Mac's network namespace; the local terminal command completes that step.
 
 This branch's CI only checks and builds a downloadable artifact. It does not deploy the live site. The next design iteration should prioritize the actual Mac viewing experience, first-camera framing, control density, and photographic selection. Hover color accents, a more expressive relation presentation, SH/compression tuning, and the DINO-to-photo gallery remain polish/extensions rather than silently simulated features.

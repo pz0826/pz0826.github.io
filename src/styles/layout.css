@@ -207,6 +207,12 @@ nav a:hover:not([aria-current])::after {
   transform: translate(0, 0);
 }
 
+.masthead-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
 .masthead-identity {
   display: flex;
   align-items: center;
@@ -215,6 +221,18 @@ nav a:hover:not([aria-current])::after {
 }
 .masthead-role {
   white-space: nowrap;
+}
+/* Optical centering for the bundled Montserrat / Space Mono glyphs:
+   their visible ink centers differ even when the line boxes are centered. */
+@media (min-width: 1101px) {
+  .masthead .wordmark {
+    position: relative;
+    top: -2px;
+  }
+  .masthead-role {
+    position: relative;
+    top: 0.4px;
+  }
 }
 @media (max-width: 1100px) {
   .masthead-identity {

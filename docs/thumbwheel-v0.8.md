@@ -1,5 +1,7 @@
 # Five-detent thumbwheel and overlay contrast
 
+> Historical study: the one-off comparison scripts mentioned below were removed in the v1.0.0 cleanup. Current regression tests remain under `tests/`.
+
 This implements direction A from [the design research](dial-design-references-2026-09-20.md). The indicator stays fixed while the etched scale moves. Cylindrical projection compresses rib spacing and brightness at the edges. The desktop wheel window is 208px high (previous scale: 200px); the pointer area is 44px wide and the backing is 36px wide. The mountain and tulip also act as coarser/finer buttons. Their chevrons periodically move outward by 3px and settle, replacing the visible “Drag ↕” cue. The unavailable direction stops at each endpoint; both cues pause during dragging and respect reduced motion. The backing extends 12px above and below the control to leave clearance throughout the animation. No numerical focal lengths are implied.
 
 ## Input and motion

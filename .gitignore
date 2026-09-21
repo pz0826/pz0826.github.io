@@ -13,3 +13,14 @@ public/scenes/room/*.splat
 public/scenes/room/*.bin
 public/scenes/room/*.rgb8
 public/scenes/room/*.i32
+
+# Local photography selection originals and contact sheets
+photography-review/
+
+# Local credentials, runtime logs and scratch output
+.env
+.env.*
+!.env.example
+*.log
+*.tsbuildinfo
+coverage/

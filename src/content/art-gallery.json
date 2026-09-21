@@ -1,0 +1,3906 @@
+{
+  "version": 1,
+  "model": "DINOv2 ViT-S/14 with registers",
+  "checkpointSha256": "f433177089a681826f849f194ece3bb48f4d63fb38d32fc837e3dc7a4e5641fb",
+  "pca": "Per-image patch PCA, 3 components, deterministic signs, 2–98 percentile RGB normalization",
+  "echoMetric": "0.65 CLS cosine + 0.35 mean aligned 2×2 patch-pool cosine; best candidate per other theme",
+  "themes": [
+    {
+      "id": "elemental",
+      "zh": "原野",
+      "title": "Elemental",
+      "description": "The land, in its own language.",
+      "cover": "12a04385676dd0042232dd02",
+      "spreads": [
+        [
+          "12a04385676dd0042232dd02"
+        ],
+        [
+          "b8577b51ccdd20006959e004",
+          "79aabfd36f79749291274a3a"
+        ],
+        [
+          "9ff9b3639e241d982b3d3d91"
+        ],
+        [
+          "ac88478dc0a45ea8a9554c42",
+          "a6d412bc7b440a881b219252"
+        ],
+        [
+          "062b6cad428650b0ac89b883",
+          "bd9fc5462949b5fd4b16b3e0"
+        ],
+        [
+          "cf40b8d5f038ecbd71124621",
+          "74556423f04d1afa41307925"
+        ],
+        [
+          "1ac0eb62a5dfaf988a1f9629",
+          "4834409f4e1a1b0937a1b188"
+        ],
+        [
+          "5a5cd356c992c9550fecb767"
+        ],
+        [
+          "2c6e019ec492c670f53bdbd1",
+          "5c9741cb25dbdf04e81abfbb"
+        ],
+        [
+          "4bfeea590caaea36de2afcb1"
+        ]
+      ]
+    },
+    {
+      "id": "imprints",
+      "zh": "印迹",
+      "title": "Imprints",
+      "description": "Where we leave a trace.",
+      "cover": "a0bca435a01d602a4ddfce34",
+      "spreads": [
+        [
+          "a0bca435a01d602a4ddfce34"
+        ],
+        [
+          "19de29e56e360b7cdc41ac03",
+          "30d4f7197c099b9d16f03c69"
+        ],
+        [
+          "0ffa2de6595bcb0781f5153d",
+          "49d29a55c49be8663a3c9d73"
+        ],
+        [
+          "a8abb7b2025402a73889c8a0",
+          "be9f54df71cb112806433388"
+        ],
+        [
+          "8b26cc4cb5b05f1f77b50d20",
+          "42bc9d160693ef7bfca53024"
+        ],
+        [
+          "3ce616c44a59cea078af543a"
+        ],
+        [
+          "23e97c8500d8c6e2a026ddc2",
+          "bbd5c5091c1c1ec4ea46b5ba"
+        ],
+        [
+          "1754c2e9cddd958d494934ed",
+          "d9b7027a850df3b05422bef3"
+        ]
+      ]
+    },
+    {
+      "id": "order",
+      "zh": "秩序",
+      "title": "Order",
+      "description": "A rhythm beneath the surface.",
+      "cover": "d681b8474e3cdf876300dba5",
+      "spreads": [
+        [
+          "d681b8474e3cdf876300dba5"
+        ],
+        [
+          "50ddadc9c4e4a0e463c49a76",
+          "89ff38a01d871c541ed55641"
+        ],
+        [
+          "e0a44e2adcb374505221d4d7"
+        ],
+        [
+          "fd6c7bdb6a6f7b798a6dfcef",
+          "d745f22dce37b1ce4ab75629"
+        ],
+        [
+          "4e71cbde363587e098748268"
+        ],
+        [
+          "f4bc5f3dabb5cd9d72c458b8",
+          "03b2fbd0970e8b1d6f20c326"
+        ],
+        [
+          "85769646e835b1df15f5fe1b"
+        ],
+        [
+          "2071a8faebcd207db5153867",
+          "4d993134d8606816e4b70dbf"
+        ]
+      ]
+    },
+    {
+      "id": "in-bloom",
+      "zh": "花期",
+      "title": "In Bloom",
+      "description": "A brief season of light.",
+      "cover": "793ce1dc50a0c7a287d8cbc9",
+      "spreads": [
+        [
+          "793ce1dc50a0c7a287d8cbc9"
+        ],
+        [
+          "751cab53719c6ffe5c8debb1"
+        ],
+        [
+          "5245e99e56c32ed6ddd47f93",
+          "2c577963fe70e4324cc751e0"
+        ],
+        [
+          "a743171dea4cb9ea2d1ca131",
+          "685670b80945083ac4eb89cf"
+        ],
+        [
+          "4226d2616a0c4ebb416d0854"
+        ],
+        [
+          "325d66e57655775635176148",
+          "b22d7957865508a129c1589d"
+        ],
+        [
+          "bffef31a50008d878287634e",
+          "0c6c9b1246e47555a130a23d"
+        ],
+        [
+          "c447b938aba901fcf2b6acfa"
+        ]
+      ]
+    },
+    {
+      "id": "after-dark",
+      "zh": "入夜",
+      "title": "After Dark",
+      "description": "What remains when daylight leaves.",
+      "cover": "8b97ba475a5b0d2a5c5375a8",
+      "spreads": [
+        [
+          "8b97ba475a5b0d2a5c5375a8"
+        ],
+        [
+          "c213198083fb2da79ad19601"
+        ],
+        [
+          "a2fadb15e69a9e8a73e7cc1d",
+          "b88a63593afe46303cc63651"
+        ],
+        [
+          "f7e73bfd275ecacc2de79004"
+        ],
+        [
+          "5b24cb563ed1eca04acd6e86",
+          "b8db142f10c845259d059e96"
+        ],
+        [
+          "db23572a609554fddf1ccba0"
+        ],
+        [
+          "643e8064a8a0bb178649af75"
+        ],
+        [
+          "0de1b4114733afa514fc9491",
+          "6c8282304a162541f24de8f1"
+        ],
+        [
+          "68105b3ce0c1c4d77025f51a"
+        ]
+      ]
+    }
+  ],
+  "photos": {
+    "bbd5c5091c1c1ec4ea46b5ba": {
+      "id": "bbd5c5091c1c1ec4ea46b5ba",
+      "alt": "Lakeside buildings beneath a mountain ridge",
+      "width": 5995,
+      "height": 3372,
+      "images": {
+        "640": {
+          "src": "/media/arts/bbd5c5091c1c1ec4ea46b5ba-640.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 29458
+        },
+        "1280": {
+          "src": "/media/arts/bbd5c5091c1c1ec4ea46b5ba-1280.webp",
+          "width": 1280,
+          "height": 720,
+          "bytes": 133366
+        },
+        "1920": {
+          "src": "/media/arts/bbd5c5091c1c1ec4ea46b5ba-1920.webp",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 310132
+        },
+        "3200": {
+          "src": "/media/arts/bbd5c5091c1c1ec4ea46b5ba-3200.webp",
+          "width": 3200,
+          "height": 1800,
+          "bytes": 1035582
+        }
+      },
+      "pca": "/media/arts/bbd5c5091c1c1ec4ea46b5ba-pca.png",
+      "content": [
+        0.0,
+        0.017006802721088437,
+        1.0,
+        0.9625850340136054
+      ]
+    },
+    "2071a8faebcd207db5153867": {
+      "id": "2071a8faebcd207db5153867",
+      "alt": "Boats along a city waterfront at sunset",
+      "width": 3710,
+      "height": 3710,
+      "images": {
+        "640": {
+          "src": "/media/arts/2071a8faebcd207db5153867-640.webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 36964
+        },
+        "1280": {
+          "src": "/media/arts/2071a8faebcd207db5153867-1280.webp",
+          "width": 1280,
+          "height": 1280,
+          "bytes": 171440
+        },
+        "1920": {
+          "src": "/media/arts/2071a8faebcd207db5153867-1920.webp",
+          "width": 1920,
+          "height": 1920,
+          "bytes": 413194
+        },
+        "3200": {
+          "src": "/media/arts/2071a8faebcd207db5153867-3200.webp",
+          "width": 3200,
+          "height": 3200,
+          "bytes": 1315906
+        }
+      },
+      "pca": "/media/arts/2071a8faebcd207db5153867-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "d681b8474e3cdf876300dba5": {
+      "id": "d681b8474e3cdf876300dba5",
+      "alt": "Sunlight through diagonal steel bridge trusses",
+      "width": 6000,
+      "height": 3375,
+      "images": {
+        "640": {
+          "src": "/media/arts/d681b8474e3cdf876300dba5-640.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 23582
+        },
+        "1280": {
+          "src": "/media/arts/d681b8474e3cdf876300dba5-1280.webp",
+          "width": 1280,
+          "height": 720,
+          "bytes": 87034
+        },
+        "1920": {
+          "src": "/media/arts/d681b8474e3cdf876300dba5-1920.webp",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 187948
+        },
+        "3200": {
+          "src": "/media/arts/d681b8474e3cdf876300dba5-3200.webp",
+          "width": 3200,
+          "height": 1800,
+          "bytes": 559672
+        }
+      },
+      "pca": "/media/arts/d681b8474e3cdf876300dba5-pca.png",
+      "content": [
+        0.0,
+        0.017006802721088437,
+        1.0,
+        0.9659863945578231
+      ]
+    },
+    "4d993134d8606816e4b70dbf": {
+      "id": "4d993134d8606816e4b70dbf",
+      "alt": "Illuminated towers reflected in dark water",
+      "width": 12000,
+      "height": 6750,
+      "images": {
+        "640": {
+          "src": "/media/arts/4d993134d8606816e4b70dbf-640.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 28786
+        },
+        "1280": {
+          "src": "/media/arts/4d993134d8606816e4b70dbf-1280.webp",
+          "width": 1280,
+          "height": 720,
+          "bytes": 118908
+        },
+        "1920": {
+          "src": "/media/arts/4d993134d8606816e4b70dbf-1920.webp",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 262874
+        },
+        "3200": {
+          "src": "/media/arts/4d993134d8606816e4b70dbf-3200.webp",
+          "width": 3200,
+          "height": 1800,
+          "bytes": 808148
+        }
+      },
+      "pca": "/media/arts/4d993134d8606816e4b70dbf-pca.png",
+      "content": [
+        0.0,
+        0.017006802721088437,
+        1.0,
+        0.9659863945578231
+      ]
+    },
+    "89ff38a01d871c541ed55641": {
+      "id": "89ff38a01d871c541ed55641",
+      "alt": "Three towers seen from below",
+      "width": 6000,
+      "height": 3375,
+      "images": {
+        "640": {
+          "src": "/media/arts/89ff38a01d871c541ed55641-640.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 19308
+        },
+        "1280": {
+          "src": "/media/arts/89ff38a01d871c541ed55641-1280.webp",
+          "width": 1280,
+          "height": 720,
+          "bytes": 94396
+        },
+        "1920": {
+          "src": "/media/arts/89ff38a01d871c541ed55641-1920.webp",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 232952
+        },
+        "3200": {
+          "src": "/media/arts/89ff38a01d871c541ed55641-3200.webp",
+          "width": 3200,
+          "height": 1800,
+          "bytes": 982318
+        }
+      },
+      "pca": "/media/arts/89ff38a01d871c541ed55641-pca.png",
+      "content": [
+        0.0,
+        0.017006802721088437,
+        1.0,
+        0.9659863945578231
+      ]
+    },
+    "e0a44e2adcb374505221d4d7": {
+      "id": "e0a44e2adcb374505221d4d7",
+      "alt": "A river winding through a dense city at dusk",
+      "width": 6000,
+      "height": 3375,
+      "images": {
+        "640": {
+          "src": "/media/arts/e0a44e2adcb374505221d4d7-640.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 30590
+        },
+        "1280": {
+          "src": "/media/arts/e0a44e2adcb374505221d4d7-1280.webp",
+          "width": 1280,
+          "height": 720,
+          "bytes": 134552
+        },
+        "1920": {
+          "src": "/media/arts/e0a44e2adcb374505221d4d7-1920.webp",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 311636
+        },
+        "3200": {
+          "src": "/media/arts/e0a44e2adcb374505221d4d7-3200.webp",
+          "width": 3200,
+          "height": 1800,
+          "bytes": 1040022
+        }
+      },
+      "pca": "/media/arts/e0a44e2adcb374505221d4d7-pca.png",
+      "content": [
+        0.0,
+        0.017006802721088437,
+        1.0,
+        0.9659863945578231
+      ]
+    },
+    "1754c2e9cddd958d494934ed": {
+      "id": "1754c2e9cddd958d494934ed",
+      "alt": "Birds over a misty lake and island",
+      "width": 2256,
+      "height": 1504,
+      "images": {
+        "640": {
+          "src": "/media/arts/1754c2e9cddd958d494934ed-640.webp",
+          "width": 640,
+          "height": 427,
+          "bytes": 5004
+        },
+        "1280": {
+          "src": "/media/arts/1754c2e9cddd958d494934ed-1280.webp",
+          "width": 1280,
+          "height": 853,
+          "bytes": 18288
+        },
+        "1920": {
+          "src": "/media/arts/1754c2e9cddd958d494934ed-1920.webp",
+          "width": 1920,
+          "height": 1280,
+          "bytes": 43154
+        },
+        "3200": {
+          "src": "/media/arts/1754c2e9cddd958d494934ed-3200.webp",
+          "width": 2256,
+          "height": 1504,
+          "bytes": 130002
+        }
+      },
+      "pca": "/media/arts/1754c2e9cddd958d494934ed-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "fd6c7bdb6a6f7b798a6dfcef": {
+      "id": "fd6c7bdb6a6f7b798a6dfcef",
+      "alt": "A pedestrian beneath tall buildings in blue haze",
+      "width": 3370,
+      "height": 5938,
+      "images": {
+        "640": {
+          "src": "/media/arts/fd6c7bdb6a6f7b798a6dfcef-640.webp",
+          "width": 363,
+          "height": 640,
+          "bytes": 17122
+        },
+        "1280": {
+          "src": "/media/arts/fd6c7bdb6a6f7b798a6dfcef-1280.webp",
+          "width": 726,
+          "height": 1280,
+          "bytes": 63694
+        },
+        "1920": {
+          "src": "/media/arts/fd6c7bdb6a6f7b798a6dfcef-1920.webp",
+          "width": 1090,
+          "height": 1920,
+          "bytes": 133478
+        },
+        "3200": {
+          "src": "/media/arts/fd6c7bdb6a6f7b798a6dfcef-3200.webp",
+          "width": 1816,
+          "height": 3200,
+          "bytes": 413060
+        }
+      },
+      "pca": "/media/arts/fd6c7bdb6a6f7b798a6dfcef-pca.png",
+      "content": [
+        0.013605442176870748,
+        0.0,
+        0.9727891156462585,
+        1.0
+      ]
+    },
+    "d745f22dce37b1ce4ab75629": {
+      "id": "d745f22dce37b1ce4ab75629",
+      "alt": "Old rooftops beneath a modern skyline",
+      "width": 3606,
+      "height": 5409,
+      "images": {
+        "640": {
+          "src": "/media/arts/d745f22dce37b1ce4ab75629-640.webp",
+          "width": 427,
+          "height": 640,
+          "bytes": 31556
+        },
+        "1280": {
+          "src": "/media/arts/d745f22dce37b1ce4ab75629-1280.webp",
+          "width": 853,
+          "height": 1280,
+          "bytes": 128872
+        },
+        "1920": {
+          "src": "/media/arts/d745f22dce37b1ce4ab75629-1920.webp",
+          "width": 1280,
+          "height": 1920,
+          "bytes": 295348
+        },
+        "3200": {
+          "src": "/media/arts/d745f22dce37b1ce4ab75629-3200.webp",
+          "width": 2133,
+          "height": 3200,
+          "bytes": 900120
+        }
+      },
+      "pca": "/media/arts/d745f22dce37b1ce4ab75629-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "4e71cbde363587e098748268": {
+      "id": "4e71cbde363587e098748268",
+      "alt": "A historic building and snow-covered steps",
+      "width": 6000,
+      "height": 4000,
+      "images": {
+        "640": {
+          "src": "/media/arts/4e71cbde363587e098748268-640.webp",
+          "width": 640,
+          "height": 427,
+          "bytes": 30882
+        },
+        "1280": {
+          "src": "/media/arts/4e71cbde363587e098748268-1280.webp",
+          "width": 1280,
+          "height": 853,
+          "bytes": 97806
+        },
+        "1920": {
+          "src": "/media/arts/4e71cbde363587e098748268-1920.webp",
+          "width": 1920,
+          "height": 1280,
+          "bytes": 197428
+        },
+        "3200": {
+          "src": "/media/arts/4e71cbde363587e098748268-3200.webp",
+          "width": 3200,
+          "height": 2133,
+          "bytes": 532056
+        }
+      },
+      "pca": "/media/arts/4e71cbde363587e098748268-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "50ddadc9c4e4a0e463c49a76": {
+      "id": "50ddadc9c4e4a0e463c49a76",
+      "alt": "Repeating frames inside a steel bridge",
+      "width": 5214,
+      "height": 2933,
+      "images": {
+        "640": {
+          "src": "/media/arts/50ddadc9c4e4a0e463c49a76-640.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 48964
+        },
+        "1280": {
+          "src": "/media/arts/50ddadc9c4e4a0e463c49a76-1280.webp",
+          "width": 1280,
+          "height": 720,
+          "bytes": 172454
+        },
+        "1920": {
+          "src": "/media/arts/50ddadc9c4e4a0e463c49a76-1920.webp",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 358096
+        },
+        "3200": {
+          "src": "/media/arts/50ddadc9c4e4a0e463c49a76-3200.webp",
+          "width": 3200,
+          "height": 1800,
+          "bytes": 994488
+        }
+      },
+      "pca": "/media/arts/50ddadc9c4e4a0e463c49a76-pca.png",
+      "content": [
+        0.0,
+        0.017006802721088437,
+        1.0,
+        0.9659863945578231
+      ]
+    },
+    "5245e99e56c32ed6ddd47f93": {
+      "id": "5245e99e56c32ed6ddd47f93",
+      "alt": "Pink blossoms in soft focus",
+      "width": 3144,
+      "height": 5589,
+      "images": {
+        "640": {
+          "src": "/media/arts/5245e99e56c32ed6ddd47f93-640.webp",
+          "width": 360,
+          "height": 640,
+          "bytes": 19074
+        },
+        "1280": {
+          "src": "/media/arts/5245e99e56c32ed6ddd47f93-1280.webp",
+          "width": 720,
+          "height": 1280,
+          "bytes": 51080
+        },
+        "1920": {
+          "src": "/media/arts/5245e99e56c32ed6ddd47f93-1920.webp",
+          "width": 1080,
+          "height": 1920,
+          "bytes": 91290
+        },
+        "3200": {
+          "src": "/media/arts/5245e99e56c32ed6ddd47f93-3200.webp",
+          "width": 1800,
+          "height": 3200,
+          "bytes": 238364
+        }
+      },
+      "pca": "/media/arts/5245e99e56c32ed6ddd47f93-pca.png",
+      "content": [
+        0.017006802721088437,
+        0.0,
+        0.9659863945578231,
+        1.0
+      ]
+    },
+    "d9b7027a850df3b05422bef3": {
+      "id": "d9b7027a850df3b05422bef3",
+      "alt": "Silhouettes on a boardwalk at sunset",
+      "width": 6000,
+      "height": 3375,
+      "images": {
+        "640": {
+          "src": "/media/arts/d9b7027a850df3b05422bef3-640.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 10668
+        },
+        "1280": {
+          "src": "/media/arts/d9b7027a850df3b05422bef3-1280.webp",
+          "width": 1280,
+          "height": 720,
+          "bytes": 36844
+        },
+        "1920": {
+          "src": "/media/arts/d9b7027a850df3b05422bef3-1920.webp",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 75222
+        },
+        "3200": {
+          "src": "/media/arts/d9b7027a850df3b05422bef3-3200.webp",
+          "width": 3200,
+          "height": 1800,
+          "bytes": 234664
+        }
+      },
+      "pca": "/media/arts/d9b7027a850df3b05422bef3-pca.png",
+      "content": [
+        0.0,
+        0.017006802721088437,
+        1.0,
+        0.9659863945578231
+      ]
+    },
+    "0de1b4114733afa514fc9491": {
+      "id": "0de1b4114733afa514fc9491",
+      "alt": "Light-painted numerals above a traditional building",
+      "width": 6000,
+      "height": 4000,
+      "images": {
+        "640": {
+          "src": "/media/arts/0de1b4114733afa514fc9491-640.webp",
+          "width": 640,
+          "height": 427,
+          "bytes": 14616
+        },
+        "1280": {
+          "src": "/media/arts/0de1b4114733afa514fc9491-1280.webp",
+          "width": 1280,
+          "height": 853,
+          "bytes": 45544
+        },
+        "1920": {
+          "src": "/media/arts/0de1b4114733afa514fc9491-1920.webp",
+          "width": 1920,
+          "height": 1280,
+          "bytes": 88962
+        },
+        "3200": {
+          "src": "/media/arts/0de1b4114733afa514fc9491-3200.webp",
+          "width": 3200,
+          "height": 2133,
+          "bytes": 296478
+        }
+      },
+      "pca": "/media/arts/0de1b4114733afa514fc9491-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "6c8282304a162541f24de8f1": {
+      "id": "6c8282304a162541f24de8f1",
+      "alt": "A distant building framed by flowing light trails",
+      "width": 5204,
+      "height": 2927,
+      "images": {
+        "640": {
+          "src": "/media/arts/6c8282304a162541f24de8f1-640.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 8338
+        },
+        "1280": {
+          "src": "/media/arts/6c8282304a162541f24de8f1-1280.webp",
+          "width": 1280,
+          "height": 720,
+          "bytes": 24466
+        },
+        "1920": {
+          "src": "/media/arts/6c8282304a162541f24de8f1-1920.webp",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 48346
+        },
+        "3200": {
+          "src": "/media/arts/6c8282304a162541f24de8f1-3200.webp",
+          "width": 3200,
+          "height": 1800,
+          "bytes": 151620
+        }
+      },
+      "pca": "/media/arts/6c8282304a162541f24de8f1-pca.png",
+      "content": [
+        0.0,
+        0.017006802721088437,
+        1.0,
+        0.9625850340136054
+      ]
+    },
+    "f7e73bfd275ecacc2de79004": {
+      "id": "f7e73bfd275ecacc2de79004",
+      "alt": "A full moon above roof ornaments",
+      "width": 3727,
+      "height": 2485,
+      "images": {
+        "640": {
+          "src": "/media/arts/f7e73bfd275ecacc2de79004-640.webp",
+          "width": 640,
+          "height": 427,
+          "bytes": 3882
+        },
+        "1280": {
+          "src": "/media/arts/f7e73bfd275ecacc2de79004-1280.webp",
+          "width": 1280,
+          "height": 853,
+          "bytes": 11136
+        },
+        "1920": {
+          "src": "/media/arts/f7e73bfd275ecacc2de79004-1920.webp",
+          "width": 1920,
+          "height": 1280,
+          "bytes": 22616
+        },
+        "3200": {
+          "src": "/media/arts/f7e73bfd275ecacc2de79004-3200.webp",
+          "width": 3200,
+          "height": 2134,
+          "bytes": 69560
+        }
+      },
+      "pca": "/media/arts/f7e73bfd275ecacc2de79004-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "2c577963fe70e4324cc751e0": {
+      "id": "2c577963fe70e4324cc751e0",
+      "alt": "Pink blossom branches against blue sky",
+      "width": 2951,
+      "height": 4426,
+      "images": {
+        "640": {
+          "src": "/media/arts/2c577963fe70e4324cc751e0-640.webp",
+          "width": 427,
+          "height": 640,
+          "bytes": 18082
+        },
+        "1280": {
+          "src": "/media/arts/2c577963fe70e4324cc751e0-1280.webp",
+          "width": 853,
+          "height": 1280,
+          "bytes": 52192
+        },
+        "1920": {
+          "src": "/media/arts/2c577963fe70e4324cc751e0-1920.webp",
+          "width": 1280,
+          "height": 1920,
+          "bytes": 96064
+        },
+        "3200": {
+          "src": "/media/arts/2c577963fe70e4324cc751e0-3200.webp",
+          "width": 2134,
+          "height": 3200,
+          "bytes": 256000
+        }
+      },
+      "pca": "/media/arts/2c577963fe70e4324cc751e0-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "a743171dea4cb9ea2d1ca131": {
+      "id": "a743171dea4cb9ea2d1ca131",
+      "alt": "White blossoms above an ornate roof",
+      "width": 2589,
+      "height": 4603,
+      "images": {
+        "640": {
+          "src": "/media/arts/a743171dea4cb9ea2d1ca131-640.webp",
+          "width": 360,
+          "height": 640,
+          "bytes": 32026
+        },
+        "1280": {
+          "src": "/media/arts/a743171dea4cb9ea2d1ca131-1280.webp",
+          "width": 720,
+          "height": 1280,
+          "bytes": 93872
+        },
+        "1920": {
+          "src": "/media/arts/a743171dea4cb9ea2d1ca131-1920.webp",
+          "width": 1080,
+          "height": 1920,
+          "bytes": 175792
+        },
+        "3200": {
+          "src": "/media/arts/a743171dea4cb9ea2d1ca131-3200.webp",
+          "width": 1800,
+          "height": 3200,
+          "bytes": 459582
+        }
+      },
+      "pca": "/media/arts/a743171dea4cb9ea2d1ca131-pca.png",
+      "content": [
+        0.017006802721088437,
+        0.0,
+        0.9625850340136054,
+        1.0
+      ]
+    },
+    "03b2fbd0970e8b1d6f20c326": {
+      "id": "03b2fbd0970e8b1d6f20c326",
+      "alt": "A city street illuminated in blue and amber",
+      "width": 3883,
+      "height": 5825,
+      "images": {
+        "640": {
+          "src": "/media/arts/03b2fbd0970e8b1d6f20c326-640.webp",
+          "width": 427,
+          "height": 640,
+          "bytes": 42986
+        },
+        "1280": {
+          "src": "/media/arts/03b2fbd0970e8b1d6f20c326-1280.webp",
+          "width": 853,
+          "height": 1280,
+          "bytes": 152804
+        },
+        "1920": {
+          "src": "/media/arts/03b2fbd0970e8b1d6f20c326-1920.webp",
+          "width": 1280,
+          "height": 1920,
+          "bytes": 318022
+        },
+        "3200": {
+          "src": "/media/arts/03b2fbd0970e8b1d6f20c326-3200.webp",
+          "width": 2133,
+          "height": 3200,
+          "bytes": 1173540
+        }
+      },
+      "pca": "/media/arts/03b2fbd0970e8b1d6f20c326-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "643e8064a8a0bb178649af75": {
+      "id": "643e8064a8a0bb178649af75",
+      "alt": "Colorful city lights reflected across a harbor",
+      "width": 6000,
+      "height": 3750,
+      "images": {
+        "640": {
+          "src": "/media/arts/643e8064a8a0bb178649af75-640.webp",
+          "width": 640,
+          "height": 400,
+          "bytes": 31086
+        },
+        "1280": {
+          "src": "/media/arts/643e8064a8a0bb178649af75-1280.webp",
+          "width": 1280,
+          "height": 800,
+          "bytes": 135328
+        },
+        "1920": {
+          "src": "/media/arts/643e8064a8a0bb178649af75-1920.webp",
+          "width": 1920,
+          "height": 1200,
+          "bytes": 309128
+        },
+        "3200": {
+          "src": "/media/arts/643e8064a8a0bb178649af75-3200.webp",
+          "width": 3200,
+          "height": 2000,
+          "bytes": 986730
+        }
+      },
+      "pca": "/media/arts/643e8064a8a0bb178649af75-pca.png",
+      "content": [
+        0.0,
+        0.009316770186335404,
+        1.0,
+        0.9782608695652174
+      ]
+    },
+    "f4bc5f3dabb5cd9d72c458b8": {
+      "id": "f4bc5f3dabb5cd9d72c458b8",
+      "alt": "A tram passing shops along a city street",
+      "width": 3912,
+      "height": 5868,
+      "images": {
+        "640": {
+          "src": "/media/arts/f4bc5f3dabb5cd9d72c458b8-640.webp",
+          "width": 427,
+          "height": 640,
+          "bytes": 53936
+        },
+        "1280": {
+          "src": "/media/arts/f4bc5f3dabb5cd9d72c458b8-1280.webp",
+          "width": 853,
+          "height": 1280,
+          "bytes": 192704
+        },
+        "1920": {
+          "src": "/media/arts/f4bc5f3dabb5cd9d72c458b8-1920.webp",
+          "width": 1280,
+          "height": 1920,
+          "bytes": 444842
+        },
+        "3200": {
+          "src": "/media/arts/f4bc5f3dabb5cd9d72c458b8-3200.webp",
+          "width": 2133,
+          "height": 3200,
+          "bytes": 1773828
+        }
+      },
+      "pca": "/media/arts/f4bc5f3dabb5cd9d72c458b8-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "db23572a609554fddf1ccba0": {
+      "id": "db23572a609554fddf1ccba0",
+      "alt": "A snow-covered street beneath night lamps",
+      "width": 5572,
+      "height": 3134,
+      "images": {
+        "640": {
+          "src": "/media/arts/db23572a609554fddf1ccba0-640.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 20232
+        },
+        "1280": {
+          "src": "/media/arts/db23572a609554fddf1ccba0-1280.webp",
+          "width": 1280,
+          "height": 720,
+          "bytes": 78076
+        },
+        "1920": {
+          "src": "/media/arts/db23572a609554fddf1ccba0-1920.webp",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 168024
+        },
+        "3200": {
+          "src": "/media/arts/db23572a609554fddf1ccba0-3200.webp",
+          "width": 3200,
+          "height": 1800,
+          "bytes": 562376
+        }
+      },
+      "pca": "/media/arts/db23572a609554fddf1ccba0-pca.png",
+      "content": [
+        0.0,
+        0.017006802721088437,
+        1.0,
+        0.9625850340136054
+      ]
+    },
+    "68105b3ce0c1c4d77025f51a": {
+      "id": "68105b3ce0c1c4d77025f51a",
+      "alt": "People watching bright fireworks at night",
+      "width": 6000,
+      "height": 3375,
+      "images": {
+        "640": {
+          "src": "/media/arts/68105b3ce0c1c4d77025f51a-640.webp",
+          "width": 640,
+          "height": 360,
+          "bytes": 21492
+        },
+        "1280": {
+          "src": "/media/arts/68105b3ce0c1c4d77025f51a-1280.webp",
+          "width": 1280,
+          "height": 720,
+          "bytes": 63502
+        },
+        "1920": {
+          "src": "/media/arts/68105b3ce0c1c4d77025f51a-1920.webp",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 117168
+        },
+        "3200": {
+          "src": "/media/arts/68105b3ce0c1c4d77025f51a-3200.webp",
+          "width": 3200,
+          "height": 1800,
+          "bytes": 308056
+        }
+      },
+      "pca": "/media/arts/68105b3ce0c1c4d77025f51a-pca.png",
+      "content": [
+        0.0,
+        0.017006802721088437,
+        1.0,
+        0.9659863945578231
+      ]
+    },
+    "5b24cb563ed1eca04acd6e86": {
+      "id": "5b24cb563ed1eca04acd6e86",
+      "alt": "A figure in a tall gateway at night",
+      "width": 2923,
+      "height": 5197,
+      "images": {
+        "640": {
+          "src": "/media/arts/5b24cb563ed1eca04acd6e86-640.webp",
+          "width": 360,
+          "height": 640,
+          "bytes": 15526
+        },
+        "1280": {
+          "src": "/media/arts/5b24cb563ed1eca04acd6e86-1280.webp",
+          "width": 720,
+          "height": 1280,
+          "bytes": 44970
+        },
+        "1920": {
+          "src": "/media/arts/5b24cb563ed1eca04acd6e86-1920.webp",
+          "width": 1080,
+          "height": 1920,
+          "bytes": 96042
+        },
+        "3200": {
+          "src": "/media/arts/5b24cb563ed1eca04acd6e86-3200.webp",
+          "width": 1800,
+          "height": 3200,
+          "bytes": 663500
+        }
+      },
+      "pca": "/media/arts/5b24cb563ed1eca04acd6e86-pca.png",
+      "content": [
+        0.017006802721088437,
+        0.0,
+        0.9625850340136054,
+        1.0
+      ]
+    },
+    "b8db142f10c845259d059e96": {
+      "id": "b8db142f10c845259d059e96",
+      "alt": "A person passing an illuminated museum wall",
+      "width": 2926,
+      "height": 5201,
+      "images": {
+        "640": {
+          "src": "/media/arts/b8db142f10c845259d059e96-640.webp",
+          "width": 360,
+          "height": 640,
+          "bytes": 19726
+        },
+        "1280": {
+          "src": "/media/arts/b8db142f10c845259d059e96-1280.webp",
+          "width": 720,
+          "height": 1280,
+          "bytes": 81282
+        },
+        "1920": {
+          "src": "/media/arts/b8db142f10c845259d059e96-1920.webp",
+          "width": 1080,
+          "height": 1920,
+          "bytes": 189446
+        },
+        "3200": {
+          "src": "/media/arts/b8db142f10c845259d059e96-3200.webp",
+          "width": 1800,
+          "height": 3200,
+          "bytes": 642314
+        }
+      },
+      "pca": "/media/arts/b8db142f10c845259d059e96-pca.png",
+      "content": [
+        0.017006802721088437,
+        0.0,
+        0.9659863945578231,
+        1.0
+      ]
+    },
+    "0c6c9b1246e47555a130a23d": {
+      "id": "0c6c9b1246e47555a130a23d",
+      "alt": "A luminous window behind dark blue blossom branches",
+      "width": 6000,
+      "height": 2571,
+      "images": {
+        "640": {
+          "src": "/media/arts/0c6c9b1246e47555a130a23d-640.webp",
+          "width": 640,
+          "height": 274,
+          "bytes": 6954
+        },
+        "1280": {
+          "src": "/media/arts/0c6c9b1246e47555a130a23d-1280.webp",
+          "width": 1280,
+          "height": 548,
+          "bytes": 20700
+        },
+        "1920": {
+          "src": "/media/arts/0c6c9b1246e47555a130a23d-1920.webp",
+          "width": 1920,
+          "height": 823,
+          "bytes": 59150
+        },
+        "3200": {
+          "src": "/media/arts/0c6c9b1246e47555a130a23d-3200.webp",
+          "width": 3200,
+          "height": 1371,
+          "bytes": 705602
+        }
+      },
+      "pca": "/media/arts/0c6c9b1246e47555a130a23d-pca.png",
+      "content": [
+        0.0,
+        0.017857142857142856,
+        1.0,
+        0.9642857142857143
+      ]
+    },
+    "c447b938aba901fcf2b6acfa": {
+      "id": "c447b938aba901fcf2b6acfa",
+      "alt": "People beneath flowering trees and lamps at night",
+      "width": 6000,
+      "height": 2571,
+      "images": {
+        "640": {
+          "src": "/media/arts/c447b938aba901fcf2b6acfa-640.webp",
+          "width": 640,
+          "height": 274,
+          "bytes": 17484
+        },
+        "1280": {
+          "src": "/media/arts/c447b938aba901fcf2b6acfa-1280.webp",
+          "width": 1280,
+          "height": 548,
+          "bytes": 68194
+        },
+        "1920": {
+          "src": "/media/arts/c447b938aba901fcf2b6acfa-1920.webp",
+          "width": 1920,
+          "height": 823,
+          "bytes": 142308
+        },
+        "3200": {
+          "src": "/media/arts/c447b938aba901fcf2b6acfa-3200.webp",
+          "width": 3200,
+          "height": 1371,
+          "bytes": 435902
+        }
+      },
+      "pca": "/media/arts/c447b938aba901fcf2b6acfa-pca.png",
+      "content": [
+        0.0,
+        0.017857142857142856,
+        1.0,
+        0.9642857142857143
+      ]
+    },
+    "325d66e57655775635176148": {
+      "id": "325d66e57655775635176148",
+      "alt": "A roof corner beneath blossoms at dusk",
+      "width": 6000,
+      "height": 2571,
+      "images": {
+        "640": {
+          "src": "/media/arts/325d66e57655775635176148-640.webp",
+          "width": 640,
+          "height": 274,
+          "bytes": 17886
+        },
+        "1280": {
+          "src": "/media/arts/325d66e57655775635176148-1280.webp",
+          "width": 1280,
+          "height": 548,
+          "bytes": 53626
+        },
+        "1920": {
+          "src": "/media/arts/325d66e57655775635176148-1920.webp",
+          "width": 1920,
+          "height": 823,
+          "bytes": 102086
+        },
+        "3200": {
+          "src": "/media/arts/325d66e57655775635176148-3200.webp",
+          "width": 3200,
+          "height": 1371,
+          "bytes": 264926
+        }
+      },
+      "pca": "/media/arts/325d66e57655775635176148-pca.png",
+      "content": [
+        0.0,
+        0.017857142857142856,
+        1.0,
+        0.9642857142857143
+      ]
+    },
+    "4834409f4e1a1b0937a1b188": {
+      "id": "4834409f4e1a1b0937a1b188",
+      "alt": "Sunlit rocks and trees beside a river",
+      "width": 3750,
+      "height": 5999,
+      "images": {
+        "640": {
+          "src": "/media/arts/4834409f4e1a1b0937a1b188-640.webp",
+          "width": 400,
+          "height": 640,
+          "bytes": 64824
+        },
+        "1280": {
+          "src": "/media/arts/4834409f4e1a1b0937a1b188-1280.webp",
+          "width": 800,
+          "height": 1280,
+          "bytes": 298734
+        },
+        "1920": {
+          "src": "/media/arts/4834409f4e1a1b0937a1b188-1920.webp",
+          "width": 1200,
+          "height": 1920,
+          "bytes": 687144
+        },
+        "3200": {
+          "src": "/media/arts/4834409f4e1a1b0937a1b188-3200.webp",
+          "width": 2000,
+          "height": 3200,
+          "bytes": 1990042
+        }
+      },
+      "pca": "/media/arts/4834409f4e1a1b0937a1b188-pca.png",
+      "content": [
+        0.009316770186335404,
+        0.0,
+        0.9782608695652174,
+        1.0
+      ]
+    },
+    "a6d412bc7b440a881b219252": {
+      "id": "a6d412bc7b440a881b219252",
+      "alt": "Snow-covered ridge above a dark forest",
+      "width": 6000,
+      "height": 3750,
+      "images": {
+        "640": {
+          "src": "/media/arts/a6d412bc7b440a881b219252-640.webp",
+          "width": 640,
+          "height": 400,
+          "bytes": 24276
+        },
+        "1280": {
+          "src": "/media/arts/a6d412bc7b440a881b219252-1280.webp",
+          "width": 1280,
+          "height": 800,
+          "bytes": 96322
+        },
+        "1920": {
+          "src": "/media/arts/a6d412bc7b440a881b219252-1920.webp",
+          "width": 1920,
+          "height": 1200,
+          "bytes": 203430
+        },
+        "3200": {
+          "src": "/media/arts/a6d412bc7b440a881b219252-3200.webp",
+          "width": 3200,
+          "height": 2000,
+          "bytes": 634436
+        }
+      },
+      "pca": "/media/arts/a6d412bc7b440a881b219252-pca.png",
+      "content": [
+        0.0,
+        0.009316770186335404,
+        1.0,
+        0.9782608695652174
+      ]
+    },
+    "23e97c8500d8c6e2a026ddc2": {
+      "id": "23e97c8500d8c6e2a026ddc2",
+      "alt": "A wooden pier against a lake and snowy mountains",
+      "width": 5999,
+      "height": 3749,
+      "images": {
+        "640": {
+          "src": "/media/arts/23e97c8500d8c6e2a026ddc2-640.webp",
+          "width": 640,
+          "height": 400,
+          "bytes": 37472
+        },
+        "1280": {
+          "src": "/media/arts/23e97c8500d8c6e2a026ddc2-1280.webp",
+          "width": 1280,
+          "height": 800,
+          "bytes": 149472
+        },
+        "1920": {
+          "src": "/media/arts/23e97c8500d8c6e2a026ddc2-1920.webp",
+          "width": 1920,
+          "height": 1200,
+          "bytes": 327408
+        },
+        "3200": {
+          "src": "/media/arts/23e97c8500d8c6e2a026ddc2-3200.webp",
+          "width": 3200,
+          "height": 2000,
+          "bytes": 949742
+        }
+      },
+      "pca": "/media/arts/23e97c8500d8c6e2a026ddc2-pca.png",
+      "content": [
+        0.0,
+        0.009316770186335404,
+        1.0,
+        0.9782608695652174
+      ]
+    },
+    "b88a63593afe46303cc63651": {
+      "id": "b88a63593afe46303cc63651",
+      "alt": "An illuminated walkway beneath a blue mountain sky",
+      "width": 3742,
+      "height": 5987,
+      "images": {
+        "640": {
+          "src": "/media/arts/b88a63593afe46303cc63651-640.webp",
+          "width": 400,
+          "height": 640,
+          "bytes": 21038
+        },
+        "1280": {
+          "src": "/media/arts/b88a63593afe46303cc63651-1280.webp",
+          "width": 800,
+          "height": 1280,
+          "bytes": 77056
+        },
+        "1920": {
+          "src": "/media/arts/b88a63593afe46303cc63651-1920.webp",
+          "width": 1200,
+          "height": 1920,
+          "bytes": 167580
+        },
+        "3200": {
+          "src": "/media/arts/b88a63593afe46303cc63651-3200.webp",
+          "width": 2000,
+          "height": 3200,
+          "bytes": 714422
+        }
+      },
+      "pca": "/media/arts/b88a63593afe46303cc63651-pca.png",
+      "content": [
+        0.009316770186335404,
+        0.0,
+        0.9782608695652174,
+        1.0
+      ]
+    },
+    "a2fadb15e69a9e8a73e7cc1d": {
+      "id": "a2fadb15e69a9e8a73e7cc1d",
+      "alt": "A warmly outlined wooden lodge beneath cool mountains",
+      "width": 3707,
+      "height": 5932,
+      "images": {
+        "640": {
+          "src": "/media/arts/a2fadb15e69a9e8a73e7cc1d-640.webp",
+          "width": 400,
+          "height": 640,
+          "bytes": 21912
+        },
+        "1280": {
+          "src": "/media/arts/a2fadb15e69a9e8a73e7cc1d-1280.webp",
+          "width": 800,
+          "height": 1280,
+          "bytes": 74448
+        },
+        "1920": {
+          "src": "/media/arts/a2fadb15e69a9e8a73e7cc1d-1920.webp",
+          "width": 1200,
+          "height": 1920,
+          "bytes": 149222
+        },
+        "3200": {
+          "src": "/media/arts/a2fadb15e69a9e8a73e7cc1d-3200.webp",
+          "width": 2000,
+          "height": 3200,
+          "bytes": 831014
+        }
+      },
+      "pca": "/media/arts/a2fadb15e69a9e8a73e7cc1d-pca.png",
+      "content": [
+        0.009316770186335404,
+        0.0,
+        0.9782608695652174,
+        1.0
+      ]
+    },
+    "49d29a55c49be8663a3c9d73": {
+      "id": "49d29a55c49be8663a3c9d73",
+      "alt": "A small settlement beneath wooded hills",
+      "width": 4000,
+      "height": 6000,
+      "images": {
+        "640": {
+          "src": "/media/arts/49d29a55c49be8663a3c9d73-640.webp",
+          "width": 427,
+          "height": 640,
+          "bytes": 28978
+        },
+        "1280": {
+          "src": "/media/arts/49d29a55c49be8663a3c9d73-1280.webp",
+          "width": 853,
+          "height": 1280,
+          "bytes": 132622
+        },
+        "1920": {
+          "src": "/media/arts/49d29a55c49be8663a3c9d73-1920.webp",
+          "width": 1280,
+          "height": 1920,
+          "bytes": 319098
+        },
+        "3200": {
+          "src": "/media/arts/49d29a55c49be8663a3c9d73-3200.webp",
+          "width": 2133,
+          "height": 3200,
+          "bytes": 1052524
+        }
+      },
+      "pca": "/media/arts/49d29a55c49be8663a3c9d73-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "a8abb7b2025402a73889c8a0": {
+      "id": "a8abb7b2025402a73889c8a0",
+      "alt": "A wooden fence before green mountain slopes",
+      "width": 4000,
+      "height": 6000,
+      "images": {
+        "640": {
+          "src": "/media/arts/a8abb7b2025402a73889c8a0-640.webp",
+          "width": 427,
+          "height": 640,
+          "bytes": 25980
+        },
+        "1280": {
+          "src": "/media/arts/a8abb7b2025402a73889c8a0-1280.webp",
+          "width": 853,
+          "height": 1280,
+          "bytes": 116222
+        },
+        "1920": {
+          "src": "/media/arts/a8abb7b2025402a73889c8a0-1920.webp",
+          "width": 1280,
+          "height": 1920,
+          "bytes": 284374
+        },
+        "3200": {
+          "src": "/media/arts/a8abb7b2025402a73889c8a0-3200.webp",
+          "width": 2133,
+          "height": 3200,
+          "bytes": 1059842
+        }
+      },
+      "pca": "/media/arts/a8abb7b2025402a73889c8a0-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "cf40b8d5f038ecbd71124621": {
+      "id": "cf40b8d5f038ecbd71124621",
+      "alt": "A horse grazing beneath forested mountains",
+      "width": 4000,
+      "height": 6000,
+      "images": {
+        "640": {
+          "src": "/media/arts/cf40b8d5f038ecbd71124621-640.webp",
+          "width": 427,
+          "height": 640,
+          "bytes": 28644
+        },
+        "1280": {
+          "src": "/media/arts/cf40b8d5f038ecbd71124621-1280.webp",
+          "width": 853,
+          "height": 1280,
+          "bytes": 126752
+        },
+        "1920": {
+          "src": "/media/arts/cf40b8d5f038ecbd71124621-1920.webp",
+          "width": 1280,
+          "height": 1920,
+          "bytes": 292614
+        },
+        "3200": {
+          "src": "/media/arts/cf40b8d5f038ecbd71124621-3200.webp",
+          "width": 2133,
+          "height": 3200,
+          "bytes": 931250
+        }
+      },
+      "pca": "/media/arts/cf40b8d5f038ecbd71124621-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "5a5cd356c992c9550fecb767": {
+      "id": "5a5cd356c992c9550fecb767",
+      "alt": "Fast-flowing river below a forested mountain",
+      "width": 6000,
+      "height": 3750,
+      "images": {
+        "640": {
+          "src": "/media/arts/5a5cd356c992c9550fecb767-640.webp",
+          "width": 640,
+          "height": 400,
+          "bytes": 33922
+        },
+        "1280": {
+          "src": "/media/arts/5a5cd356c992c9550fecb767-1280.webp",
+          "width": 1280,
+          "height": 800,
+          "bytes": 156314
+        },
+        "1920": {
+          "src": "/media/arts/5a5cd356c992c9550fecb767-1920.webp",
+          "width": 1920,
+          "height": 1200,
+          "bytes": 378254
+        },
+        "3200": {
+          "src": "/media/arts/5a5cd356c992c9550fecb767-3200.webp",
+          "width": 3200,
+          "height": 2000,
+          "bytes": 1203922
+        }
+      },
+      "pca": "/media/arts/5a5cd356c992c9550fecb767-pca.png",
+      "content": [
+        0.0,
+        0.009316770186335404,
+        1.0,
+        0.9782608695652174
+      ]
+    },
+    "1ac0eb62a5dfaf988a1f9629": {
+      "id": "1ac0eb62a5dfaf988a1f9629",
+      "alt": "Turquoise river winding through forest",
+      "width": 3748,
+      "height": 5996,
+      "images": {
+        "640": {
+          "src": "/media/arts/1ac0eb62a5dfaf988a1f9629-640.webp",
+          "width": 400,
+          "height": 640,
+          "bytes": 40982
+        },
+        "1280": {
+          "src": "/media/arts/1ac0eb62a5dfaf988a1f9629-1280.webp",
+          "width": 800,
+          "height": 1280,
+          "bytes": 200056
+        },
+        "1920": {
+          "src": "/media/arts/1ac0eb62a5dfaf988a1f9629-1920.webp",
+          "width": 1200,
+          "height": 1920,
+          "bytes": 495706
+        },
+        "3200": {
+          "src": "/media/arts/1ac0eb62a5dfaf988a1f9629-3200.webp",
+          "width": 2000,
+          "height": 3200,
+          "bytes": 1654754
+        }
+      },
+      "pca": "/media/arts/1ac0eb62a5dfaf988a1f9629-pca.png",
+      "content": [
+        0.009316770186335404,
+        0.0,
+        0.9782608695652174,
+        1.0
+      ]
+    },
+    "ac88478dc0a45ea8a9554c42": {
+      "id": "ac88478dc0a45ea8a9554c42",
+      "alt": "A narrow band of sunlight along a mountain ridge",
+      "width": 6000,
+      "height": 3750,
+      "images": {
+        "640": {
+          "src": "/media/arts/ac88478dc0a45ea8a9554c42-640.webp",
+          "width": 640,
+          "height": 400,
+          "bytes": 16010
+        },
+        "1280": {
+          "src": "/media/arts/ac88478dc0a45ea8a9554c42-1280.webp",
+          "width": 1280,
+          "height": 800,
+          "bytes": 66430
+        },
+        "1920": {
+          "src": "/media/arts/ac88478dc0a45ea8a9554c42-1920.webp",
+          "width": 1920,
+          "height": 1200,
+          "bytes": 151454
+        },
+        "3200": {
+          "src": "/media/arts/ac88478dc0a45ea8a9554c42-3200.webp",
+          "width": 3200,
+          "height": 2000,
+          "bytes": 529050
+        }
+      },
+      "pca": "/media/arts/ac88478dc0a45ea8a9554c42-pca.png",
+      "content": [
+        0.0,
+        0.009316770186335404,
+        1.0,
+        0.9782608695652174
+      ]
+    },
+    "0ffa2de6595bcb0781f5153d": {
+      "id": "0ffa2de6595bcb0781f5153d",
+      "alt": "A village beneath blue mountains",
+      "width": 6000,
+      "height": 3750,
+      "images": {
+        "640": {
+          "src": "/media/arts/0ffa2de6595bcb0781f5153d-640.webp",
+          "width": 640,
+          "height": 400,
+          "bytes": 21432
+        },
+        "1280": {
+          "src": "/media/arts/0ffa2de6595bcb0781f5153d-1280.webp",
+          "width": 1280,
+          "height": 800,
+          "bytes": 85896
+        },
+        "1920": {
+          "src": "/media/arts/0ffa2de6595bcb0781f5153d-1920.webp",
+          "width": 1920,
+          "height": 1200,
+          "bytes": 184256
+        },
+        "3200": {
+          "src": "/media/arts/0ffa2de6595bcb0781f5153d-3200.webp",
+          "width": 3200,
+          "height": 2000,
+          "bytes": 616948
+        }
+      },
+      "pca": "/media/arts/0ffa2de6595bcb0781f5153d-pca.png",
+      "content": [
+        0.0,
+        0.009316770186335404,
+        1.0,
+        0.9782608695652174
+      ]
+    },
+    "30d4f7197c099b9d16f03c69": {
+      "id": "30d4f7197c099b9d16f03c69",
+      "alt": "Wooden houses following a river through forest",
+      "width": 4000,
+      "height": 6000,
+      "images": {
+        "640": {
+          "src": "/media/arts/30d4f7197c099b9d16f03c69-640.webp",
+          "width": 427,
+          "height": 640,
+          "bytes": 62236
+        },
+        "1280": {
+          "src": "/media/arts/30d4f7197c099b9d16f03c69-1280.webp",
+          "width": 853,
+          "height": 1280,
+          "bytes": 289184
+        },
+        "1920": {
+          "src": "/media/arts/30d4f7197c099b9d16f03c69-1920.webp",
+          "width": 1280,
+          "height": 1920,
+          "bytes": 672736
+        },
+        "3200": {
+          "src": "/media/arts/30d4f7197c099b9d16f03c69-3200.webp",
+          "width": 2133,
+          "height": 3200,
+          "bytes": 2085824
+        }
+      },
+      "pca": "/media/arts/30d4f7197c099b9d16f03c69-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "42bc9d160693ef7bfca53024": {
+      "id": "42bc9d160693ef7bfca53024",
+      "alt": "A road curving around a rock formation",
+      "width": 4000,
+      "height": 6000,
+      "images": {
+        "640": {
+          "src": "/media/arts/42bc9d160693ef7bfca53024-640.webp",
+          "width": 427,
+          "height": 640,
+          "bytes": 38768
+        },
+        "1280": {
+          "src": "/media/arts/42bc9d160693ef7bfca53024-1280.webp",
+          "width": 853,
+          "height": 1280,
+          "bytes": 184310
+        },
+        "1920": {
+          "src": "/media/arts/42bc9d160693ef7bfca53024-1920.webp",
+          "width": 1280,
+          "height": 1920,
+          "bytes": 469376
+        },
+        "3200": {
+          "src": "/media/arts/42bc9d160693ef7bfca53024-3200.webp",
+          "width": 2133,
+          "height": 3200,
+          "bytes": 1701418
+        }
+      },
+      "pca": "/media/arts/42bc9d160693ef7bfca53024-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "3ce616c44a59cea078af543a": {
+      "id": "3ce616c44a59cea078af543a",
+      "alt": "A person walking on a road through a bare valley",
+      "width": 4780,
+      "height": 2988,
+      "images": {
+        "640": {
+          "src": "/media/arts/3ce616c44a59cea078af543a-640.webp",
+          "width": 640,
+          "height": 400,
+          "bytes": 61880
+        },
+        "1280": {
+          "src": "/media/arts/3ce616c44a59cea078af543a-1280.webp",
+          "width": 1280,
+          "height": 800,
+          "bytes": 291248
+        },
+        "1920": {
+          "src": "/media/arts/3ce616c44a59cea078af543a-1920.webp",
+          "width": 1920,
+          "height": 1200,
+          "bytes": 705072
+        },
+        "3200": {
+          "src": "/media/arts/3ce616c44a59cea078af543a-3200.webp",
+          "width": 3200,
+          "height": 2000,
+          "bytes": 2251548
+        }
+      },
+      "pca": "/media/arts/3ce616c44a59cea078af543a-pca.png",
+      "content": [
+        0.0,
+        0.009316770186335404,
+        1.0,
+        0.9782608695652174
+      ]
+    },
+    "79aabfd36f79749291274a3a": {
+      "id": "79aabfd36f79749291274a3a",
+      "alt": "Yellow flowers, blue lake and a distant snowy mountain",
+      "width": 3782,
+      "height": 5673,
+      "images": {
+        "640": {
+          "src": "/media/arts/79aabfd36f79749291274a3a-640.webp",
+          "width": 427,
+          "height": 640,
+          "bytes": 28534
+        },
+        "1280": {
+          "src": "/media/arts/79aabfd36f79749291274a3a-1280.webp",
+          "width": 853,
+          "height": 1280,
+          "bytes": 117380
+        },
+        "1920": {
+          "src": "/media/arts/79aabfd36f79749291274a3a-1920.webp",
+          "width": 1280,
+          "height": 1920,
+          "bytes": 258660
+        },
+        "3200": {
+          "src": "/media/arts/79aabfd36f79749291274a3a-3200.webp",
+          "width": 2133,
+          "height": 3200,
+          "bytes": 768536
+        }
+      },
+      "pca": "/media/arts/79aabfd36f79749291274a3a-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "062b6cad428650b0ac89b883": {
+      "id": "062b6cad428650b0ac89b883",
+      "alt": "Small walkers crossing a green mountain meadow",
+      "width": 6000,
+      "height": 3750,
+      "images": {
+        "640": {
+          "src": "/media/arts/062b6cad428650b0ac89b883-640.webp",
+          "width": 640,
+          "height": 400,
+          "bytes": 29324
+        },
+        "1280": {
+          "src": "/media/arts/062b6cad428650b0ac89b883-1280.webp",
+          "width": 1280,
+          "height": 800,
+          "bytes": 133664
+        },
+        "1920": {
+          "src": "/media/arts/062b6cad428650b0ac89b883-1920.webp",
+          "width": 1920,
+          "height": 1200,
+          "bytes": 327008
+        },
+        "3200": {
+          "src": "/media/arts/062b6cad428650b0ac89b883-3200.webp",
+          "width": 3200,
+          "height": 2000,
+          "bytes": 1108230
+        }
+      },
+      "pca": "/media/arts/062b6cad428650b0ac89b883-pca.png",
+      "content": [
+        0.0,
+        0.009316770186335404,
+        1.0,
+        0.9782608695652174
+      ]
+    },
+    "be9f54df71cb112806433388": {
+      "id": "be9f54df71cb112806433388",
+      "alt": "Tracks crossing an open mountain meadow",
+      "width": 6000,
+      "height": 3750,
+      "images": {
+        "640": {
+          "src": "/media/arts/be9f54df71cb112806433388-640.webp",
+          "width": 640,
+          "height": 400,
+          "bytes": 19384
+        },
+        "1280": {
+          "src": "/media/arts/be9f54df71cb112806433388-1280.webp",
+          "width": 1280,
+          "height": 800,
+          "bytes": 89508
+        },
+        "1920": {
+          "src": "/media/arts/be9f54df71cb112806433388-1920.webp",
+          "width": 1920,
+          "height": 1200,
+          "bytes": 227770
+        },
+        "3200": {
+          "src": "/media/arts/be9f54df71cb112806433388-3200.webp",
+          "width": 3200,
+          "height": 2000,
+          "bytes": 826698
+        }
+      },
+      "pca": "/media/arts/be9f54df71cb112806433388-pca.png",
+      "content": [
+        0.0,
+        0.009316770186335404,
+        1.0,
+        0.9782608695652174
+      ]
+    },
+    "bd9fc5462949b5fd4b16b3e0": {
+      "id": "bd9fc5462949b5fd4b16b3e0",
+      "alt": "Repeating pine groves across rolling hills",
+      "width": 6000,
+      "height": 3750,
+      "images": {
+        "640": {
+          "src": "/media/arts/bd9fc5462949b5fd4b16b3e0-640.webp",
+          "width": 640,
+          "height": 400,
+          "bytes": 33018
+        },
+        "1280": {
+          "src": "/media/arts/bd9fc5462949b5fd4b16b3e0-1280.webp",
+          "width": 1280,
+          "height": 800,
+          "bytes": 156298
+        },
+        "1920": {
+          "src": "/media/arts/bd9fc5462949b5fd4b16b3e0-1920.webp",
+          "width": 1920,
+          "height": 1200,
+          "bytes": 390614
+        },
+        "3200": {
+          "src": "/media/arts/bd9fc5462949b5fd4b16b3e0-3200.webp",
+          "width": 3200,
+          "height": 2000,
+          "bytes": 1380660
+        }
+      },
+      "pca": "/media/arts/bd9fc5462949b5fd4b16b3e0-pca.png",
+      "content": [
+        0.0,
+        0.009316770186335404,
+        1.0,
+        0.9782608695652174
+      ]
+    },
+    "19de29e56e360b7cdc41ac03": {
+      "id": "19de29e56e360b7cdc41ac03",
+      "alt": "Small buildings scattered across mountain slopes",
+      "width": 4000,
+      "height": 6000,
+      "images": {
+        "640": {
+          "src": "/media/arts/19de29e56e360b7cdc41ac03-640.webp",
+          "width": 427,
+          "height": 640,
+          "bytes": 21836
+        },
+        "1280": {
+          "src": "/media/arts/19de29e56e360b7cdc41ac03-1280.webp",
+          "width": 853,
+          "height": 1280,
+          "bytes": 102472
+        },
+        "1920": {
+          "src": "/media/arts/19de29e56e360b7cdc41ac03-1920.webp",
+          "width": 1280,
+          "height": 1920,
+          "bytes": 249444
+        },
+        "3200": {
+          "src": "/media/arts/19de29e56e360b7cdc41ac03-3200.webp",
+          "width": 2133,
+          "height": 3200,
+          "bytes": 887754
+        }
+      },
+      "pca": "/media/arts/19de29e56e360b7cdc41ac03-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "9ff9b3639e241d982b3d3d91": {
+      "id": "9ff9b3639e241d982b3d3d91",
+      "alt": "Layered green hills beneath snow-covered peaks",
+      "width": 5720,
+      "height": 3575,
+      "images": {
+        "640": {
+          "src": "/media/arts/9ff9b3639e241d982b3d3d91-640.webp",
+          "width": 640,
+          "height": 400,
+          "bytes": 24172
+        },
+        "1280": {
+          "src": "/media/arts/9ff9b3639e241d982b3d3d91-1280.webp",
+          "width": 1280,
+          "height": 800,
+          "bytes": 91276
+        },
+        "1920": {
+          "src": "/media/arts/9ff9b3639e241d982b3d3d91-1920.webp",
+          "width": 1920,
+          "height": 1200,
+          "bytes": 203952
+        },
+        "3200": {
+          "src": "/media/arts/9ff9b3639e241d982b3d3d91-3200.webp",
+          "width": 3200,
+          "height": 2000,
+          "bytes": 706590
+        }
+      },
+      "pca": "/media/arts/9ff9b3639e241d982b3d3d91-pca.png",
+      "content": [
+        0.0,
+        0.009316770186335404,
+        1.0,
+        0.9782608695652174
+      ]
+    },
+    "a0bca435a01d602a4ddfce34": {
+      "id": "a0bca435a01d602a4ddfce34",
+      "alt": "A settlement and road nestled in a green valley",
+      "width": 6000,
+      "height": 3750,
+      "images": {
+        "640": {
+          "src": "/media/arts/a0bca435a01d602a4ddfce34-640.webp",
+          "width": 640,
+          "height": 400,
+          "bytes": 28476
+        },
+        "1280": {
+          "src": "/media/arts/a0bca435a01d602a4ddfce34-1280.webp",
+          "width": 1280,
+          "height": 800,
+          "bytes": 113482
+        },
+        "1920": {
+          "src": "/media/arts/a0bca435a01d602a4ddfce34-1920.webp",
+          "width": 1920,
+          "height": 1200,
+          "bytes": 258736
+        },
+        "3200": {
+          "src": "/media/arts/a0bca435a01d602a4ddfce34-3200.webp",
+          "width": 3200,
+          "height": 2000,
+          "bytes": 886524
+        }
+      },
+      "pca": "/media/arts/a0bca435a01d602a4ddfce34-pca.png",
+      "content": [
+        0.0,
+        0.009316770186335404,
+        1.0,
+        0.9782608695652174
+      ]
+    },
+    "74556423f04d1afa41307925": {
+      "id": "74556423f04d1afa41307925",
+      "alt": "A person facing a vast snow-covered mountain",
+      "width": 6000,
+      "height": 3750,
+      "images": {
+        "640": {
+          "src": "/media/arts/74556423f04d1afa41307925-640.webp",
+          "width": 640,
+          "height": 400,
+          "bytes": 54920
+        },
+        "1280": {
+          "src": "/media/arts/74556423f04d1afa41307925-1280.webp",
+          "width": 1280,
+          "height": 800,
+          "bytes": 218590
+        },
+        "1920": {
+          "src": "/media/arts/74556423f04d1afa41307925-1920.webp",
+          "width": 1920,
+          "height": 1200,
+          "bytes": 488882
+        },
+        "3200": {
+          "src": "/media/arts/74556423f04d1afa41307925-3200.webp",
+          "width": 3200,
+          "height": 2000,
+          "bytes": 1441124
+        }
+      },
+      "pca": "/media/arts/74556423f04d1afa41307925-pca.png",
+      "content": [
+        0.0,
+        0.009316770186335404,
+        1.0,
+        0.9782608695652174
+      ]
+    },
+    "8b26cc4cb5b05f1f77b50d20": {
+      "id": "8b26cc4cb5b05f1f77b50d20",
+      "alt": "A winding mountain road beneath an immense rock face",
+      "width": 3750,
+      "height": 6000,
+      "images": {
+        "640": {
+          "src": "/media/arts/8b26cc4cb5b05f1f77b50d20-640.webp",
+          "width": 400,
+          "height": 640,
+          "bytes": 59950
+        },
+        "1280": {
+          "src": "/media/arts/8b26cc4cb5b05f1f77b50d20-1280.webp",
+          "width": 800,
+          "height": 1280,
+          "bytes": 266136
+        },
+        "1920": {
+          "src": "/media/arts/8b26cc4cb5b05f1f77b50d20-1920.webp",
+          "width": 1200,
+          "height": 1920,
+          "bytes": 637010
+        },
+        "3200": {
+          "src": "/media/arts/8b26cc4cb5b05f1f77b50d20-3200.webp",
+          "width": 2000,
+          "height": 3200,
+          "bytes": 1987024
+        }
+      },
+      "pca": "/media/arts/8b26cc4cb5b05f1f77b50d20-pca.png",
+      "content": [
+        0.009316770186335404,
+        0.0,
+        0.9782608695652174,
+        1.0
+      ]
+    },
+    "751cab53719c6ffe5c8debb1": {
+      "id": "751cab53719c6ffe5c8debb1",
+      "alt": "Sunlight shining through white blossom branches",
+      "width": 5870,
+      "height": 2516,
+      "images": {
+        "640": {
+          "src": "/media/arts/751cab53719c6ffe5c8debb1-640.webp",
+          "width": 640,
+          "height": 274,
+          "bytes": 45264
+        },
+        "1280": {
+          "src": "/media/arts/751cab53719c6ffe5c8debb1-1280.webp",
+          "width": 1280,
+          "height": 549,
+          "bytes": 157980
+        },
+        "1920": {
+          "src": "/media/arts/751cab53719c6ffe5c8debb1-1920.webp",
+          "width": 1920,
+          "height": 823,
+          "bytes": 307186
+        },
+        "3200": {
+          "src": "/media/arts/751cab53719c6ffe5c8debb1-3200.webp",
+          "width": 3200,
+          "height": 1372,
+          "bytes": 823716
+        }
+      },
+      "pca": "/media/arts/751cab53719c6ffe5c8debb1-pca.png",
+      "content": [
+        0.0,
+        0.017857142857142856,
+        1.0,
+        0.9642857142857143
+      ]
+    },
+    "b22d7957865508a129c1589d": {
+      "id": "b22d7957865508a129c1589d",
+      "alt": "Blossom silhouettes against a pink evening sky",
+      "width": 5956,
+      "height": 2553,
+      "images": {
+        "640": {
+          "src": "/media/arts/b22d7957865508a129c1589d-640.webp",
+          "width": 640,
+          "height": 274,
+          "bytes": 28158
+        },
+        "1280": {
+          "src": "/media/arts/b22d7957865508a129c1589d-1280.webp",
+          "width": 1280,
+          "height": 549,
+          "bytes": 93764
+        },
+        "1920": {
+          "src": "/media/arts/b22d7957865508a129c1589d-1920.webp",
+          "width": 1920,
+          "height": 823,
+          "bytes": 180334
+        },
+        "3200": {
+          "src": "/media/arts/b22d7957865508a129c1589d-3200.webp",
+          "width": 3200,
+          "height": 1372,
+          "bytes": 527756
+        }
+      },
+      "pca": "/media/arts/b22d7957865508a129c1589d-pca.png",
+      "content": [
+        0.0,
+        0.017857142857142856,
+        1.0,
+        0.9642857142857143
+      ]
+    },
+    "bffef31a50008d878287634e": {
+      "id": "bffef31a50008d878287634e",
+      "alt": "A crescent moon framed by blurred branches",
+      "width": 2787,
+      "height": 4459,
+      "images": {
+        "640": {
+          "src": "/media/arts/bffef31a50008d878287634e-640.webp",
+          "width": 400,
+          "height": 640,
+          "bytes": 8384
+        },
+        "1280": {
+          "src": "/media/arts/bffef31a50008d878287634e-1280.webp",
+          "width": 800,
+          "height": 1280,
+          "bytes": 23026
+        },
+        "1920": {
+          "src": "/media/arts/bffef31a50008d878287634e-1920.webp",
+          "width": 1200,
+          "height": 1920,
+          "bytes": 42310
+        },
+        "3200": {
+          "src": "/media/arts/bffef31a50008d878287634e-3200.webp",
+          "width": 2000,
+          "height": 3200,
+          "bytes": 360332
+        }
+      },
+      "pca": "/media/arts/bffef31a50008d878287634e-pca.png",
+      "content": [
+        0.009316770186335404,
+        0.0,
+        0.9782608695652174,
+        1.0
+      ]
+    },
+    "685670b80945083ac4eb89cf": {
+      "id": "685670b80945083ac4eb89cf",
+      "alt": "Flowering trees beside a white staircase",
+      "width": 6000,
+      "height": 2571,
+      "images": {
+        "640": {
+          "src": "/media/arts/685670b80945083ac4eb89cf-640.webp",
+          "width": 640,
+          "height": 274,
+          "bytes": 24002
+        },
+        "1280": {
+          "src": "/media/arts/685670b80945083ac4eb89cf-1280.webp",
+          "width": 1280,
+          "height": 548,
+          "bytes": 98526
+        },
+        "1920": {
+          "src": "/media/arts/685670b80945083ac4eb89cf-1920.webp",
+          "width": 1920,
+          "height": 823,
+          "bytes": 224848
+        },
+        "3200": {
+          "src": "/media/arts/685670b80945083ac4eb89cf-3200.webp",
+          "width": 3200,
+          "height": 1371,
+          "bytes": 691472
+        }
+      },
+      "pca": "/media/arts/685670b80945083ac4eb89cf-pca.png",
+      "content": [
+        0.0,
+        0.017857142857142856,
+        1.0,
+        0.9642857142857143
+      ]
+    },
+    "793ce1dc50a0c7a287d8cbc9": {
+      "id": "793ce1dc50a0c7a287d8cbc9",
+      "alt": "Flowering branches and shadows across a warm wall",
+      "width": 5211,
+      "height": 2233,
+      "images": {
+        "640": {
+          "src": "/media/arts/793ce1dc50a0c7a287d8cbc9-640.webp",
+          "width": 640,
+          "height": 274,
+          "bytes": 38866
+        },
+        "1280": {
+          "src": "/media/arts/793ce1dc50a0c7a287d8cbc9-1280.webp",
+          "width": 1280,
+          "height": 549,
+          "bytes": 155034
+        },
+        "1920": {
+          "src": "/media/arts/793ce1dc50a0c7a287d8cbc9-1920.webp",
+          "width": 1920,
+          "height": 823,
+          "bytes": 315106
+        },
+        "3200": {
+          "src": "/media/arts/793ce1dc50a0c7a287d8cbc9-3200.webp",
+          "width": 3200,
+          "height": 1371,
+          "bytes": 879686
+        }
+      },
+      "pca": "/media/arts/793ce1dc50a0c7a287d8cbc9-pca.png",
+      "content": [
+        0.0,
+        0.017857142857142856,
+        1.0,
+        0.9642857142857143
+      ]
+    },
+    "2c6e019ec492c670f53bdbd1": {
+      "id": "2c6e019ec492c670f53bdbd1",
+      "alt": "Waterfall between cliffs, with a rocky stream in the foreground",
+      "width": 3695,
+      "height": 5543,
+      "images": {
+        "640": {
+          "src": "/media/arts/2c6e019ec492c670f53bdbd1-640.webp",
+          "width": 427,
+          "height": 640,
+          "bytes": 50322
+        },
+        "1280": {
+          "src": "/media/arts/2c6e019ec492c670f53bdbd1-1280.webp",
+          "width": 853,
+          "height": 1280,
+          "bytes": 225094
+        },
+        "1920": {
+          "src": "/media/arts/2c6e019ec492c670f53bdbd1-1920.webp",
+          "width": 1280,
+          "height": 1920,
+          "bytes": 529366
+        },
+        "3200": {
+          "src": "/media/arts/2c6e019ec492c670f53bdbd1-3200.webp",
+          "width": 2133,
+          "height": 3200,
+          "bytes": 1695758
+        }
+      },
+      "pca": "/media/arts/2c6e019ec492c670f53bdbd1-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "5c9741cb25dbdf04e81abfbb": {
+      "id": "5c9741cb25dbdf04e81abfbb",
+      "alt": "A valley seen through trees",
+      "width": 6000,
+      "height": 3750,
+      "images": {
+        "640": {
+          "src": "/media/arts/5c9741cb25dbdf04e81abfbb-640.webp",
+          "width": 640,
+          "height": 400,
+          "bytes": 48634
+        },
+        "1280": {
+          "src": "/media/arts/5c9741cb25dbdf04e81abfbb-1280.webp",
+          "width": 1280,
+          "height": 800,
+          "bytes": 225828
+        },
+        "1920": {
+          "src": "/media/arts/5c9741cb25dbdf04e81abfbb-1920.webp",
+          "width": 1920,
+          "height": 1200,
+          "bytes": 535614
+        },
+        "3200": {
+          "src": "/media/arts/5c9741cb25dbdf04e81abfbb-3200.webp",
+          "width": 3200,
+          "height": 2000,
+          "bytes": 1669362
+        }
+      },
+      "pca": "/media/arts/5c9741cb25dbdf04e81abfbb-pca.png",
+      "content": [
+        0.0,
+        0.009316770186335404,
+        1.0,
+        0.9782608695652174
+      ]
+    },
+    "4226d2616a0c4ebb416d0854": {
+      "id": "4226d2616a0c4ebb416d0854",
+      "alt": "Purple flowers and sunlit green foliage",
+      "width": 4000,
+      "height": 6000,
+      "images": {
+        "640": {
+          "src": "/media/arts/4226d2616a0c4ebb416d0854-640.webp",
+          "width": 427,
+          "height": 640,
+          "bytes": 82560
+        },
+        "1280": {
+          "src": "/media/arts/4226d2616a0c4ebb416d0854-1280.webp",
+          "width": 853,
+          "height": 1280,
+          "bytes": 302644
+        },
+        "1920": {
+          "src": "/media/arts/4226d2616a0c4ebb416d0854-1920.webp",
+          "width": 1280,
+          "height": 1920,
+          "bytes": 614390
+        },
+        "3200": {
+          "src": "/media/arts/4226d2616a0c4ebb416d0854-3200.webp",
+          "width": 2133,
+          "height": 3200,
+          "bytes": 1711798
+        }
+      },
+      "pca": "/media/arts/4226d2616a0c4ebb416d0854-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "4bfeea590caaea36de2afcb1": {
+      "id": "4bfeea590caaea36de2afcb1",
+      "alt": "Light falling through woodland onto a fallen trunk",
+      "width": 6000,
+      "height": 4000,
+      "images": {
+        "640": {
+          "src": "/media/arts/4bfeea590caaea36de2afcb1-640.webp",
+          "width": 640,
+          "height": 427,
+          "bytes": 60464
+        },
+        "1280": {
+          "src": "/media/arts/4bfeea590caaea36de2afcb1-1280.webp",
+          "width": 1280,
+          "height": 853,
+          "bytes": 274604
+        },
+        "1920": {
+          "src": "/media/arts/4bfeea590caaea36de2afcb1-1920.webp",
+          "width": 1920,
+          "height": 1280,
+          "bytes": 636154
+        },
+        "3200": {
+          "src": "/media/arts/4bfeea590caaea36de2afcb1-3200.webp",
+          "width": 3200,
+          "height": 2133,
+          "bytes": 2019010
+        }
+      },
+      "pca": "/media/arts/4bfeea590caaea36de2afcb1-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "b8577b51ccdd20006959e004": {
+      "id": "b8577b51ccdd20006959e004",
+      "alt": "Clouds and sunlight over a mountain lake",
+      "width": 5803,
+      "height": 3627,
+      "images": {
+        "640": {
+          "src": "/media/arts/b8577b51ccdd20006959e004-640.webp",
+          "width": 640,
+          "height": 400,
+          "bytes": 16634
+        },
+        "1280": {
+          "src": "/media/arts/b8577b51ccdd20006959e004-1280.webp",
+          "width": 1280,
+          "height": 800,
+          "bytes": 73676
+        },
+        "1920": {
+          "src": "/media/arts/b8577b51ccdd20006959e004-1920.webp",
+          "width": 1920,
+          "height": 1200,
+          "bytes": 175778
+        },
+        "3200": {
+          "src": "/media/arts/b8577b51ccdd20006959e004-3200.webp",
+          "width": 3200,
+          "height": 2000,
+          "bytes": 648320
+        }
+      },
+      "pca": "/media/arts/b8577b51ccdd20006959e004-pca.png",
+      "content": [
+        0.0,
+        0.009316770186335404,
+        1.0,
+        0.9782608695652174
+      ]
+    },
+    "12a04385676dd0042232dd02": {
+      "id": "12a04385676dd0042232dd02",
+      "alt": "Sunlit green hillside meeting deep blue water",
+      "width": 6000,
+      "height": 3750,
+      "images": {
+        "640": {
+          "src": "/media/arts/12a04385676dd0042232dd02-640.webp",
+          "width": 640,
+          "height": 400,
+          "bytes": 15256
+        },
+        "1280": {
+          "src": "/media/arts/12a04385676dd0042232dd02-1280.webp",
+          "width": 1280,
+          "height": 800,
+          "bytes": 133324
+        },
+        "1920": {
+          "src": "/media/arts/12a04385676dd0042232dd02-1920.webp",
+          "width": 1920,
+          "height": 1200,
+          "bytes": 417566
+        },
+        "3200": {
+          "src": "/media/arts/12a04385676dd0042232dd02-3200.webp",
+          "width": 3200,
+          "height": 2000,
+          "bytes": 1662862
+        }
+      },
+      "pca": "/media/arts/12a04385676dd0042232dd02-pca.png",
+      "content": [
+        0.0,
+        0.009316770186335404,
+        1.0,
+        0.9782608695652174
+      ]
+    },
+    "8b97ba475a5b0d2a5c5375a8": {
+      "id": "8b97ba475a5b0d2a5c5375a8",
+      "alt": "The Milky Way above a small structure and grass",
+      "width": 5325,
+      "height": 3676,
+      "images": {
+        "640": {
+          "src": "/media/arts/8b97ba475a5b0d2a5c5375a8-640.webp",
+          "width": 640,
+          "height": 442,
+          "bytes": 23668
+        },
+        "1280": {
+          "src": "/media/arts/8b97ba475a5b0d2a5c5375a8-1280.webp",
+          "width": 1280,
+          "height": 884,
+          "bytes": 112938
+        },
+        "1920": {
+          "src": "/media/arts/8b97ba475a5b0d2a5c5375a8-1920.webp",
+          "width": 1920,
+          "height": 1325,
+          "bytes": 262126
+        },
+        "3200": {
+          "src": "/media/arts/8b97ba475a5b0d2a5c5375a8-3200.webp",
+          "width": 3200,
+          "height": 2209,
+          "bytes": 930136
+        }
+      },
+      "pca": "/media/arts/8b97ba475a5b0d2a5c5375a8-pca.png",
+      "content": [
+        0.0,
+        0.002857142857142857,
+        1.0,
+        0.9942857142857143
+      ]
+    },
+    "c213198083fb2da79ad19601": {
+      "id": "c213198083fb2da79ad19601",
+      "alt": "Star trails above dark trees and glowing tents",
+      "width": 6000,
+      "height": 4000,
+      "images": {
+        "640": {
+          "src": "/media/arts/c213198083fb2da79ad19601-640.webp",
+          "width": 640,
+          "height": 427,
+          "bytes": 45076
+        },
+        "1280": {
+          "src": "/media/arts/c213198083fb2da79ad19601-1280.webp",
+          "width": 1280,
+          "height": 853,
+          "bytes": 212068
+        },
+        "1920": {
+          "src": "/media/arts/c213198083fb2da79ad19601-1920.webp",
+          "width": 1920,
+          "height": 1280,
+          "bytes": 505708
+        },
+        "3200": {
+          "src": "/media/arts/c213198083fb2da79ad19601-3200.webp",
+          "width": 3200,
+          "height": 2133,
+          "bytes": 1699084
+        }
+      },
+      "pca": "/media/arts/c213198083fb2da79ad19601-pca.png",
+      "content": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "85769646e835b1df15f5fe1b": {
+      "id": "85769646e835b1df15f5fe1b",
+      "alt": "Old and new architecture layered at night",
+      "width": 3942,
+      "height": 5756,
+      "images": {
+        "640": {
+          "src": "/media/arts/85769646e835b1df15f5fe1b-640.webp",
+          "width": 438,
+          "height": 640,
+          "bytes": 40622
+        },
+        "1280": {
+          "src": "/media/arts/85769646e835b1df15f5fe1b-1280.webp",
+          "width": 877,
+          "height": 1280,
+          "bytes": 121842
+        },
+        "1920": {
+          "src": "/media/arts/85769646e835b1df15f5fe1b-1920.webp",
+          "width": 1315,
+          "height": 1920,
+          "bytes": 230236
+        },
+        "3200": {
+          "src": "/media/arts/85769646e835b1df15f5fe1b-3200.webp",
+          "width": 2192,
+          "height": 3200,
+          "bytes": 673646
+        }
+      },
+      "pca": "/media/arts/85769646e835b1df15f5fe1b-pca.png",
+      "content": [
+        0.005714285714285714,
+        0.0,
+        0.9857142857142858,
+        1.0
+      ]
+    }
+  },
+  "echoes": {
+    "bbd5c5091c1c1ec4ea46b5ba": [
+      {
+        "id": "5a5cd356c992c9550fecb767",
+        "theme": "elemental",
+        "similarity": 0.4817
+      },
+      {
+        "id": "643e8064a8a0bb178649af75",
+        "theme": "after-dark",
+        "similarity": 0.45142
+      },
+      {
+        "id": "2071a8faebcd207db5153867",
+        "theme": "order",
+        "similarity": 0.35405
+      }
+    ],
+    "2071a8faebcd207db5153867": [
+      {
+        "id": "643e8064a8a0bb178649af75",
+        "theme": "after-dark",
+        "similarity": 0.69245
+      },
+      {
+        "id": "1754c2e9cddd958d494934ed",
+        "theme": "imprints",
+        "similarity": 0.37807
+      },
+      {
+        "id": "5a5cd356c992c9550fecb767",
+        "theme": "elemental",
+        "similarity": 0.23788
+      }
+    ],
+    "d681b8474e3cdf876300dba5": [
+      {
+        "id": "643e8064a8a0bb178649af75",
+        "theme": "after-dark",
+        "similarity": 0.24425
+      },
+      {
+        "id": "23e97c8500d8c6e2a026ddc2",
+        "theme": "imprints",
+        "similarity": 0.24379
+      },
+      {
+        "id": "0c6c9b1246e47555a130a23d",
+        "theme": "in-bloom",
+        "similarity": 0.19718
+      }
+    ],
+    "4d993134d8606816e4b70dbf": [
+      {
+        "id": "643e8064a8a0bb178649af75",
+        "theme": "after-dark",
+        "similarity": 0.74903
+      },
+      {
+        "id": "1754c2e9cddd958d494934ed",
+        "theme": "imprints",
+        "similarity": 0.33633
+      },
+      {
+        "id": "685670b80945083ac4eb89cf",
+        "theme": "in-bloom",
+        "similarity": 0.1871
+      }
+    ],
+    "89ff38a01d871c541ed55641": [
+      {
+        "id": "643e8064a8a0bb178649af75",
+        "theme": "after-dark",
+        "similarity": 0.39306
+      },
+      {
+        "id": "0c6c9b1246e47555a130a23d",
+        "theme": "in-bloom",
+        "similarity": 0.22923
+      },
+      {
+        "id": "d9b7027a850df3b05422bef3",
+        "theme": "imprints",
+        "similarity": 0.21681
+      }
+    ],
+    "e0a44e2adcb374505221d4d7": [
+      {
+        "id": "643e8064a8a0bb178649af75",
+        "theme": "after-dark",
+        "similarity": 0.63106
+      },
+      {
+        "id": "1754c2e9cddd958d494934ed",
+        "theme": "imprints",
+        "similarity": 0.27504
+      },
+      {
+        "id": "1ac0eb62a5dfaf988a1f9629",
+        "theme": "elemental",
+        "similarity": 0.21035
+      }
+    ],
+    "1754c2e9cddd958d494934ed": [
+      {
+        "id": "2071a8faebcd207db5153867",
+        "theme": "order",
+        "similarity": 0.37807
+      },
+      {
+        "id": "643e8064a8a0bb178649af75",
+        "theme": "after-dark",
+        "similarity": 0.3214
+      },
+      {
+        "id": "bffef31a50008d878287634e",
+        "theme": "in-bloom",
+        "similarity": 0.23621
+      }
+    ],
+    "fd6c7bdb6a6f7b798a6dfcef": [
+      {
+        "id": "643e8064a8a0bb178649af75",
+        "theme": "after-dark",
+        "similarity": 0.39783
+      },
+      {
+        "id": "c447b938aba901fcf2b6acfa",
+        "theme": "in-bloom",
+        "similarity": 0.29739
+      },
+      {
+        "id": "1754c2e9cddd958d494934ed",
+        "theme": "imprints",
+        "similarity": 0.24235
+      }
+    ],
+    "d745f22dce37b1ce4ab75629": [
+      {
+        "id": "643e8064a8a0bb178649af75",
+        "theme": "after-dark",
+        "similarity": 0.55591
+      },
+      {
+        "id": "1754c2e9cddd958d494934ed",
+        "theme": "imprints",
+        "similarity": 0.32589
+      },
+      {
+        "id": "325d66e57655775635176148",
+        "theme": "in-bloom",
+        "similarity": 0.18007
+      }
+    ],
+    "4e71cbde363587e098748268": [
+      {
+        "id": "b8db142f10c845259d059e96",
+        "theme": "after-dark",
+        "similarity": 0.25836
+      },
+      {
+        "id": "685670b80945083ac4eb89cf",
+        "theme": "in-bloom",
+        "similarity": 0.23839
+      },
+      {
+        "id": "30d4f7197c099b9d16f03c69",
+        "theme": "imprints",
+        "similarity": 0.17316
+      }
+    ],
+    "50ddadc9c4e4a0e463c49a76": [
+      {
+        "id": "b8db142f10c845259d059e96",
+        "theme": "after-dark",
+        "similarity": 0.21706
+      },
+      {
+        "id": "23e97c8500d8c6e2a026ddc2",
+        "theme": "imprints",
+        "similarity": 0.20658
+      },
+      {
+        "id": "c447b938aba901fcf2b6acfa",
+        "theme": "in-bloom",
+        "similarity": 0.17513
+      }
+    ],
+    "5245e99e56c32ed6ddd47f93": [
+      {
+        "id": "2071a8faebcd207db5153867",
+        "theme": "order",
+        "similarity": 0.09962
+      },
+      {
+        "id": "f7e73bfd275ecacc2de79004",
+        "theme": "after-dark",
+        "similarity": 0.09796
+      },
+      {
+        "id": "cf40b8d5f038ecbd71124621",
+        "theme": "elemental",
+        "similarity": 0.09297
+      }
+    ],
+    "d9b7027a850df3b05422bef3": [
+      {
+        "id": "643e8064a8a0bb178649af75",
+        "theme": "after-dark",
+        "similarity": 0.36763
+      },
+      {
+        "id": "2071a8faebcd207db5153867",
+        "theme": "order",
+        "similarity": 0.33598
+      },
+      {
+        "id": "4834409f4e1a1b0937a1b188",
+        "theme": "elemental",
+        "similarity": 0.1981
+      }
+    ],
+    "0de1b4114733afa514fc9491": [
+      {
+        "id": "325d66e57655775635176148",
+        "theme": "in-bloom",
+        "similarity": 0.42694
+      },
+      {
+        "id": "d9b7027a850df3b05422bef3",
+        "theme": "imprints",
+        "similarity": 0.22492
+      },
+      {
+        "id": "4e71cbde363587e098748268",
+        "theme": "order",
+        "similarity": 0.21259
+      }
+    ],
+    "6c8282304a162541f24de8f1": [
+      {
+        "id": "bffef31a50008d878287634e",
+        "theme": "in-bloom",
+        "similarity": 0.35123
+      },
+      {
+        "id": "89ff38a01d871c541ed55641",
+        "theme": "order",
+        "similarity": 0.24779
+      },
+      {
+        "id": "d9b7027a850df3b05422bef3",
+        "theme": "imprints",
+        "similarity": 0.23223
+      }
+    ],
+    "f7e73bfd275ecacc2de79004": [
+      {
+        "id": "bffef31a50008d878287634e",
+        "theme": "in-bloom",
+        "similarity": 0.42141
+      },
+      {
+        "id": "d9b7027a850df3b05422bef3",
+        "theme": "imprints",
+        "similarity": 0.20634
+      },
+      {
+        "id": "ac88478dc0a45ea8a9554c42",
+        "theme": "elemental",
+        "similarity": 0.18825
+      }
+    ],
+    "2c577963fe70e4324cc751e0": [
+      {
+        "id": "f7e73bfd275ecacc2de79004",
+        "theme": "after-dark",
+        "similarity": 0.16867
+      },
+      {
+        "id": "4834409f4e1a1b0937a1b188",
+        "theme": "elemental",
+        "similarity": 0.15094
+      },
+      {
+        "id": "42bc9d160693ef7bfca53024",
+        "theme": "imprints",
+        "similarity": 0.11742
+      }
+    ],
+    "a743171dea4cb9ea2d1ca131": [
+      {
+        "id": "f7e73bfd275ecacc2de79004",
+        "theme": "after-dark",
+        "similarity": 0.34623
+      },
+      {
+        "id": "85769646e835b1df15f5fe1b",
+        "theme": "order",
+        "similarity": 0.30422
+      },
+      {
+        "id": "74556423f04d1afa41307925",
+        "theme": "elemental",
+        "similarity": 0.14831
+      }
+    ],
+    "03b2fbd0970e8b1d6f20c326": [
+      {
+        "id": "db23572a609554fddf1ccba0",
+        "theme": "after-dark",
+        "similarity": 0.3806
+      },
+      {
+        "id": "c447b938aba901fcf2b6acfa",
+        "theme": "in-bloom",
+        "similarity": 0.25127
+      },
+      {
+        "id": "5a5cd356c992c9550fecb767",
+        "theme": "elemental",
+        "similarity": 0.13242
+      }
+    ],
+    "643e8064a8a0bb178649af75": [
+      {
+        "id": "4d993134d8606816e4b70dbf",
+        "theme": "order",
+        "similarity": 0.74903
+      },
+      {
+        "id": "bbd5c5091c1c1ec4ea46b5ba",
+        "theme": "imprints",
+        "similarity": 0.45142
+      },
+      {
+        "id": "5a5cd356c992c9550fecb767",
+        "theme": "elemental",
+        "similarity": 0.30364
+      }
+    ],
+    "f4bc5f3dabb5cd9d72c458b8": [
+      {
+        "id": "db23572a609554fddf1ccba0",
+        "theme": "after-dark",
+        "similarity": 0.3113
+      },
+      {
+        "id": "685670b80945083ac4eb89cf",
+        "theme": "in-bloom",
+        "similarity": 0.24671
+      },
+      {
+        "id": "74556423f04d1afa41307925",
+        "theme": "elemental",
+        "similarity": 0.1205
+      }
+    ],
+    "db23572a609554fddf1ccba0": [
+      {
+        "id": "c447b938aba901fcf2b6acfa",
+        "theme": "in-bloom",
+        "similarity": 0.3965
+      },
+      {
+        "id": "03b2fbd0970e8b1d6f20c326",
+        "theme": "order",
+        "similarity": 0.3806
+      },
+      {
+        "id": "4834409f4e1a1b0937a1b188",
+        "theme": "elemental",
+        "similarity": 0.14592
+      }
+    ],
+    "68105b3ce0c1c4d77025f51a": [
+      {
+        "id": "c447b938aba901fcf2b6acfa",
+        "theme": "in-bloom",
+        "similarity": 0.34551
+      },
+      {
+        "id": "1754c2e9cddd958d494934ed",
+        "theme": "imprints",
+        "similarity": 0.20869
+      },
+      {
+        "id": "50ddadc9c4e4a0e463c49a76",
+        "theme": "order",
+        "similarity": 0.17431
+      }
+    ],
+    "5b24cb563ed1eca04acd6e86": [
+      {
+        "id": "685670b80945083ac4eb89cf",
+        "theme": "in-bloom",
+        "similarity": 0.27952
+      },
+      {
+        "id": "4e71cbde363587e098748268",
+        "theme": "order",
+        "similarity": 0.25218
+      },
+      {
+        "id": "1754c2e9cddd958d494934ed",
+        "theme": "imprints",
+        "similarity": 0.20134
+      }
+    ],
+    "b8db142f10c845259d059e96": [
+      {
+        "id": "685670b80945083ac4eb89cf",
+        "theme": "in-bloom",
+        "similarity": 0.40792
+      },
+      {
+        "id": "89ff38a01d871c541ed55641",
+        "theme": "order",
+        "similarity": 0.32128
+      },
+      {
+        "id": "d9b7027a850df3b05422bef3",
+        "theme": "imprints",
+        "similarity": 0.1532
+      }
+    ],
+    "0c6c9b1246e47555a130a23d": [
+      {
+        "id": "b8db142f10c845259d059e96",
+        "theme": "after-dark",
+        "similarity": 0.28523
+      },
+      {
+        "id": "fd6c7bdb6a6f7b798a6dfcef",
+        "theme": "order",
+        "similarity": 0.25966
+      },
+      {
+        "id": "4bfeea590caaea36de2afcb1",
+        "theme": "elemental",
+        "similarity": 0.12842
+      }
+    ],
+    "c447b938aba901fcf2b6acfa": [
+      {
+        "id": "db23572a609554fddf1ccba0",
+        "theme": "after-dark",
+        "similarity": 0.3965
+      },
+      {
+        "id": "fd6c7bdb6a6f7b798a6dfcef",
+        "theme": "order",
+        "similarity": 0.29739
+      },
+      {
+        "id": "1754c2e9cddd958d494934ed",
+        "theme": "imprints",
+        "similarity": 0.16857
+      }
+    ],
+    "325d66e57655775635176148": [
+      {
+        "id": "0de1b4114733afa514fc9491",
+        "theme": "after-dark",
+        "similarity": 0.42694
+      },
+      {
+        "id": "fd6c7bdb6a6f7b798a6dfcef",
+        "theme": "order",
+        "similarity": 0.21908
+      },
+      {
+        "id": "1754c2e9cddd958d494934ed",
+        "theme": "imprints",
+        "similarity": 0.12881
+      }
+    ],
+    "4834409f4e1a1b0937a1b188": [
+      {
+        "id": "30d4f7197c099b9d16f03c69",
+        "theme": "imprints",
+        "similarity": 0.27284
+      },
+      {
+        "id": "4226d2616a0c4ebb416d0854",
+        "theme": "in-bloom",
+        "similarity": 0.21152
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.15084
+      }
+    ],
+    "a6d412bc7b440a881b219252": [
+      {
+        "id": "49d29a55c49be8663a3c9d73",
+        "theme": "imprints",
+        "similarity": 0.73887
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.28462
+      },
+      {
+        "id": "fd6c7bdb6a6f7b798a6dfcef",
+        "theme": "order",
+        "similarity": 0.18914
+      }
+    ],
+    "23e97c8500d8c6e2a026ddc2": [
+      {
+        "id": "5a5cd356c992c9550fecb767",
+        "theme": "elemental",
+        "similarity": 0.60276
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.41549
+      },
+      {
+        "id": "d681b8474e3cdf876300dba5",
+        "theme": "order",
+        "similarity": 0.24379
+      }
+    ],
+    "b88a63593afe46303cc63651": [
+      {
+        "id": "a8abb7b2025402a73889c8a0",
+        "theme": "imprints",
+        "similarity": 0.40412
+      },
+      {
+        "id": "4bfeea590caaea36de2afcb1",
+        "theme": "elemental",
+        "similarity": 0.28532
+      },
+      {
+        "id": "4226d2616a0c4ebb416d0854",
+        "theme": "in-bloom",
+        "similarity": 0.18741
+      }
+    ],
+    "a2fadb15e69a9e8a73e7cc1d": [
+      {
+        "id": "30d4f7197c099b9d16f03c69",
+        "theme": "imprints",
+        "similarity": 0.54442
+      },
+      {
+        "id": "cf40b8d5f038ecbd71124621",
+        "theme": "elemental",
+        "similarity": 0.42733
+      },
+      {
+        "id": "4226d2616a0c4ebb416d0854",
+        "theme": "in-bloom",
+        "similarity": 0.21999
+      }
+    ],
+    "49d29a55c49be8663a3c9d73": [
+      {
+        "id": "ac88478dc0a45ea8a9554c42",
+        "theme": "elemental",
+        "similarity": 0.834
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.35017
+      },
+      {
+        "id": "fd6c7bdb6a6f7b798a6dfcef",
+        "theme": "order",
+        "similarity": 0.15952
+      }
+    ],
+    "a8abb7b2025402a73889c8a0": [
+      {
+        "id": "bd9fc5462949b5fd4b16b3e0",
+        "theme": "elemental",
+        "similarity": 0.79176
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.48774
+      },
+      {
+        "id": "4226d2616a0c4ebb416d0854",
+        "theme": "in-bloom",
+        "similarity": 0.13107
+      }
+    ],
+    "cf40b8d5f038ecbd71124621": [
+      {
+        "id": "a8abb7b2025402a73889c8a0",
+        "theme": "imprints",
+        "similarity": 0.54149
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.42733
+      },
+      {
+        "id": "4226d2616a0c4ebb416d0854",
+        "theme": "in-bloom",
+        "similarity": 0.20081
+      }
+    ],
+    "5a5cd356c992c9550fecb767": [
+      {
+        "id": "23e97c8500d8c6e2a026ddc2",
+        "theme": "imprints",
+        "similarity": 0.60276
+      },
+      {
+        "id": "643e8064a8a0bb178649af75",
+        "theme": "after-dark",
+        "similarity": 0.30364
+      },
+      {
+        "id": "2071a8faebcd207db5153867",
+        "theme": "order",
+        "similarity": 0.23788
+      }
+    ],
+    "1ac0eb62a5dfaf988a1f9629": [
+      {
+        "id": "49d29a55c49be8663a3c9d73",
+        "theme": "imprints",
+        "similarity": 0.49017
+      },
+      {
+        "id": "e0a44e2adcb374505221d4d7",
+        "theme": "order",
+        "similarity": 0.21035
+      },
+      {
+        "id": "643e8064a8a0bb178649af75",
+        "theme": "after-dark",
+        "similarity": 0.13937
+      }
+    ],
+    "ac88478dc0a45ea8a9554c42": [
+      {
+        "id": "49d29a55c49be8663a3c9d73",
+        "theme": "imprints",
+        "similarity": 0.834
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.28622
+      },
+      {
+        "id": "4226d2616a0c4ebb416d0854",
+        "theme": "in-bloom",
+        "similarity": 0.14369
+      }
+    ],
+    "0ffa2de6595bcb0781f5153d": [
+      {
+        "id": "ac88478dc0a45ea8a9554c42",
+        "theme": "elemental",
+        "similarity": 0.53924
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.40557
+      },
+      {
+        "id": "d745f22dce37b1ce4ab75629",
+        "theme": "order",
+        "similarity": 0.27655
+      }
+    ],
+    "30d4f7197c099b9d16f03c69": [
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.54442
+      },
+      {
+        "id": "1ac0eb62a5dfaf988a1f9629",
+        "theme": "elemental",
+        "similarity": 0.32724
+      },
+      {
+        "id": "d745f22dce37b1ce4ab75629",
+        "theme": "order",
+        "similarity": 0.22273
+      }
+    ],
+    "42bc9d160693ef7bfca53024": [
+      {
+        "id": "2c6e019ec492c670f53bdbd1",
+        "theme": "elemental",
+        "similarity": 0.29446
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.23953
+      },
+      {
+        "id": "d745f22dce37b1ce4ab75629",
+        "theme": "order",
+        "similarity": 0.17154
+      }
+    ],
+    "3ce616c44a59cea078af543a": [
+      {
+        "id": "2c6e019ec492c670f53bdbd1",
+        "theme": "elemental",
+        "similarity": 0.30588
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.15405
+      },
+      {
+        "id": "4e71cbde363587e098748268",
+        "theme": "order",
+        "similarity": 0.14375
+      }
+    ],
+    "79aabfd36f79749291274a3a": [
+      {
+        "id": "be9f54df71cb112806433388",
+        "theme": "imprints",
+        "similarity": 0.70528
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.42493
+      },
+      {
+        "id": "4226d2616a0c4ebb416d0854",
+        "theme": "in-bloom",
+        "similarity": 0.19673
+      }
+    ],
+    "062b6cad428650b0ac89b883": [
+      {
+        "id": "49d29a55c49be8663a3c9d73",
+        "theme": "imprints",
+        "similarity": 0.59105
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.36838
+      },
+      {
+        "id": "4226d2616a0c4ebb416d0854",
+        "theme": "in-bloom",
+        "similarity": 0.16986
+      }
+    ],
+    "be9f54df71cb112806433388": [
+      {
+        "id": "79aabfd36f79749291274a3a",
+        "theme": "elemental",
+        "similarity": 0.70528
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.37225
+      },
+      {
+        "id": "4226d2616a0c4ebb416d0854",
+        "theme": "in-bloom",
+        "similarity": 0.14361
+      }
+    ],
+    "bd9fc5462949b5fd4b16b3e0": [
+      {
+        "id": "49d29a55c49be8663a3c9d73",
+        "theme": "imprints",
+        "similarity": 0.8334
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.32829
+      },
+      {
+        "id": "4e71cbde363587e098748268",
+        "theme": "order",
+        "similarity": 0.12686
+      }
+    ],
+    "19de29e56e360b7cdc41ac03": [
+      {
+        "id": "ac88478dc0a45ea8a9554c42",
+        "theme": "elemental",
+        "similarity": 0.69734
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.4261
+      },
+      {
+        "id": "b22d7957865508a129c1589d",
+        "theme": "in-bloom",
+        "similarity": 0.15034
+      }
+    ],
+    "9ff9b3639e241d982b3d3d91": [
+      {
+        "id": "a0bca435a01d602a4ddfce34",
+        "theme": "imprints",
+        "similarity": 0.78379
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.24774
+      },
+      {
+        "id": "bffef31a50008d878287634e",
+        "theme": "in-bloom",
+        "similarity": 0.18345
+      }
+    ],
+    "a0bca435a01d602a4ddfce34": [
+      {
+        "id": "9ff9b3639e241d982b3d3d91",
+        "theme": "elemental",
+        "similarity": 0.78379
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.30465
+      },
+      {
+        "id": "d745f22dce37b1ce4ab75629",
+        "theme": "order",
+        "similarity": 0.22098
+      }
+    ],
+    "74556423f04d1afa41307925": [
+      {
+        "id": "8b26cc4cb5b05f1f77b50d20",
+        "theme": "imprints",
+        "similarity": 0.82364
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.18674
+      },
+      {
+        "id": "a743171dea4cb9ea2d1ca131",
+        "theme": "in-bloom",
+        "similarity": 0.14831
+      }
+    ],
+    "8b26cc4cb5b05f1f77b50d20": [
+      {
+        "id": "74556423f04d1afa41307925",
+        "theme": "elemental",
+        "similarity": 0.82364
+      },
+      {
+        "id": "4e71cbde363587e098748268",
+        "theme": "order",
+        "similarity": 0.1703
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.16874
+      }
+    ],
+    "751cab53719c6ffe5c8debb1": [
+      {
+        "id": "db23572a609554fddf1ccba0",
+        "theme": "after-dark",
+        "similarity": 0.2167
+      },
+      {
+        "id": "f4bc5f3dabb5cd9d72c458b8",
+        "theme": "order",
+        "similarity": 0.15103
+      },
+      {
+        "id": "1754c2e9cddd958d494934ed",
+        "theme": "imprints",
+        "similarity": 0.1298
+      }
+    ],
+    "b22d7957865508a129c1589d": [
+      {
+        "id": "f7e73bfd275ecacc2de79004",
+        "theme": "after-dark",
+        "similarity": 0.2693
+      },
+      {
+        "id": "fd6c7bdb6a6f7b798a6dfcef",
+        "theme": "order",
+        "similarity": 0.21029
+      },
+      {
+        "id": "1754c2e9cddd958d494934ed",
+        "theme": "imprints",
+        "similarity": 0.21009
+      }
+    ],
+    "bffef31a50008d878287634e": [
+      {
+        "id": "f7e73bfd275ecacc2de79004",
+        "theme": "after-dark",
+        "similarity": 0.42141
+      },
+      {
+        "id": "1754c2e9cddd958d494934ed",
+        "theme": "imprints",
+        "similarity": 0.23621
+      },
+      {
+        "id": "9ff9b3639e241d982b3d3d91",
+        "theme": "elemental",
+        "similarity": 0.18345
+      }
+    ],
+    "685670b80945083ac4eb89cf": [
+      {
+        "id": "b8db142f10c845259d059e96",
+        "theme": "after-dark",
+        "similarity": 0.40792
+      },
+      {
+        "id": "f4bc5f3dabb5cd9d72c458b8",
+        "theme": "order",
+        "similarity": 0.24671
+      },
+      {
+        "id": "1754c2e9cddd958d494934ed",
+        "theme": "imprints",
+        "similarity": 0.14822
+      }
+    ],
+    "793ce1dc50a0c7a287d8cbc9": [
+      {
+        "id": "f4bc5f3dabb5cd9d72c458b8",
+        "theme": "order",
+        "similarity": 0.23135
+      },
+      {
+        "id": "5b24cb563ed1eca04acd6e86",
+        "theme": "after-dark",
+        "similarity": 0.22517
+      },
+      {
+        "id": "1754c2e9cddd958d494934ed",
+        "theme": "imprints",
+        "similarity": 0.15143
+      }
+    ],
+    "2c6e019ec492c670f53bdbd1": [
+      {
+        "id": "be9f54df71cb112806433388",
+        "theme": "imprints",
+        "similarity": 0.3512
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.25672
+      },
+      {
+        "id": "4226d2616a0c4ebb416d0854",
+        "theme": "in-bloom",
+        "similarity": 0.19835
+      }
+    ],
+    "5c9741cb25dbdf04e81abfbb": [
+      {
+        "id": "a8abb7b2025402a73889c8a0",
+        "theme": "imprints",
+        "similarity": 0.34353
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.29791
+      },
+      {
+        "id": "4226d2616a0c4ebb416d0854",
+        "theme": "in-bloom",
+        "similarity": 0.29495
+      }
+    ],
+    "4226d2616a0c4ebb416d0854": [
+      {
+        "id": "5c9741cb25dbdf04e81abfbb",
+        "theme": "elemental",
+        "similarity": 0.29495
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.21999
+      },
+      {
+        "id": "be9f54df71cb112806433388",
+        "theme": "imprints",
+        "similarity": 0.14361
+      }
+    ],
+    "4bfeea590caaea36de2afcb1": [
+      {
+        "id": "a8abb7b2025402a73889c8a0",
+        "theme": "imprints",
+        "similarity": 0.36908
+      },
+      {
+        "id": "b88a63593afe46303cc63651",
+        "theme": "after-dark",
+        "similarity": 0.28532
+      },
+      {
+        "id": "4226d2616a0c4ebb416d0854",
+        "theme": "in-bloom",
+        "similarity": 0.27708
+      }
+    ],
+    "b8577b51ccdd20006959e004": [
+      {
+        "id": "be9f54df71cb112806433388",
+        "theme": "imprints",
+        "similarity": 0.595
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.25988
+      },
+      {
+        "id": "2071a8faebcd207db5153867",
+        "theme": "order",
+        "similarity": 0.15589
+      }
+    ],
+    "12a04385676dd0042232dd02": [
+      {
+        "id": "19de29e56e360b7cdc41ac03",
+        "theme": "imprints",
+        "similarity": 0.5317
+      },
+      {
+        "id": "a2fadb15e69a9e8a73e7cc1d",
+        "theme": "after-dark",
+        "similarity": 0.20972
+      },
+      {
+        "id": "4226d2616a0c4ebb416d0854",
+        "theme": "in-bloom",
+        "similarity": 0.12531
+      }
+    ],
+    "8b97ba475a5b0d2a5c5375a8": [
+      {
+        "id": "d9b7027a850df3b05422bef3",
+        "theme": "imprints",
+        "similarity": 0.25736
+      },
+      {
+        "id": "bffef31a50008d878287634e",
+        "theme": "in-bloom",
+        "similarity": 0.25658
+      },
+      {
+        "id": "89ff38a01d871c541ed55641",
+        "theme": "order",
+        "similarity": 0.20188
+      }
+    ],
+    "c213198083fb2da79ad19601": [
+      {
+        "id": "c447b938aba901fcf2b6acfa",
+        "theme": "in-bloom",
+        "similarity": 0.27601
+      },
+      {
+        "id": "0ffa2de6595bcb0781f5153d",
+        "theme": "imprints",
+        "similarity": 0.22196
+      },
+      {
+        "id": "4d993134d8606816e4b70dbf",
+        "theme": "order",
+        "similarity": 0.2089
+      }
+    ],
+    "85769646e835b1df15f5fe1b": [
+      {
+        "id": "643e8064a8a0bb178649af75",
+        "theme": "after-dark",
+        "similarity": 0.35326
+      },
+      {
+        "id": "a743171dea4cb9ea2d1ca131",
+        "theme": "in-bloom",
+        "similarity": 0.30422
+      },
+      {
+        "id": "1754c2e9cddd958d494934ed",
+        "theme": "imprints",
+        "similarity": 0.1358
+      }
+    ]
+  }
+}

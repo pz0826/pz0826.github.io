@@ -70,6 +70,7 @@ export class SceneHud {
     private tables: SceneTables,
     onQuery: (query: SceneQuery) => void,
     private invalidate: () => void,
+    onClearSelection: () => void,
   ) {
     this.svg.setAttribute('aria-hidden', 'true');
     this.svg.classList.add('hud-traces');
@@ -82,6 +83,7 @@ export class SceneHud {
     this.svg.append(this.leaders, this.connections.group, this.outline);
     this.host.append(this.svg);
     this.caption.className = 'hud-caption';
+    this.caption.hidden = true;
     this.host.append(this.caption);
     this.trace.className = 'query-trace';
     this.trace.setAttribute('aria-hidden', 'true');
@@ -96,13 +98,21 @@ export class SceneHud {
       button.setAttribute('aria-pressed', String(mode === this.relationStyle));
       button.onclick = () => {
         this.relationStyle = mode;
-        for (const child of this.caption.children)
+        for (const child of this.caption.querySelectorAll('[aria-pressed]'))
           child.setAttribute('aria-pressed', String(child === button));
         this.updateRelations();
         this.invalidate();
       };
       this.caption.append(button);
     }
+    const close = document.createElement('button');
+    close.className = 'hud-clear-selection';
+    close.type = 'button';
+    close.textContent = '×';
+    close.setAttribute('aria-label', 'Clear selection');
+    close.title = 'Clear selection';
+    close.onclick = onClearSelection;
+    this.caption.append(close);
     for (const query of data.queries.filter((q) => q.featured)) {
       const node = data.nodes.get(directedSteps(query)[0].node);
       if (!node) continue;
@@ -479,12 +489,16 @@ export class SceneHud {
     );
     this.trace.hidden = !this.state?.queryId;
     this.caption.hidden = false;
-    const captionY = Math.max(22, Math.min(...points.map((p) => p.y)) - 25);
+    // Leave room for the floating close button, including at viewport edges.
+    const captionY = Math.min(
+      height - this.caption.offsetHeight - 12,
+      Math.max(16, Math.min(...points.map((p) => p.y)) - 25),
+    );
     const above = captionY - this.trace.offsetHeight - 8;
     const traceY =
       above >= 12 ? above : captionY + this.caption.offsetHeight + 8;
     this.trace.style.transform = `translate(${Math.max(12, Math.min(width - 240, center.x - 110))}px,${traceY}px)`;
-    this.caption.style.transform = `translate(${Math.min(width - 150, Math.max(15, center.x))}px,${captionY}px)`;
+    this.caption.style.transform = `translate(${Math.max(12, Math.min(width - this.caption.offsetWidth - 36, center.x))}px,${captionY}px)`;
   }
   dispose() {
     this.disposed = true;

@@ -109,6 +109,43 @@ try {
       2,
   );
   assert.equal(await page.locator('.selection-panel').count(), 0);
+  const close = page.getByRole('button', {
+    name: 'Clear selection',
+    exact: true,
+  });
+  const closeBox = await close.boundingBox();
+  assert.equal(closeBox.width, closeBox.height, 'Close backing is square');
+  assert.equal(closeBox.width, 16, 'Close backing stays visually compact');
+  const captionBox = await page.locator('.hud-caption').boundingBox();
+  assert.ok(
+    Math.abs(closeBox.y - captionBox.y) < 1,
+    'Close aligns with the caption top',
+  );
+  assert.ok(
+    Math.abs(closeBox.x - captionBox.x - captionBox.width - 4) < 1,
+    'Close sits just outside the right edge',
+  );
+  assert.equal(await close.getAttribute('aria-pressed'), null);
+  await page.screenshot({ path: '.preview/screenshots/selection-close.png' });
+  await close.click();
+  await page.waitForFunction(
+    () => !document.querySelector('.room-experience')?.dataset.selected,
+  );
+  await page.waitForTimeout(500);
+  assert.equal(await page.locator('.hud-caption').isVisible(), false);
+  assert.equal(await page.locator('.hud-outline').getAttribute('points'), '');
+  assert.equal(await room.getAttribute('data-playing'), 'false');
+  // Closing during a query must also invalidate its scheduled later stages.
+  await page
+    .locator('[data-query-id="room-query-02"]')
+    .evaluate((e) => e.click());
+  await page.waitForFunction(
+    () => !!document.querySelector('.room-experience')?.dataset.selected,
+  );
+  await close.click();
+  await page.waitForTimeout(3500);
+  assert.equal(await room.getAttribute('data-selected'), '');
+  assert.equal(await room.getAttribute('data-playing'), 'false');
   await page
     .getByRole('button', { name: 'Reset camera and selection' })
     .click();
@@ -138,6 +175,28 @@ try {
   );
   await page.waitForTimeout(2000);
   console.log('Final query cluster', await room.getAttribute('data-selected'));
+  const selectedBeforeViewer = await room.getAttribute('data-selected');
+  await page
+    .getByRole('navigation', { name: 'Main navigation' })
+    .getByRole('link', { name: 'Arts' })
+    .click();
+  await page
+    .getByRole('button', { name: 'Explore Elemental', exact: true })
+    .click();
+  await page
+    .locator('.art-spread')
+    .first()
+    .locator('.art-open-photo')
+    .first()
+    .click();
+  await page.locator('.art-lightbox[open]').waitFor();
+  await page.keyboard.press('Escape');
+  await page.locator('.art-lightbox').waitFor({ state: 'detached' });
+  assert.equal(
+    await room.getAttribute('data-selected'),
+    selectedBeforeViewer,
+    'Closing a photograph must not clear the room selection',
+  );
   await page.locator('.room-stage').scrollIntoViewIfNeeded();
   await page.screenshot({ path: '.preview/screenshots/desktop-query.png' });
   const before = await page.evaluate(() => scrollY);
@@ -157,7 +216,7 @@ try {
     'outside the scene, wheel still scrolls the page',
   );
   await page
-    .getByRole('navigation')
+    .getByRole('navigation', { name: 'Main navigation' })
     .getByRole('link', { name: 'Works', exact: true })
     .click();
   assert.equal(new URL(page.url()).hash, '#works');
@@ -205,7 +264,7 @@ try {
   await mobile.getByRole('button', { name: 'Done exploring' }).click();
   assert.equal(
     await mobile
-      .locator('canvas')
+      .locator('.room-canvas canvas')
       .evaluate((canvas) => canvas.style.touchAction),
     'pan-y',
   );
@@ -230,6 +289,19 @@ try {
     .getByRole('link', { name: 'Info', exact: true })
     .click();
   assert.equal(new URL(fallback.url()).hash, '#info');
+  await fallback.unroute('**/scenes/room/room.splat.gz');
+  await fallback.getByRole('button', { name: 'Retry scene' }).click();
+  await fallback.waitForFunction(
+    () =>
+      document.querySelector('.room-experience')?.dataset.sceneStatus ===
+      'ready',
+    null,
+    { timeout: 60000 },
+  );
+  assert.equal(
+    await fallback.getByRole('button', { name: 'Retry scene' }).count(),
+    0,
+  );
   await fallback.close();
   assert.deepEqual(errors, []);
   await writeFile(

@@ -123,7 +123,7 @@ export class SparkAdapter implements SceneAdapter {
     this.controls.enableDamping = false;
     this.controls.enableZoom = true;
     this.controls.zoomSpeed = 0.6;
-    this.controls.minDistance = 0.6;
+    this.controls.minDistance = 0.38;
     this.controls.maxDistance = 12;
     this.controls.rotateSpeed = 0.35;
     this.controls.addEventListener('start', this.manual);
@@ -259,6 +259,10 @@ export class SparkAdapter implements SceneAdapter {
         adapter.tables,
         options.onQuery,
         adapter.invalidate,
+        () => {
+          options.onManual();
+          options.onSelect(null, -1);
+        },
       );
       await adapter.hud.initialize();
       await adapter.apply(initialState);
@@ -432,7 +436,10 @@ export class SparkAdapter implements SceneAdapter {
       Math.tan(THREE.MathUtils.degToRad(fov / 2)) *
         Math.min(1, this.camera.aspect),
     );
-    const distance = Math.max(0.38, (radius * context) / Math.sin(halfFov));
+    const distance = Math.max(
+      this.controls.minDistance,
+      (radius * context) / Math.sin(halfFov),
+    );
     const position = target.clone().addScaledVector(direction, distance);
     const facing = new THREE.Quaternion().setFromRotationMatrix(
       new THREE.Matrix4().lookAt(position, target, this.camera.up),
@@ -444,6 +451,7 @@ export class SparkAdapter implements SceneAdapter {
       this.camera.quaternion.copy(facing);
       this.camera.fov = fov;
       this.controls.target.copy(target);
+      this.camera.lookAt(target);
       this.camera.updateProjectionMatrix();
     } else {
       this.motion = {
@@ -707,11 +715,18 @@ export class SparkAdapter implements SceneAdapter {
         t = Math.min(1, (now - m.start) / 1200),
         ease = t * t * (3 - 2 * t);
       this.camera.position.lerpVectors(m.from, m.to, ease);
-      this.camera.quaternion.slerpQuaternions(m.q0, m.q1, ease);
       this.camera.fov = THREE.MathUtils.lerp(m.f0, m.f1, ease);
-      this.syncControls();
-      if (m.target0 && m.target1)
+      if (m.target0 && m.target1) {
         this.controls.target.lerpVectors(m.target0, m.target1, ease);
+        // The rendered orientation and OrbitControls must share the SAME target
+        // at every frame, including when the visitor interrupts between stages.
+        this.camera.lookAt(this.controls.target);
+        this.camera.updateProjectionMatrix();
+        this.camera.updateMatrixWorld();
+      } else {
+        this.camera.quaternion.slerpQuaternions(m.q0, m.q1, ease);
+        this.syncControls();
+      }
       if (t === 1) this.motion = undefined;
     }
     const revealing =

@@ -1,6 +1,6 @@
 {
   "name": "yuning-peng-homepage",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -17,7 +17,10 @@
     "dev:status": "node node_modules/astro/bin/astro.mjs dev status",
     "dev:stop": "node node_modules/astro/bin/astro.mjs dev stop",
     "dev:logs": "node node_modules/astro/bin/astro.mjs dev logs",
-    "format": "node node_modules/prettier/bin/prettier.cjs --write src tests scripts/*.mjs"
+    "format": "node node_modules/prettier/bin/prettier.cjs --write src tests scripts/*.mjs",
+    "review:serve": "python3 tools/photo-review/server.py --directory photography-review/originals --state-dir photography-review/.service --port 4324",
+    "test:photo-review": "python3 -m unittest discover -s tools/photo-review -p test_server.py && node tests/photo-review-browser.mjs",
+    "check:arts": "node scripts/check_art_assets.mjs"
   },
   "dependencies": {
     "@astrojs/react": "6.0.6",

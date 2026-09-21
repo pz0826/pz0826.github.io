@@ -23,8 +23,8 @@ export class ConnectionArt {
       const path = document.createElementNS(NS, 'path');
       path.classList.add('connection-packet');
       path.setAttribute('fill', 'none');
-      path.setAttribute('stroke', '#e7f5f7');
-      path.setAttribute('stroke-width', '.85');
+      path.setAttribute('stroke', '#f1fcff');
+      path.setAttribute('stroke-width', '1.05');
       path.setAttribute('stroke-linecap', 'butt');
       return path;
     });
@@ -108,23 +108,34 @@ export class ConnectionArt {
           p.y += dx * k;
         });
       const d = polyline(samples);
-      const opacity = secondary ? 0.18 : Math.max(0.23, 0.44 - length / 1800);
+      const blinkPhase = (time + id * 0.137) % (3.4 + (id % 7) * 0.47);
+      const blink = reduced
+        ? 1
+        : blinkPhase < 0.065
+          ? 0.55
+          : blinkPhase < 0.135
+            ? 0.95
+            : blinkPhase < 0.18
+              ? 0.7
+              : 1;
+      const opacity =
+        (secondary ? 0.42 : Math.max(0.38, 0.88 - length / 1100)) * blink;
       line.dataset.nodeId = String(id);
       line.setAttribute('d', d);
       line.setAttribute('stroke', '#d2e1e4');
-      line.setAttribute('stroke-width', '.85');
+      line.setAttribute('stroke-width', '1.05');
       line.style.opacity = String(opacity);
-      // One low-duty packet per edge, staggered by identity; no global blinking.
+      // Independent short glints and brighter packets converge on the selection, even at rest.
       const cycle = 5.5 + (id % 7) * 0.43;
       const elapsed = (time + id * 0.713) % cycle;
       const duration = 2.6 + (id % 3) * 0.25;
       const active = !reduced && !secondary && elapsed < duration;
-      const packet = active ? fiberPacket(samples, elapsed / duration) : [];
+      const packet = active ? fiberPacket(samples, 1 - elapsed / duration) : [];
       packets.forEach((path, j) => {
         path.style.display = active ? '' : 'none';
         if (!active) return;
         path.setAttribute('d', packet[j].d);
-        path.style.opacity = String(packet[j].opacity * 0.72);
+        path.style.opacity = String(packet[j].opacity * 0.95);
       });
     });
     this.markers.setAttribute(

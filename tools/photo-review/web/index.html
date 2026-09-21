@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>摄影选片 · Contact Room</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <header class="top">
+      <div>
+        <span class="eyebrow">CONTACT ROOM</span>
+        <h1>摄影选片</h1>
+      </div>
+      <span id="save-state" role="status">连接中…</span>
+    </header>
+    <section class="source">
+      <form id="open-folder">
+        <label for="folder">照片目录 <small>服务器上的路径</small></label>
+        <div class="path-row">
+          <input
+            id="folder"
+            name="folder"
+            placeholder="/path/to/photographs"
+            required
+            autocomplete="off"
+          /><button type="submit" class="primary">打开 / 重新扫描</button>
+        </div>
+        <div class="source-options">
+          <label><input id="recursive" type="checkbox" /> 包含子文件夹</label
+          ><select id="recent" aria-label="最近打开的目录">
+            <option value="">最近打开的目录</option>
+          </select>
+        </div>
+      </form>
+      <p class="hint">
+        拖动照片到左侧主题，或勾选后批量加入。照片可属于多个主题；归类不会移动或修改原片。
+      </p>
+    </section>
+    <p id="message" role="status" hidden></p>
+    <div class="workspace">
+      <aside>
+        <div class="aside-title">
+          <span class="eyebrow">主题 / COLLECTIONS</span
+          ><button id="new-tag" aria-label="新建主题" title="新建主题">
+            ＋
+          </button>
+        </div>
+        <nav id="tags" aria-label="照片主题"></nav>
+        <p class="aside-note">拖到主题即保存<br />点击主题查看全部照片</p>
+      </aside>
+      <main>
+        <div class="gallery-head">
+          <div>
+            <h2 id="heading">打开一个照片目录</h2>
+            <span id="count" class="muted"></span>
+          </div>
+          <div class="view-tools">
+            <input
+              id="search"
+              type="search"
+              placeholder="搜索文件名…"
+              aria-label="搜索照片"
+            /><button id="rename-tag" hidden>重命名</button
+            ><button id="delete-tag" hidden>删除主题</button>
+          </div>
+        </div>
+        <div class="selection-tools">
+          <label><input id="select-all" type="checkbox" /> 全选当前结果</label
+          ><span id="selection-count">未选择照片</span
+          ><select id="target-tag" aria-label="选择要加入的主题"></select
+          ><button id="assign-selected">加入主题</button
+          ><button id="remove-selected" hidden>从此主题移除</button
+          ><button id="clear-selection">取消选择</button>
+        </div>
+        <div id="grid" class="grid"></div>
+        <div id="empty" hidden>
+          这个主题还没有照片。返回「全部照片」，将照片拖到这个主题即可。
+        </div>
+      </main>
+    </div>
+    <dialog id="name-dialog">
+      <form id="name-form">
+        <h2 id="name-title">新建主题</h2>
+        <label for="tag-name">主题名称</label
+        ><input id="tag-name" maxlength="60" required autocomplete="off" />
+        <p id="name-error" role="alert"></p>
+        <div class="dialog-actions">
+          <button type="button" id="cancel-name">取消</button
+          ><button type="submit" class="primary">保存</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="lightbox">
+      <div class="lightbox-head">
+        <span id="photo-title"></span
+        ><button id="close-photo" aria-label="关闭大图">关闭 ×</button>
+      </div>
+      <div class="photo-stage">
+        <button id="previous-photo" aria-label="上一张">‹</button
+        ><img id="large-photo" alt="" /><button
+          id="next-photo"
+          aria-label="下一张"
+        >
+          ›
+        </button>
+      </div>
+      <div class="photo-meta">
+        <span id="photo-size"></span>
+        <p id="photo-note"></p>
+        <div id="photo-tags"></div>
+      </div>
+    </dialog>
+  </body>
+</html>

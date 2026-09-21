@@ -659,6 +659,29 @@
   text-decoration: underline;
   text-underline-offset: 4px;
 }
+.hud-caption .hud-clear-selection {
+  position: absolute;
+  left: calc(100% + 4px);
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  background: #09090999;
+  color: #c5cac8;
+  font: 14px/1 var(--body);
+  text-shadow: none;
+}
+.hud-caption .hud-clear-selection::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+}
+.hud-caption .hud-clear-selection:hover {
+  color: #f1f0e8;
+  background: #303332bb;
+}
 
 /* Spatial invitations replace the separate catalogue of queries. */
 .query-tag {

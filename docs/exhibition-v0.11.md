@@ -1,5 +1,7 @@
 # v0.11 — bridge signals and quieter framing
 
+> Historical study: the one-off comparison scripts mentioned below were removed in the v1.0.0 cleanup. Current regression tests remain under `tests/`.
+
 ## Selected presentation
 
 D / Bridges is the default. Existing `connections=signal`, `arcs`, `constellation` and `bridges` preview URLs remain valid. Arch height and connection density are unchanged.

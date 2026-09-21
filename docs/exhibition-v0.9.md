@@ -1,5 +1,7 @@
 # v0.9 — selection, relationships and directed query journeys
 
+> Historical study: the one-off comparison scripts mentioned below were removed in the v1.0.0 cleanup. Current regression tests remain under `tests/`.
+
 ## Selection feedback
 
 A primary click/tap injects a small expanding ring into the existing view-space flow grid. It lasts 0.85 seconds, adds no continuing force from a stationary pointer, and relaxes through the existing flow displacement field. Label clicks also trigger the ring. Camera drags and secondary clicks do not inject it. Reduced-motion skips the ring.

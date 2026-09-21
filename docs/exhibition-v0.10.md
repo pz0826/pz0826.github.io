@@ -1,5 +1,7 @@
 # v0.10 — spatial invitations and connection studies
 
+> Historical study: the one-off comparison scripts mentioned below were removed in the v1.0.0 cleanup. Current regression tests remain under `tests/`.
+
 ## Visitor experience
 
 Six featured natural-language queries now float at the first object in their curated chain. They replace the four object-name tags and the separate query catalogue. Default text is deliberately small and subdued; hover and keyboard focus brighten and enlarge it. Clicking or pressing Enter starts the existing progressive framing. A compact chain follows the current selection inside the viewport; the full active sentence, stage controls and LEGO attribution remain immediately below it. The readiness row and its vertical gap are removed.

@@ -41,7 +41,6 @@ def main():
     # Remove only superseded, reproducible uncompressed exports from this exporter.
     for name in ['room.splat'] + [f'{kind}-level-{level}.{ext}' for level in range(1, 6) for kind, ext in [('labels', 'i32'), ('pca', 'rgb8')]]:
         (args.output / name).unlink(missing_ok=True)
-    shutil.copyfile(args.source / 'previews/room-poster.webp', args.output / 'poster.webp')
     source_manifest = json.loads((args.source / 'manifest.json').read_text())
     manifest = {'schemaVersion': 1, 'count': n, 'levels': [1, 2, 3, 4, 5], 'geometry': 'room.splat.gz',
                 'initialCamera': source_manifest['cameras']['initial'],

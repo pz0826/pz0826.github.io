@@ -11,9 +11,15 @@ async function json<T>(name: string, signal: AbortSignal): Promise<T> {
   if (!response.ok) throw new Error(`Scene resource unavailable: ${name}`);
   return response.json();
 }
-export async function loadSceneData(signal: AbortSignal): Promise<SceneData> {
+export function loadSceneManifest(signal: AbortSignal) {
+  return json<SceneManifest>('manifest.json', signal);
+}
+export async function loadSceneData(
+  signal: AbortSignal,
+  prefetchedManifest?: SceneManifest,
+): Promise<SceneData> {
   const [manifest, tree, queries, neighbors, graphMeta] = await Promise.all([
-    json<SceneManifest>('manifest.json', signal),
+    prefetchedManifest ?? loadSceneManifest(signal),
     json<{ nodes: SceneNode[] }>('nodes.json', signal),
     json<{ queries: SceneQuery[] }>('queries.json', signal),
     json<{

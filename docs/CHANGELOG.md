@@ -1,5 +1,11 @@
 # Homepage iteration log
 
+## v1.0.1 — Astro Pages deployment repair
+
+- Diagnose the branch-source Pages failure at Build with Jekyll; the separate Astro validation/build had succeeded. A source-only content push cannot fix that publishing mismatch.
+- Extend the existing workflow to upload the built `dist/` as a Pages artifact and deploy it after checks. Grant Pages/OIDC permissions only to the deploy job, serialize deployments, and exclude pull-request runs from publishing. Document the required GitHub Actions source setting.
+- Link HKUST in the supervisor paragraph to its official homepage using the existing animated external-link arrow.
+
 ## v1.0.0 — first release candidate
 
 - Remove the 01 / 02 / 03 prefixes from the three primary photography covers; all five theme labels now share the same unnumbered presentation.

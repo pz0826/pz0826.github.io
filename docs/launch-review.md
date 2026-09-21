@@ -26,4 +26,4 @@ Browser checks used Linux Chrome, including touch/viewport emulation. They do no
 
 The selection-close backing is now 16×16 pixels, aligned to the connection controls' upper-right edge with a four-pixel gap and a transparent 24×24 hit area.
 
-The existing CI workflow builds and uploads a preview artifact; it does not publish the site. Hosting configuration remains a separate release step.
+At v1.0.0 the workflow only uploaded a preview. The deployment repair now publishes the built `dist/` directory after successful checks on pushes to `feat/artistic-homepage`. Pages Source must be GitHub Actions, rather than the branch-root Jekyll publisher.

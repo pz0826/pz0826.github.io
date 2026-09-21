@@ -107,7 +107,7 @@ node tests/art-browser.mjs # Particle movement, settling, picking and attached o
 
 The browser test uses headless Vulkan on this machine's RTX 4090. Set `SOFTWARE_WEBGL=1` for software WebGL; it is much slower on the full scene. Screenshots and test results are saved in `.preview/`. Node/CI checks require no GPU.
 
-The GitHub workflow only builds and uploads a preview artifact. It does not deploy or change the live GitHub Pages site. Hosting can later serve `dist/` as a normal static site; preserve the separate `/LEGO-Webpage/` and `/GAGS-Webpage/` project URLs when changing Pages settings.
+The GitHub workflow validates and builds the site, then deploys only `dist/` to GitHub Pages on pushes to `feat/artistic-homepage`. Pull requests run checks and upload a preview without deploying. In Settings → Pages, set Source to **GitHub Actions**; the branch-root Jekyll publisher cannot build Astro source. Preserve the separate `/LEGO-Webpage/` and `/GAGS-Webpage/` project repositories and their Pages settings.
 
 ## Release assets
 

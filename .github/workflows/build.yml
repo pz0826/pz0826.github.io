@@ -1,4 +1,4 @@
-name: Check homepage
+name: Build and deploy homepage
 on:
   push:
     branches: [feat/artistic-homepage]
@@ -25,3 +25,28 @@ jobs:
           name: homepage-preview
           path: dist/
           retention-days: 7
+      - name: Upload static site for Pages
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/feat/artistic-homepage'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/feat/artistic-homepage'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Deploy built site
+        id: deployment
+        uses: actions/deploy-pages@v4

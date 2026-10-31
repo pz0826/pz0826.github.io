@@ -1,5 +1,10 @@
 # Homepage iteration log
 
+## 2026-11-01 — Recognition update
+
+- Add the October 2026 National Scholarship for Graduate Students (Top 2%) as the newest Recognition entry, preserving the earlier awards.
+- Widen the Recognition date column to accommodate the year and month without crowding the award text.
+
 ## v1.0.1 — Astro Pages deployment repair
 
 - Diagnose the branch-source Pages failure at Build with Jekyll; the separate Astro validation/build had succeeded. A source-only content push cannot fix that publishing mismatch.

@@ -1,5 +1,9 @@
 # Homepage iteration log
 
+## 2026-11-01 — Consistent award dates
+
+- Display the graduate national scholarship date as 2026 to match the year-only dates of the other awards, and restore the original 42-pixel date column.
+
 ## 2026-11-01 — Recognition update
 
 - Add the October 2026 National Scholarship for Graduate Students (Top 2%) as the newest Recognition entry, preserving the earlier awards.

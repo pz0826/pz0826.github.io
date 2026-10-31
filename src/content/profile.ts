@@ -35,7 +35,7 @@ export const news = [
   },
 ];
 export const awards = [
-  ['2026.10', 'National Scholarship for Graduate Students · Top 2%'],
+  ['2026', 'National Scholarship for Graduate Students · Top 2%'],
   ['2025', 'Excellent Academic Performance Scholarship, Wuhan University'],
   ['2025', 'Excellence Award for Graduate Students, Wuhan University'],
   ['2023', 'National Scholarship for Undergraduates · Top 3%'],

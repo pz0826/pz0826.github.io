@@ -58,7 +58,7 @@
 }
 .awards li {
   display: grid;
-  grid-template-columns: 54px 1fr;
+  grid-template-columns: 42px 1fr;
   gap: 8px;
   margin-bottom: 14px;
   font-size: 11px;

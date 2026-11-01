@@ -1,5 +1,10 @@
 # Homepage iteration log
 
+## 2026-11-02 — Scholarship percentile and graduate entry wording
+
+- Display both university scholarships as Top 10% without an approximation mark, following the recipient's clarification that both fall within the top ten percent.
+- Rename the 2025 entry to Outstanding Incoming Graduate Student Scholarship to make its graduate admissions context explicit.
+
 ## 2026-11-01 — Scholarship details
 
 - Replace the 2025 academic performance scholarship with the 2026 First-Class Academic Excellence Scholarship, Wuhan University.

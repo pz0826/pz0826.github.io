@@ -1,5 +1,11 @@
 # Homepage iteration log
 
+## 2026-11-01 — Scholarship details
+
+- Replace the 2025 academic performance scholarship with the 2026 First-Class Academic Excellence Scholarship, Wuhan University.
+- Correct the 2025 graduate excellence award to Outstanding New Student Scholarship, Wuhan University, retaining its existing year.
+- Mark both scholarships as Top ~10%, reflecting the approximate proportions supplied by the recipient.
+
 ## 2026-11-01 — Software Cup overall ranking
 
 - Update the 2022 Recognition entry to “First Prize, China Software Cup · 1st overall / 5,576 entries”. The denominator is nationwide registrations, not the number of finalists.

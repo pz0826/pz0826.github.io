@@ -40,5 +40,5 @@ export const awards = [
   ['2025', 'Excellence Award for Graduate Students, Wuhan University'],
   ['2023', 'National Scholarship for Undergraduates · Top 3%'],
   ['2023', 'Innova Student Innovation Achievement Award, Wuhan University'],
-  ['2022', 'First Prize, China Software Cup · Rank 1'],
+  ['2022', 'First Prize, China Software Cup · 1st overall / 5,576 entries'],
 ];

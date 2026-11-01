@@ -1,5 +1,10 @@
 # Homepage iteration log
 
+## 2026-11-01 — Software Cup overall ranking
+
+- Update the 2022 Recognition entry to “First Prize, China Software Cup · 1st overall / 5,576 entries”. The denominator is nationwide registrations, not the number of finalists.
+- Sources: [Wuhan University award report](https://news.whu.edu.cn/info/1002/67803.htm) confirms the team's first-place trophy; [MIIT competition report](https://wap.miit.gov.cn/jgsj/xxjsfzs/gzdt/art/2022/art_adef4ee33c214b75bbf37c8e0992f455.html) confirms 5,576 registered teams.
+
 ## 2026-11-01 — Consistent award dates
 
 - Display the graduate national scholarship date as 2026 to match the year-only dates of the other awards, and restore the original 42-pixel date column.
